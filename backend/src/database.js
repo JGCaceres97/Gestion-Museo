@@ -4,7 +4,8 @@ const URI = process.env.MONGODB_URI;
 
 moongoose.connect(URI, {
   useNewUrlParser: true,
-  useCreateIndex: true
+  useCreateIndex: true,
+  useFindAndModify: false
 });
 
 const connection = moongoose.connection;

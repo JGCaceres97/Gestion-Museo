@@ -2,8 +2,9 @@ const { Schema, model } = require('mongoose');
 
 const solicitudSchema = new Schema({
   ID: {
-    type: number,
-    required: true
+    type: Number,
+    required: true,
+    unique: true
   },
   NumIdentidad: {
     type: String,
@@ -11,7 +12,8 @@ const solicitudSchema = new Schema({
   },
   Nombre: {
     type: String,
-    required: true
+    required: true,
+    trim: true
   },
   Telefono: {
     type: String,
@@ -23,22 +25,25 @@ const solicitudSchema = new Schema({
   },
   Institucion: {
     type: String,
-    required: true
+    required: true,
+    trim: true
   },
   Procedencia: {
     type: String,
-    required: true
+    required: true,
+    trim: true
   },
   CantPersonas: {
-    type: number,
+    type: Number,
     required: true
   },
   FechaSolicitud: {
-    type: String,
+    type: Date,
+    default: Date.now,
     required: true
   },
   FechaVisita: {
-    type: String,
+    type: Date,
     required: true
   },
   Charla: {
@@ -48,10 +53,12 @@ const solicitudSchema = new Schema({
   TemaCharla: String,
   Estado: {
     type: String,
-    required: true
+    default: 'Proceso',
+    required: true,
+    trim: true
   }
 }, {
-  timestamps: true
-});
+    timestamps: true
+  });
 
-model('Solicitud', solicitudSchema);
+module.exports = model('Solicitud', solicitudSchema);
