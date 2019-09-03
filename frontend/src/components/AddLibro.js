@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
 
-class Navigation extends Component {
+class AddLibro extends Component {
   render() {
     return (
       <div>
-        NAVIGATION
+        ADD LIBRO
       </div>
     );
   }
 }
 
-export default Navigation;
+export default AddLibro;
