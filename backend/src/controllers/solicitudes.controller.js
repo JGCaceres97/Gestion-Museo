@@ -20,7 +20,7 @@ solicitudCtrl.createSolicitud = async (req, res) => {
     CantPersonas,
     FechaVisita,
     Charla,
-    Tema
+    TemaCharla
   } = req.body;
   const nuevaSolicitud = new Solicitud({
     ID,
@@ -33,7 +33,7 @@ solicitudCtrl.createSolicitud = async (req, res) => {
     CantPersonas,
     FechaVisita,
     Charla,
-    Tema
+    TemaCharla
   });
   await nuevaSolicitud.save();
   res.json({ message: 'Solicitud enviada' });
@@ -56,7 +56,7 @@ solicitudCtrl.updateSolicitud = async (req, res) => {
     CantPersonas,
     FechaVisita,
     Charla,
-    Tema
+    TemaCharla
   } = req.body;
   await Solicitud.findOneAndUpdate({ _id: req.params.id }, {
     NumIdentidad,
@@ -68,9 +68,9 @@ solicitudCtrl.updateSolicitud = async (req, res) => {
     CantPersonas,
     FechaVisita,
     Charla,
-    Tema
+    TemaCharla
   });
-  res.json({ message: 'Solicitud updated' });
+  res.json({ message: 'Solicitud actualizada' });
 };
 
 solicitudCtrl.deleteSolicitud = async (req, res) => {

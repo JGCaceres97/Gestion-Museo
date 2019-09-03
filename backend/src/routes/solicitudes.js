@@ -7,7 +7,7 @@ const {
   getSolicitud,
   updateSolicitud,
   deleteSolicitud
-} = require('../controllers/solicitud.controller');
+} = require('../controllers/solicitudes.controller');
 
 router.route('/')
   .get(getSolicitudes)
