@@ -1,4 +1,5 @@
 import React from 'react';
+import { BrowserRouter as Router, Route } from 'react-router-dom';
 import './App.css';
 
 import AddLibro from './components/AddLibro';
@@ -7,10 +8,13 @@ import Navigation from './components/Navigation';
 
 function App() {
   return (
-    <div>
+    <Router>
       <Navigation />
-      Hello World from ReactJS
-    </div>
+
+      <Route path='/create' exact component={CreateSolicitud} />
+      <Route path='/add' component={AddLibro} />
+      <Route path='/edit/:id' component={AddLibro} />
+    </Router>
   );
 }
 
