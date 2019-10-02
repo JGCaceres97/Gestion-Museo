@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const URI = process.env.MONGODB_URI;
+const URI = 'mongodb://mongo:27017/CentrosCulturales';
 
 try {
   mongoose.connect(URI, {
@@ -10,7 +10,7 @@ try {
     useUnifiedTopology: true
   });
 } catch (e) {
-  console.error('You have to set the MONGODB_URI environment variable.');
+  console.error(e);
   process.exit(1);
 }
 
