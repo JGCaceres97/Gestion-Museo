@@ -1,6 +1,5 @@
-const solicitudCtrl = {};
-
 const Solicitud = require('../models/Solicitud');
+const solicitudCtrl = {};
 
 solicitudCtrl.getSolicitudes = async (req, res) => {
   const solicitudes = await Solicitud.find();

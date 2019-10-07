@@ -50,15 +50,18 @@ const solicitudSchema = new Schema({
     type: String,
     required: true
   },
-  TemaCharla: String,
+  TemaCharla: {
+    type: String,
+    trim: true
+  },
   Estado: {
     type: String,
-    default: 'Proceso',
+    default: 'En proceso',
     required: true,
     trim: true
   }
 }, {
-    timestamps: true
-  });
+  timestamps: true
+});
 
 module.exports = model('Solicitud', solicitudSchema);

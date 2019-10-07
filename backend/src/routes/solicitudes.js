@@ -9,11 +9,11 @@ const {
   deleteSolicitud
 } = require('../controllers/solicitudes.controller');
 
-router.route('/')
+router.route('/api/solicitudes')
   .get(getSolicitudes)
   .post(createSolicitud);
 
-router.route('/:id')
+router.route('/api/solicitudes/:id')
   .get(getSolicitud)
   .put(updateSolicitud)
   .delete(deleteSolicitud);
