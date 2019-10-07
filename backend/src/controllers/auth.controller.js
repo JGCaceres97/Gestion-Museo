@@ -49,7 +49,11 @@ auth.signIn = async (req, res) => {
 };
 
 auth.profile = async (req, res) => {
-  const usuario = await Usuario.findById(req.usuarioId, { Password: 0, createdAt: 0, updatedAt: 0 });
+  const {
+    usuarioId
+  } = req;
+
+  const usuario = await Usuario.findById(usuarioId, { Password: 0, createdAt: 0, updatedAt: 0 });
   if (!usuario) return res.status(404).json('Usuario no encontrado.');
   res.json(usuario);
 };
