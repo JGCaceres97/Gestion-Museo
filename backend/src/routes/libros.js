@@ -9,11 +9,11 @@ const {
   deleteLibro
 } = require('../controllers/libros.controller');
 
-router.route('/')
+router.route('/api/libros')
   .get(getLibros)
   .post(createLibro);
 
-router.route('/:id')
+router.route('/api/libros/:id')
   .get(getLibro)
   .put(updateLibro)
   .delete(deleteLibro);

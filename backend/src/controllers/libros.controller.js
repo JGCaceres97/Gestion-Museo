@@ -1,6 +1,5 @@
-const libroCtrl = {};
-
 const Libro = require('../models/Libro');
+const libroCtrl = {};
 
 libroCtrl.getLibros = async (req, res) => {
   const libros = await Libro.find();
@@ -29,8 +28,8 @@ libroCtrl.createLibro = async (req, res) => {
 };
 
 libroCtrl.getLibro = async (req, res) => {
-  const Libro = await Libro.findById(req.params.id);
-  res.json(Libro);
+  const libro = await Libro.findById(req.params.id);
+  res.json(libro);
 };
 
 libroCtrl.updateLibro = async (req, res) => {
