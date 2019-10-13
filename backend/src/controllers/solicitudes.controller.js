@@ -8,7 +8,6 @@ solicitudCtrl.getSolicitudes = async (req, res) => {
 
 solicitudCtrl.createSolicitud = async (req, res) => {
   const {
-    ID,
     NumIdentidad,
     Nombre,
     Apellido,
@@ -22,7 +21,6 @@ solicitudCtrl.createSolicitud = async (req, res) => {
     TemaCharla
   } = req.body;
   const nuevaSolicitud = new Solicitud({
-    ID,
     NumIdentidad,
     Nombre: Nombre + " " + Apellido,
     Telefono,

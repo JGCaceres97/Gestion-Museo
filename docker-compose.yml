@@ -29,3 +29,15 @@ services:
     restart: always
     expose:
       - '27017'
+  
+  adminMongo:
+    container_name: adminMongo
+    image: mrvautin/adminmongo
+    ports:
+      - '1234:1234'
+    environment:
+      - HOST=0.0.0.0
+      - DB_HOST=mongo
+      - CONN_NAME=adminMongo
+    depends_on:
+      - mongo

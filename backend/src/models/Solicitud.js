@@ -1,11 +1,6 @@
 const { Schema, model } = require('mongoose');
 
 const solicitudSchema = new Schema({
-  ID: {
-    type: Number,
-    required: true,
-    unique: true
-  },
   NumIdentidad: {
     type: String,
     required: true
@@ -47,7 +42,7 @@ const solicitudSchema = new Schema({
     required: true
   },
   Charla: {
-    type: String,
+    type: Boolean,
     required: true
   },
   TemaCharla: {
