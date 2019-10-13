@@ -4,6 +4,8 @@ services:
     container_name: backend
     restart: always
     build: ./backend
+    ports:
+      - '4000:4000'
     volumes:
       - ./backend:/usr/src/app
     depends_on:
@@ -24,5 +26,6 @@ services:
   mongo:
     container_name: mongodb
     image: mongo:4.2.0-bionic
+    restart: always
     expose:
       - '27017'

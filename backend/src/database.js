@@ -10,6 +10,6 @@ mongoose.connect(URI, {
 })
   .then(() => console.log('DB is connected'))
   .catch(e => {
-    console.error(e);
+    console.error('DB connection error: ', e);
     process.exit(1);
   });

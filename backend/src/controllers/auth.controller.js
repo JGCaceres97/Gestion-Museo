@@ -34,11 +34,11 @@ auth.signIn = async (req, res) => {
 
   // Buscando usuario
   const usuario = await Usuario.findOne({ Email });
-  if (!usuario) return res.status(400).json('El usuario no existe en la base de datos.');
+  if (!usuario) return res.status(400).json({ message: 'El usuario no existe en la base de datos.' });
 
   // Verificando contraseña
   const correctPassword = await usuario.decryptPassword(Password);
-  if (!correctPassword) return res.status(400).json('Contraseña incorrecta.');
+  if (!correctPassword) return res.status(400).json({ message: 'La contraseña es incorrecta.' });
 
   // Token
   const token = jwt.sign({ _id: usuario._id }, process.env.TOKEN_SECRET || 'FraseSecreta', {
@@ -54,7 +54,7 @@ auth.profile = async (req, res) => {
   } = req;
 
   const usuario = await Usuario.findById(usuarioId, { Password: 0, createdAt: 0, updatedAt: 0 });
-  if (!usuario) return res.status(404).json('Usuario no encontrado.');
+  if (!usuario) return res.status(404).json({ message: 'Usuario no encontrado.' });
   res.json(usuario);
 };
 

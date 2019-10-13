@@ -1,6 +1,6 @@
 const { Router } = require('express');
 const router = Router();
-const TokenValidation = require('../libs/verifyToken');
+const verifyToken = require('../controllers/verifyToken');
 
 const {
   signUp,
@@ -11,6 +11,6 @@ const {
 router.post('/api/auth/registrar', signUp);
 router.post('/api/auth/ingresar', signIn);
 
-router.get('/api/auth/perfil', TokenValidation, profile);
+router.get('/api/auth/perfil', verifyToken, profile);
 
 module.exports = router;
