@@ -2,23 +2,39 @@ const { Schema, model } = require('mongoose');
 const bcrypt = require('bcryptjs');
 
 const usuarioSchema = new Schema({
-  Nombre: {
-    type: String,
-    required: true
+  IDRol: {
+    type: Schema.Types.ObjectId,
+    ref: 'Rol'
   },
-  Apellido: {
+  Nombres: {
     type: String,
-    required: true
+    required: true,
+    maxlength: 50,
+    minlength: 1,
+    trim: true
   },
-  Password: {
+  Apellidos: {
     type: String,
-    required: true
+    required: true,
+    maxlength: 50,
+    minlength: 1,
+    trim: true
   },
   Email: {
     type: String,
     required: true,
     unique: true,
-    lowercase: true
+    maxlength: 100,
+    lowercase: true,
+    match: /\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,4}/
+  },
+  Password: {
+    type: String,
+    required: true
+  },
+  ÚltimaConexion: {
+    type: Date,
+    required: true
   }
 }, {
   timestamps: true

@@ -1,36 +1,55 @@
 const { Schema, model } = require('mongoose');
 
 const solicitudSchema = new Schema({
-  NumIdentidad: {
-    type: String,
-    required: true
-  },
-  Nombre: {
+  Identidad: {
     type: String,
     required: true,
-    trim: true
+    maxlength: 15,
+    match: /\d{4}-\d{4}-\d{5}/
+  },
+  Nombres: {
+    type: String,
+    required: true,
+    trim: true,
+    maxlength: 50
+  },
+  Apellidos: {
+    type: String,
+    required: true,
+    trim: true,
+    maxlength: 50
   },
   Telefono: {
     type: String,
-    required: true
+    required: true,
+    maxlength: 9,
+    match: /\d{4}-\d{4}/
   },
-  Correo: {
+  Email: {
     type: String,
-    required: true
+    required: true,
+    unique: true,
+    maxlength: 100,
+    lowercase: true,
+    match: /\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,4}/
   },
   Institucion: {
     type: String,
     required: true,
-    trim: true
+    trim: true,
+    maxlength: 100
   },
   Procedencia: {
     type: String,
     required: true,
-    trim: true
+    trim: true,
+    maxlength: 100
   },
   CantPersonas: {
     type: Number,
-    required: true
+    required: true,
+    min: 1,
+    max: 100
   },
   FechaSolicitud: {
     type: Date,
@@ -41,19 +60,25 @@ const solicitudSchema = new Schema({
     type: Date,
     required: true
   },
+  IDHorario: {
+    type: Schema.Types.ObjectId,
+    ref: 'Horario',
+    required: true
+  },
   Charla: {
     type: Boolean,
     required: true
   },
   TemaCharla: {
     type: String,
-    trim: true
+    trim: true,
+    required: false,
+    maxlength: 20
   },
-  Estado: {
-    type: String,
-    default: 'En proceso',
+  IDEstado: {
+    type: Schema.Types.ObjectId,
+    ref: 'Estado',
     required: true,
-    trim: true
   }
 }, {
   timestamps: true

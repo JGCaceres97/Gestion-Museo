@@ -4,18 +4,20 @@ const auth = {};
 
 auth.signUp = async (req, res) => {
   const {
-    Nombre,
-    Apellido,
-    Password,
-    Email
+    IDRol,
+    Nombres,
+    Apellidos,
+    Email,
+    Password
   } = req.body;
 
   // Guardando un nuevo usuario
   const usuario = new Usuario({
-    Nombre,
-    Apellido,
-    Password,
-    Email
+    IDRol,
+    Nombres,
+    Apellidos,
+    Email,
+    Password
   });
   usuario.Password = await usuario.encryptPassword(usuario.Password);
   const usuarioGuardado = await usuario.save();
@@ -39,6 +41,11 @@ auth.signIn = async (req, res) => {
   // Verificando contraseña
   const correctPassword = await usuario.decryptPassword(Password);
   if (!correctPassword) return res.status(400).json({ message: 'La contraseña es incorrecta.' });
+
+  // Asignando última conexión
+  await Usuario.findOneAndUpdate({ Email }, {
+    UltimaConexion: Date.now()
+  });
 
   // Token
   const token = jwt.sign({ _id: usuario._id }, process.env.TOKEN_SECRET || 'FraseSecreta', {

@@ -2,59 +2,63 @@ const Libro = require('../models/Libro');
 const libroCtrl = {};
 
 libroCtrl.getLibros = async (req, res) => {
-  const libros = await Libro.find();
+  const libros = await Libro.find().populate('Etiquetas');
   res.json(libros);
 };
 
 libroCtrl.createLibro = async (req, res) => {
   const {
-    ID,
-    Nombre,
     Autor,
+    Titulo,
+    Descripcion,
     Año,
+    ISBN,
     Editorial,
-    ISBN
+    Etiquetas
   } = req.body;
   const nuevoLibro = new Libro({
-    ID,
-    Nombre,
     Autor,
+    Titulo,
+    Descripcion,
     Año,
+    ISBN,
     Editorial,
-    ISBN
+    Etiquetas
   });
   await nuevoLibro.save();
-  res.json({ message: 'Libro ingresado' });
+  res.json({ message: 'Libro ingresado.' });
 };
 
 libroCtrl.getLibro = async (req, res) => {
-  const libro = await Libro.findById(req.params.id);
+  const libro = await Libro.findById(req.params.id).populate('Etiquetas');
   res.json(libro);
 };
 
 libroCtrl.updateLibro = async (req, res) => {
   const {
-    ID,
-    Nombre,
     Autor,
+    Titulo,
+    Descripcion,
     Año,
+    ISBN,
     Editorial,
-    ISBN
+    Etiquetas
   } = req.body;
   await Libro.findOneAndUpdate({ _id: req.params.id }, {
-    ID,
-    Nombre,
     Autor,
+    Titulo,
+    Descripcion,
     Año,
+    ISBN,
     Editorial,
-    ISBN
+    Etiquetas
   });
-  res.json({ message: 'Libro actualizado' });
+  res.json({ message: 'Libro actualizado.' });
 };
 
 libroCtrl.deleteLibro = async (req, res) => {
   await Libro.findOneAndDelete({ _id: req.params.id });
-  res.json({ message: 'Libro eliminado' })
-}
+  res.json({ message: 'Libro eliminado.' });
+};
 
 module.exports = libroCtrl;
