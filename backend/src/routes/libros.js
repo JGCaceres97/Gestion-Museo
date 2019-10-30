@@ -1,5 +1,6 @@
 const { Router } = require('express');
 const router = Router();
+const verifyToken = require('../controllers/verifyToken');
 
 const {
   getLibros,
@@ -10,12 +11,12 @@ const {
 } = require('../controllers/libros.controller');
 
 router.route('/api/libros')
-  .get(getLibros)
-  .post(createLibro);
+  .get(verifyToken, getLibros)
+  .post(verifyToken, createLibro);
 
 router.route('/api/libros/:id')
-  .get(getLibro)
-  .put(updateLibro)
-  .delete(deleteLibro);
+  .get(verifyToken, getLibro)
+  .put(verifyToken, updateLibro)
+  .delete(verifyToken, deleteLibro);
 
 module.exports = router;

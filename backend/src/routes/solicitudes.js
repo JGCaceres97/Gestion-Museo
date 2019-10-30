@@ -1,5 +1,6 @@
 const { Router } = require('express');
 const router = Router();
+const verifyToken = require('../controllers/verifyToken');
 
 const {
   getSolicitudes,
@@ -10,12 +11,12 @@ const {
 } = require('../controllers/solicitudes.controller');
 
 router.route('/api/solicitudes')
-  .get(getSolicitudes)
+  .get(verifyToken, getSolicitudes)
   .post(createSolicitud);
 
 router.route('/api/solicitudes/:id')
-  .get(getSolicitud)
-  .put(updateSolicitud)
-  .delete(deleteSolicitud);
+  .get(verifyToken, getSolicitud)
+  .put(verifyToken, updateSolicitud)
+  .delete(verifyToken, deleteSolicitud);
 
 module.exports = router;

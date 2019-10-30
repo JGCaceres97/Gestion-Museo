@@ -1,5 +1,6 @@
 const { Router } = require('express');
 const router = Router();
+const verifyToken = require('../controllers/verifyToken');
 
 const {
   getHorarios,
@@ -11,11 +12,11 @@ const {
 
 router.route('/api/horarios')
   .get(getHorarios)
-  .post(createHorario);
+  .post(verifyToken, createHorario);
 
 router.route('/api/horarios/:id')
-  .get(getHorario)
-  .put(updateHorario)
-  .delete(deleteHorario);
+  .get(verifyToken, getHorario)
+  .put(verifyToken, updateHorario)
+  .delete(verifyToken, deleteHorario);
 
 module.exports = router;

@@ -1,5 +1,6 @@
 const { Router } = require('express');
 const router = Router();
+const verifyToken = require('../controllers/verifyToken');
 
 const {
   getEstados,
@@ -10,12 +11,12 @@ const {
 } = require('../controllers/estados.controller');
 
 router.route('/api/estados')
-  .get(getEstados)
-  .post(createEstado);
+  .get(verifyToken, getEstados)
+  .post(verifyToken, createEstado);
 
 router.route('/api/estados/:id')
-  .get(getEstado)
-  .put(updateEstado)
-  .delete(deleteEstado);
+  .get(verifyToken, getEstado)
+  .put(verifyToken, updateEstado)
+  .delete(verifyToken, deleteEstado);
 
 module.exports = router;

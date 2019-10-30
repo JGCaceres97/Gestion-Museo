@@ -1,5 +1,6 @@
 const { Router } = require('express');
 const router = Router();
+const verifyToken = require('../controllers/verifyToken');
 
 const {
   getRoles,
@@ -10,12 +11,12 @@ const {
 } = require('../controllers/roles.controller');
 
 router.route('/api/roles')
-  .get(getRoles)
-  .post(createRol);
+  .get(verifyToken, getRoles)
+  .post(verifyToken, createRol);
 
 router.route('/api/roles')
-  .get(getRol)
-  .put(updateRol)
-  .delete(deleteRol);
+  .get(verifyToken, getRol)
+  .put(verifyToken, updateRol)
+  .delete(verifyToken, deleteRol);
 
 module.exports = router;

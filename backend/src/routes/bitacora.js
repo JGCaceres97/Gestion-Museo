@@ -1,5 +1,6 @@
 const { Router } = require('express');
 const router = Router();
+const verifyToken = require('../controllers/verifyToken');
 
 const {
   getRegistros,
@@ -7,7 +8,7 @@ const {
 } = require('../controllers/bitacora.controller');
 
 router.route('/api/bitacora')
-  .get(getRegistros)
-  .post(createRegistro);
+  .get(verifyToken, getRegistros)
+  .post(verifyToken, createRegistro);
 
 module.exports = router;

@@ -1,5 +1,6 @@
 const { Router } = require('express');
 const router = Router();
+const verifyToken = require('../controllers/verifyToken');
 
 const {
   getEtiquetas,
@@ -10,12 +11,12 @@ const {
 } = require('../controllers/etiquetas.controller');
 
 router.route('/api/etiquetas')
-  .get(getEtiquetas)
-  .post(createEtiqueta);
+  .get(verifyToken, getEtiquetas)
+  .post(verifyToken, createEtiqueta);
 
 router.route('/api/etiquetas/:id')
-  .get(getEtiqueta)
-  .put(updateEtiqueta)
-  .delete(deleteEtiqueta);
+  .get(verifyToken, getEtiqueta)
+  .put(verifyToken, updateEtiqueta)
+  .delete(verifyToken, deleteEtiqueta);
 
 module.exports = router;
