@@ -2,43 +2,73 @@ const Estado = require('../models/Estados');
 const estadoCtrl = {};
 
 estadoCtrl.getEstados = async (req, res) => {
-  const estados = await Estado.find();
-  res.json(estados);
+  try {
+    const estados = await Estado.find();
+    res.json(estados);
+  } catch (e) {
+    console.error(e);
+  } finally {
+    res.json({ message: 'Ha ocurrido un error al realizar la consulta.' });
+  }
 };
 
 estadoCtrl.createEstado = async (req, res) => {
-  const {
-    Nombre,
-    Descripcion
-  } = req.body;
-  const nuevoEstado = new Estado({
-    Nombre,
-    Descripcion
-  });
-  await nuevoEstado.save();
-  res.json({ message: 'Estado ingresado.' });
+  try {
+    const {
+      Nombre,
+      Descripcion
+    } = req.body;
+    const nuevoEstado = new Estado({
+      Nombre,
+      Descripcion
+    });
+    await nuevoEstado.save();
+    res.json({ message: 'Estado ingresado.' });
+  } catch (e) {
+    console.error(e);
+  } finally {
+    res.json({ message: 'Ha ocurrido un error al registrar el estado.' });
+  }
 };
 
 estadoCtrl.getEstado = async (req, res) => {
-  const estado = await Estado.findById(req.params.id);
-  res.json(estado);
+  try {
+    const estado = await Estado.findById(req.params.id);
+    res.json(estado);
+  } catch (e) {
+    console.error(e);
+  } finally {
+    res.json({ message: 'Ha ocurrido un error al realizar la consulta.' });
+  }
 };
 
 estadoCtrl.updateEstado = async (req, res) => {
-  const {
-    Nombre,
-    Descripcion
-  } = req.body;
-  await Estado.findOneAndUpdate({ _id: req.params.id }, {
-    Nombre,
-    Descripcion
-  });
-  res.json({ message: 'Estado actualizado.' });
+  try {
+    const {
+      Nombre,
+      Descripcion
+    } = req.body;
+    await Estado.findOneAndUpdate({ _id: req.params.id }, {
+      Nombre,
+      Descripcion
+    });
+    res.json({ message: 'Estado actualizado.' });
+  } catch (e) {
+    console.error(e);
+  } finally {
+    res.json({ message: 'Ha ocurrido un error al actualizar el estado.' });
+  }
 };
 
 estadoCtrl.deleteEstado = async (req, res) => {
-  await Estado.findOneAndDelete({ _id: req.params.id });
-  res.json({ message: 'Estado eliminado.' });
+  try {
+    await Estado.findOneAndDelete({ _id: req.params.id });
+    res.json({ message: 'Estado eliminado.' });
+  } catch (e) {
+    console.error(e);
+  } finally {
+    res.json({ message: 'Ha ocurrido un error al eliminar el estado.' });
+  }
 };
 
 module.exports = estadoCtrl;
