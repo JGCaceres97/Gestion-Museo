@@ -26,9 +26,4 @@ bitacoraCtrl.createRegistro = async (req, res) => {
   res.json({ message: 'Registro ingresado.' });
 };
 
-bitacoraCtrl.getRegistro = async (req, res) => {
-  const registro = await Bitacora.findById(res.params.id).populate('IDUsuario').populate('IDSolicitud').populate('IDLibro');
-  res.json(registro);
-};
-
 module.exports = bitacoraCtrl;
