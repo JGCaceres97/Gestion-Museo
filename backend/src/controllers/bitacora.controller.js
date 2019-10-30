@@ -7,7 +7,6 @@ bitacoraCtrl.getRegistros = async (req, res) => {
     res.json(registros);
   } catch (e) {
     console.error(e);
-  } finally {
     res.json({ message: 'Ha ocurrido un error al realizar la consulta.' });
   }
 };
@@ -33,7 +32,6 @@ bitacoraCtrl.createRegistro = async (req, res) => {
     res.json({ message: 'Registro ingresado.' });
   } catch (e) {
     console.error(e);
-  } finally {
     res.json({ message: 'Ha ocurrido un error al ingresar el registro.' });
   }
 };

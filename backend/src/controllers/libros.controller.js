@@ -7,7 +7,6 @@ libroCtrl.getLibros = async (req, res) => {
     res.json(libros);
   } catch (e) {
     console.error(e);
-  } finally {
     res.json({ message: 'Ha ocurrido un error al realizar la consulta.' });
   }
 };
@@ -36,7 +35,6 @@ libroCtrl.createLibro = async (req, res) => {
     res.json({ message: 'Libro ingresado.' });
   } catch (e) {
     console.error(e);
-  } finally {
     res.json({ message: 'Ha ocurrido un error al registrar el libro.' });
   }
 };
@@ -47,7 +45,6 @@ libroCtrl.getLibro = async (req, res) => {
     res.json(libro);
   } catch (e) {
     console.error(e);
-  } finally {
     res.json({ message: 'Ha ocurrido un error al realizar la consulta.' });
   }
 };
@@ -75,7 +72,6 @@ libroCtrl.updateLibro = async (req, res) => {
     res.json({ message: 'Libro actualizado.' });
   } catch (e) {
     console.error(e);
-  } finally {
     res.json({ message: 'Ha ocurrido un error al actualizar el libro.' });
   }
 };
@@ -86,7 +82,6 @@ libroCtrl.deleteLibro = async (req, res) => {
     res.json({ message: 'Libro eliminado.' });
   } catch (e) {
     console.error(e);
-  } finally {
     res.json({ message: 'Ha ocurrido un error al eliminar el libro.' });
   }
 };

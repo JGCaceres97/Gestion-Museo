@@ -7,7 +7,6 @@ etiquetaCtrl.getEtiquetas = async (req, res) => {
     res.json(etiquetas);
   } catch (e) {
     console.error(e);
-  } finally {
     res.json({ message: 'Ha ocurrido un error al realizar la consulta.' });
   }
 };
@@ -26,7 +25,6 @@ etiquetaCtrl.createEtiqueta = async (req, res) => {
     res.json({ message: 'Etiqueta ingresada.' });
   } catch (e) {
     console.error(e);
-  } finally {
     res.json({ message: 'Ha ocurrido un error al registrar la etiqueta.' });
   }
 };
@@ -37,7 +35,6 @@ etiquetaCtrl.getEtiqueta = async (req, res) => {
     res.json(etiqueta);
   } catch (e) {
     console.error(e);
-  } finally {
     res.json({ message: 'Ha ocurrido un error al realizar la consulta.' });
   }
 };
@@ -55,7 +52,6 @@ etiquetaCtrl.updateEtiqueta = async (req, res) => {
     res.json({ message: 'Etiqueta actualizada.' });
   } catch (e) {
     console.error(e);
-  } finally {
     res.json({ message: 'Ha ocurrido un error al actualizar la etiqueta.' });
   }
 };
@@ -66,7 +62,6 @@ etiquetaCtrl.deleteEtiqueta = async (req, res) => {
     res.json({ message: 'Etiqueta eliminada.' });
   } catch (e) {
     console.error(e);
-  } finally {
     res.json({ message: 'Ha ocurrido un error al eliminar la etiqueta.' });
   }
 };

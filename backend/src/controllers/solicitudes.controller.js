@@ -7,7 +7,6 @@ solicitudCtrl.getSolicitudes = async (req, res) => {
     res.json(solicitudes);
   } catch (e) {
     console.error(e);
-  } finally {
     res.json({ message: 'Ha ocurrido un error al realizar la consulta.' });
   }
 };
@@ -48,7 +47,6 @@ solicitudCtrl.createSolicitud = async (req, res) => {
     res.json({ message: 'Solicitud enviada.' });
   } catch (e) {
     console.error(e);
-  } finally {
     res.json({ message: 'Ha ocurrido un error al registrar la solicitud.' });
   }
 };
@@ -59,7 +57,6 @@ solicitudCtrl.getSolicitud = async (req, res) => {
     res.json(solicitud);
   } catch (e) {
     console.error(e);
-  } finally {
     res.json({ message: 'Ha ocurrido un error al realizar la consulta.' });
   }
 };
@@ -99,7 +96,6 @@ solicitudCtrl.updateSolicitud = async (req, res) => {
     res.json({ message: 'Solicitud actualizada.' });
   } catch (e) {
     console.error(e);
-  } finally {
     res.json({ message: 'Ha ocurrido un error al actualizar la solicitud.' });
   }
 };
@@ -110,7 +106,6 @@ solicitudCtrl.deleteSolicitud = async (req, res) => {
     res.json({ message: 'Solicitud eliminada.' });
   } catch (e) {
     console.error(e);
-  } finally {
     res.json({ message: 'Ha ocurrido un error al eliminar la solicitud.' });
   }
 };

@@ -7,7 +7,6 @@ estadoCtrl.getEstados = async (req, res) => {
     res.json(estados);
   } catch (e) {
     console.error(e);
-  } finally {
     res.json({ message: 'Ha ocurrido un error al realizar la consulta.' });
   }
 };
@@ -26,7 +25,6 @@ estadoCtrl.createEstado = async (req, res) => {
     res.json({ message: 'Estado ingresado.' });
   } catch (e) {
     console.error(e);
-  } finally {
     res.json({ message: 'Ha ocurrido un error al registrar el estado.' });
   }
 };
@@ -37,7 +35,6 @@ estadoCtrl.getEstado = async (req, res) => {
     res.json(estado);
   } catch (e) {
     console.error(e);
-  } finally {
     res.json({ message: 'Ha ocurrido un error al realizar la consulta.' });
   }
 };
@@ -55,7 +52,6 @@ estadoCtrl.updateEstado = async (req, res) => {
     res.json({ message: 'Estado actualizado.' });
   } catch (e) {
     console.error(e);
-  } finally {
     res.json({ message: 'Ha ocurrido un error al actualizar el estado.' });
   }
 };
@@ -66,7 +62,6 @@ estadoCtrl.deleteEstado = async (req, res) => {
     res.json({ message: 'Estado eliminado.' });
   } catch (e) {
     console.error(e);
-  } finally {
     res.json({ message: 'Ha ocurrido un error al eliminar el estado.' });
   }
 };

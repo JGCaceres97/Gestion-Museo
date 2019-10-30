@@ -7,7 +7,6 @@ horarioCtrl.getHorarios = async (req, res) => {
     res.json(horarios);
   } catch (e) {
     console.error(e);
-  } finally {
     res.json({ message: 'Ha ocurrido un error al realizar la consulta.' });
   }
 };
@@ -24,7 +23,6 @@ horarioCtrl.createHorario = async (req, res) => {
     res.json({ message: 'Horario agregado.' });
   } catch (e) {
     console.error(e);
-  } finally {
     res.json({ message: 'Ha ocurrido un error al registrar el horario.' });
   }
 };
@@ -35,7 +33,6 @@ horarioCtrl.getHorario = async (req, res) => {
     res.json(horario);
   } catch (e) {
     console.error(e);
-  } finally {
     res.json({ message: 'Ha ocurrido un error al realizar la consulta.' });
   }
 };
@@ -51,7 +48,6 @@ horarioCtrl.updateHorario = async (req, res) => {
     res.json({ message: 'Horario actualizado.' });
   } catch (e) {
     console.error(e);
-  } finally {
     res.json({ message: 'Ha ocurrido un error al actualizar el horario.' });
   }
 };
@@ -62,7 +58,6 @@ horarioCtrl.deleteHorario = async (req, res) => {
     res.json({ message: 'Horario eliminado.' });
   } catch (e) {
     console.error(e);
-  } finally {
     res.json({ message: 'Ha ocurrido un error al eliminar el horario.' });
   }
 };
