@@ -10,6 +10,7 @@ const verifyToken = (req, res, next) => {
 
     const payload = jwt.verify(token, process.env.TOKEN_SECRET || 'FraseSecreta');
     req.usuarioId = payload._id;
+    req.rolId = payload._rol;
 
     next();
   } catch (e) {

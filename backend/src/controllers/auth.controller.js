@@ -25,7 +25,12 @@ auth.signUp = async (req, res) => {
     const usuarioGuardado = await usuario.save();
 
     // Token
-    const token = jwt.sign({ _id: usuarioGuardado._id }, process.env.TOKEN_SECRET || 'FraseSecreta');
+    const token = jwt.sign({
+      _id: usuarioGuardado._id,
+      _rol: usuarioGuardado.IDRol
+    }, process.env.TOKEN_SECRET || 'FraseSecreta', {
+      expiresIn: 60 * 60 * 24
+    });
 
     res.header('auth-token', token).json(usuarioGuardado);
   } catch (e) {
@@ -55,7 +60,10 @@ auth.signIn = async (req, res) => {
     });
 
     // Token
-    const token = jwt.sign({ _id: usuario._id }, process.env.TOKEN_SECRET || 'FraseSecreta', {
+    const token = jwt.sign({
+      _id: usuario._id,
+      _rol: usuario.IDRol
+    }, process.env.TOKEN_SECRET || 'FraseSecreta', {
       expiresIn: 60 * 60 * 24
     });
 

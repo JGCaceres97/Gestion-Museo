@@ -1,6 +1,6 @@
 const { Router } = require('express');
 const router = Router();
-const verifyToken = require('../controllers/verifyToken');
+const verifyToken = require('../middlewares/verifyToken');
 
 const {
   getHorarios,
