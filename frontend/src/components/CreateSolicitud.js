@@ -42,6 +42,17 @@ moment.updateLocale('es-us', {
 });
 
 function CrearSolicitud() {
+  const initialDate = () => {
+    switch (moment().day()) {
+      case 5:
+        return moment().add(3, 'days');
+      case 6:
+        return moment().add(2, 'days');
+      default:
+        return moment().add(1, 'day');
+    }
+  }
+
   const [Identidad, setIdentidad] = useState('');
   const [Telefono, setTelefono] = useState('');
   const [Nombres, setNombres] = useState('');
@@ -52,9 +63,102 @@ function CrearSolicitud() {
   const [Municipio, setMunicipio] = useState('');
   const [Ciudad, setCiudad] = useState('');
   const [CantPersonas, setCantPersonas] = useState('');
-  const [FechaVisita, setFechaVisita] = useState(moment().add(1, 'day'));
+  const [FechaVisita, setFechaVisita] = useState(initialDate);
   const [Horario, setHorario] = useState('');
   const [Charla, setCharla] = useState(true);
+
+  const [ErrorID, setErrorID] = useState(false);
+  const [TxtID, setTxtID] = useState('');
+  const [ErrorTel, setErrorTel] = useState(false);
+  const [TxtTel, setTxtTel] = useState('');
+  const [ErrorNombres, setErrorNombres] = useState(false);
+  const [TxtNombres, setTxtNombres] = useState('');
+  const [ErrorApellidos, setErrorApellidos] = useState(false);
+  const [TxtApellidos, setTxtApellidos] = useState('');
+  const [ErrorEmail, setErrorEmail] = useState(false);
+  const [TxtEmail, setTxtEmail] = useState('');
+  const [ErrorInstitucion, setErrorInstitucion] = useState(false);
+  const [TxtInstitucion, setTxtInstitucion] = useState('');
+  const [ErrorCiudad, setErrorCiudad] = useState(false);
+  const [TxtCiudad, setTxtCiudad] = useState('');
+
+  const onBlur = (value, field) => {
+    const txt = 'Por favor complete el campo requerido.';
+
+    switch (field) {
+      case 'Nombres':
+        if (value === '') {
+          setErrorNombres(true);
+          setTxtNombres(txt);
+        } else {
+          setErrorNombres(false);
+          setTxtNombres('');
+        }
+        break;
+      case 'Apellidos':
+        if (value === '') {
+          setErrorApellidos(true);
+          setTxtApellidos(txt);
+        } else {
+          setErrorApellidos(false);
+          setTxtApellidos('');
+        }
+        break;
+      case 'Institucion':
+        if (value === '') {
+          setErrorInstitucion(true);
+          setTxtInstitucion(txt);
+        } else {
+          setErrorInstitucion(false);
+          setTxtInstitucion('');
+        }
+        break;
+      case 'Ciudad':
+        if (value === '') {
+          setErrorCiudad(true);
+          setTxtCiudad(txt);
+        } else {
+          setErrorCiudad(false);
+          setTxtCiudad('');
+        }
+        break;
+      default:
+        break;
+    }
+  }
+
+  const onBlurID = value => {
+    const RegExp = /^\d{4}-\d{4}-\d{5}$/;
+    if (value.search(RegExp) !== 0 || value === '') {
+      setErrorID(true);
+      setTxtID('Por favor complete el campo requerido con el formato "0123-4567-89012".');
+    } else {
+      setErrorID(false);
+      setTxtID('');
+    }
+  }
+
+  const onBlurTel = value => {
+    const RegExp = /^\d{4}-\d{4}$/;
+    if (value.search(RegExp) !== 0 || value === '') {
+      setErrorTel(true);
+      setTxtTel('Por favor complete el campo requerido con el formato "9999-9999".');
+    } else {
+      setErrorTel(false);
+      setTxtTel('');
+    }
+  }
+
+  const onBlurEmail = value => {
+    const RegExp = /^\w+([.-]?\w+)*@\w+([-]?\w+)*(\.\w{2,4})+$/;
+    if (value.search(RegExp) !== 0 || value === '') {
+      setErrorEmail(true);
+      setTxtEmail('Por favor complete el campo requerido con el formato "ejem.plo@ejemplo.com".');
+    } else {
+      setErrorEmail(false);
+      setTxtEmail('');
+    }
+  }
 
   const handleCharla = value => {
     if (value === 'true') {
@@ -91,12 +195,16 @@ function CrearSolicitud() {
           </Grid>
           <Grid item xs={12} md={6}>
             <TextField
-              label='Número de identidad'
-              placeholder='0801-1980-01234'
+              required
               autoFocus
               fullWidth
-              required
+              error={ErrorID}
               value={Identidad}
+              helperText={TxtID}
+              label='Número de identidad'
+              placeholder='0801-1980-01234'
+              inputProps={{ maxLength: 15 }}
+              onBlur={e => onBlurID(e.target.value)}
               onChange={e => setIdentidad(e.target.value)}
               InputProps={{
                 startAdornment: (
@@ -109,11 +217,15 @@ function CrearSolicitud() {
           </Grid>
           <Grid item xs={12} md={6}>
             <TextField
-              label='Teléfono'
-              placeholder='9999-9999'
-              fullWidth
               required
+              fullWidth
+              label='Teléfono'
+              error={ErrorTel}
               value={Telefono}
+              placeholder='9999-9999'
+              helperText={TxtTel}
+              inputProps={{ maxLength: 9 }}
+              onBlur={e => onBlurTel(e.target.value)}
               onChange={e => setTelefono(e.target.value)}
               InputProps={{
                 startAdornment: (
@@ -126,32 +238,44 @@ function CrearSolicitud() {
           </Grid>
           <Grid item xs={12} md={6}>
             <TextField
-              label='Nombres'
-              placeholder='Augusto Constantino'
-              fullWidth
               required
+              fullWidth
               value={Nombres}
+              label='Nombres'
+              error={ErrorNombres}
+              helperText={TxtNombres}
+              inputProps={{ maxLength: 50 }}
+              placeholder='Augusto Constantino'
               onChange={e => setNombres(e.target.value)}
+              onBlur={e => onBlur(e.target.value, 'Nombres')}
             />
           </Grid>
           <Grid item xs={12} md={6}>
             <TextField
-              label='Apellidos'
-              placeholder='Coello Estévez'
-              fullWidth
               required
+              fullWidth
               value={Apellidos}
+              label='Apellidos'
+              error={ErrorApellidos}
+              placeholder='Coello Estévez'
+              helperText={TxtApellidos}
+              inputProps={{ maxLength: 50 }}
               onChange={e => setApellidos(e.target.value)}
+              onBlur={e => onBlur(e.target.value, 'Apellidos')}
             />
           </Grid>
           <Grid item xs={12}>
             <TextField
-              label='Correo electrónico'
-              placeholder='augcoello@gmail.com'
-              fullWidth
               required
+              fullWidth
               value={Email}
+              error={ErrorEmail}
+              label='Correo electrónico'
+              helperText={TxtEmail}
+              inputProps={{ maxLength: 100 }}
+              placeholder='augcoello@gmail.com'
               onChange={e => setEmail(e.target.value)}
+              onBlur={e => onBlurEmail(e.target.value)}
               InputProps={{
                 startAdornment: (
                   <InputAdornment position='start'>
@@ -168,11 +292,15 @@ function CrearSolicitud() {
           </Grid>
           <Grid item xs={12}>
             <TextField
-              label='Institución que representa'
-              fullWidth
               required
+              fullWidth
               value={Institucion}
+              error={ErrorInstitucion}
+              inputProps={{ maxLength: 100 }}
+              helperText={TxtInstitucion}
+              label='Institución que representa'
               onChange={e => setInstitucion(e.target.value)}
+              onBlur={e => onBlur(e.target.value, 'Institucion')}
             />
           </Grid>
           <Grid item xs={4}>
@@ -209,11 +337,15 @@ function CrearSolicitud() {
           </Grid>
           <Grid item xs={4}>
             <TextField
-              label='Ciudad'
-              fullWidth
               required
+              fullWidth
+              label='Ciudad'
               value={Ciudad}
+              error={ErrorCiudad}
+              helperText={TxtCiudad}
+              inputProps={{ maxLength: 50 }}
               onChange={e => setCiudad(e.target.value)}
+              onBlur={e => onBlur(e.target.value, 'Ciudad')}
               InputProps={{
                 startAdornment: (
                   <InputAdornment position='start'>
