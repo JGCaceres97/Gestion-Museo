@@ -3,17 +3,18 @@ import { BrowserRouter as Router, Route } from 'react-router-dom';
 import './App.css';
 
 import AddLibro from './components/AddLibro';
-import CreateSolicitud from './components/CreateSolicitud';
-import Navigation from './components/Navigation';
+import CrearSolicitud from './components/CreateSolicitud';
+import FormRegister from './components/FormRegister';
+import FormLogin from './components/FormLogin';
 
 function App() {
   return (
     <Router>
-      <Navigation />
-
-      <Route path='/create' exact component={CreateSolicitud} />
-      <Route path='/add' component={AddLibro} />
-      <Route path='/edit/:id' component={AddLibro} />
+      <Route path='/registro' component={FormRegister} />
+      <Route path='/login' component={FormLogin} />
+      <Route path='/crearSolicitud' component={CrearSolicitud} />
+      <Route path='/addBook' component={AddLibro} />
+      <Route path='/editBook/:id' component={AddLibro} />
     </Router>
   );
 }

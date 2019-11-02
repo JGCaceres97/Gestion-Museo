@@ -1,14 +1,14 @@
 import React, { Component } from 'react';
 
-class Navigation extends Component {
+class FormLogin extends Component {
+  state = {}
   render() {
     return (
       <React.Fragment>
-        NAVIGATION
-        <br />
+        LOGIN
       </React.Fragment>
     );
   }
 }
 
-export default Navigation;
+export default FormLogin;
