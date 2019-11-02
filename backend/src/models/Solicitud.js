@@ -5,7 +5,7 @@ const solicitudSchema = new Schema({
     type: String,
     required: true,
     maxlength: 15,
-    match: /\d{4}-\d{4}-\d{5}/
+    match: /^\d{4}-\d{4}-\d{5}$/
   },
   Nombres: {
     type: String,
@@ -23,7 +23,7 @@ const solicitudSchema = new Schema({
     type: String,
     required: true,
     maxlength: 9,
-    match: /\d{4}-\d{4}/
+    match: /^\d{4}-\d{4}$/
   },
   Email: {
     type: String,
@@ -31,7 +31,7 @@ const solicitudSchema = new Schema({
     unique: true,
     maxlength: 100,
     lowercase: true,
-    match: /\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,4}/
+    match: /^\w+([.-]?\w+)*@\w+([-]?\w+)*(\.\w{2,4})+$/
   },
   Institucion: {
     type: String,
