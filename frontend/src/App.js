@@ -4,14 +4,14 @@ import './App.css';
 
 import AddLibro from './components/AddLibro';
 import CrearSolicitud from './components/CreateSolicitud';
-import FormRegister from './components/FormRegister';
-import FormLogin from './components/FormLogin';
+import Login from './components/Login';
+import Register from './components/Register';
 
 function App() {
   return (
     <Router>
-      <Route path='/registro' component={FormRegister} />
-      <Route path='/login' component={FormLogin} />
+      <Route path='/registro' component={Register} />
+      <Route path='/login' component={Login} />
       <Route path='/crearSolicitud' component={CrearSolicitud} />
       <Route path='/addBook' component={AddLibro} />
       <Route path='/editBook/:id' component={AddLibro} />
