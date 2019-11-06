@@ -1,9 +1,9 @@
-//@ts-check
+// @ts-check
 import MomentUtils from '@date-io/moment';
-import { faCheck, faEnvelope, faIdCard, faMapMarkerAlt, faPhoneAlt, faTimes } from '@fortawesome/free-solid-svg-icons';
+import { faCheck, faEnvelope, faFileUpload, faIdCard, faMapMarkerAlt, faPaperPlane, faPhoneAlt, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon as FAI } from '@fortawesome/react-fontawesome';
 //import axios from 'axios';
-import { Box, Button, Container, FormControl, FormControlLabel, FormHelperText, FormLabel, Grid, InputAdornment, InputLabel, MenuItem, Radio, RadioGroup, Select, Slider, TextField, Typography, Zoom } from '@material-ui/core';
+import { Box, Button, Container, Divider, FormControl, FormControlLabel, FormHelperText, FormLabel, Grid, InputAdornment, InputLabel, makeStyles, MenuItem, Paper, Radio, RadioGroup, Select, Slider, TextField, Typography, Zoom } from '@material-ui/core';
 import { DatePicker, MuiPickersUtilsProvider } from '@material-ui/pickers';
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
@@ -21,10 +21,20 @@ moment.updateLocale('es-us', {
   }
 });
 
+const useStyles = makeStyles(theme => ({
+  paper: {
+    padding: theme.spacing(3, 2),
+    margin: theme.spacing(1)
+  }
+}));
+
 /**
  * Formulario de Reservaciones de Visita a los Centros Culturales.
  */
 function CrearSolicitud() {
+  // @ts-ignore
+  const classes = useStyles();
+
   const req = async () => {
     /* const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZDlhYmM5ZWU1NzMwOTAyNzNkODRjMGQiLCJpYXQiOjE1NzI3Mjk5MDQsImV4cCI6MTU3MjgxNjMwNH0.uTO6GeJVHK6x6Bjlx9o2gqEIOXkuj2VESa3VB3LDu9k';
 
@@ -119,7 +129,7 @@ function CrearSolicitud() {
   const RefNota = React.createRef();
 
   /**
-   * Método que maneja la acciones cuando se pierde el foco en un componente.
+   * Método que maneja las acciones cuando se pierde el foco en un componente.
    * @param {string} value Valor contenido en el campo.
    * @param {string} field Campo al que hace referencia.
    */
@@ -382,411 +392,425 @@ function CrearSolicitud() {
 
   return (
     <React.Fragment>
-      <Container>
-        <Grid container spacing={2}>
-          <Grid item xs={12}>
-            <Typography align='center' variant='h4'>
-              Reserva de Visita a Centros Culturales
+      <Paper className={classes.paper}>
+        <Container>
+          <Grid container spacing={2}>
+            <Grid item xs={12}>
+              <Typography align='center' variant='h4'>
+                Reserva de Visita a Centros Culturales
+              </Typography>
+              <Divider />
+            </Grid>
+          </Grid>
+          <Grid container spacing={2}>
+            <Grid item xs={12}>
+              <Typography align='left' variant='h6' className='mt-4'>
+                Información Personal
             </Typography>
-            <hr />
-          </Grid>
-        </Grid>
-        <Grid container spacing={2}>
-          <Grid item xs={12}>
-            <Typography align='left' variant='h6' className='mt-4'>
-              Información Personal
-            </Typography>
-          </Grid>
-          <Grid item xs={12} md={6}>
-            <TextField
-              required
-              autoFocus
-              fullWidth
-              error={ErrorID}
-              value={Identidad}
-              helperText={TxtID}
-              label='Número de identidad'
-              placeholder='0801-1980-01234'
-              inputProps={{ maxLength: 15 }}
-              onBlur={e => handleBlur(e.target.value, 'ID')}
-              onChange={e => setIdentidad(e.target.value)}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position='start'>
-                    <FAI icon={faIdCard} />
-                  </InputAdornment>
-                ),
-                endAdornment: (
-                  <Zoom in={CheckID}>
-                    <InputAdornment position='end'
-                      style={{ color: !ErrorID ? ColorSuccess : ColorError }}>
-                      <FAI icon={!ErrorID ? faCheck : faTimes} />
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <TextField
+                required
+                autoFocus
+                fullWidth
+                error={ErrorID}
+                value={Identidad}
+                helperText={TxtID}
+                label='Número de identidad'
+                placeholder='0801-1980-01234'
+                inputProps={{ maxLength: 15 }}
+                onBlur={e => handleBlur(e.target.value, 'ID')}
+                onChange={e => setIdentidad(e.target.value)}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position='start'>
+                      <FAI icon={faIdCard} />
                     </InputAdornment>
-                  </Zoom>
-                )
-              }}
-            />
-          </Grid>
-          <Grid item xs={12} md={6}>
-            <TextField
-              required
-              fullWidth
-              label='Teléfono'
-              error={ErrorTel}
-              value={Telefono}
-              placeholder='9999-9999'
-              helperText={TxtTel}
-              inputProps={{ maxLength: 9 }}
-              onBlur={e => handleBlur(e.target.value, 'Tel')}
-              onChange={e => setTelefono(e.target.value)}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position='start'>
-                    <FAI icon={faPhoneAlt} />
-                  </InputAdornment>
-                ),
-                endAdornment: (
-                  <Zoom in={CheckTel}>
-                    <InputAdornment position='end'
-                      style={{ color: !ErrorTel ? ColorSuccess : ColorError }}>
-                      <FAI icon={!ErrorTel ? faCheck : faTimes} />
-                    </InputAdornment>
-                  </Zoom>
-                )
-              }}
-            />
-          </Grid>
-          <Grid item xs={12} md={6}>
-            <TextField
-              required
-              fullWidth
-              value={Nombres}
-              label='Nombres'
-              error={ErrorNombres}
-              helperText={TxtNombres}
-              inputProps={{ maxLength: 50 }}
-              placeholder='Augusto Constantino'
-              onChange={e => setNombres(e.target.value)}
-              onBlur={e => handleBlur(e.target.value, 'Nombres')}
-              InputProps={{
-                endAdornment: (
-                  <Zoom in={CheckNombres}>
-                    <InputAdornment position='end'
-                      style={{ color: !ErrorNombres ? ColorSuccess : ColorError }}>
-                      <FAI icon={!ErrorNombres ? faCheck : faTimes} />
-                    </InputAdornment>
-                  </Zoom>
-                )
-              }}
-            />
-          </Grid>
-          <Grid item xs={12} md={6}>
-            <TextField
-              required
-              fullWidth
-              value={Apellidos}
-              label='Apellidos'
-              error={ErrorApellidos}
-              placeholder='Coello Estévez'
-              helperText={TxtApellidos}
-              inputProps={{ maxLength: 50 }}
-              onChange={e => setApellidos(e.target.value)}
-              onBlur={e => handleBlur(e.target.value, 'Apellidos')}
-              InputProps={{
-                endAdornment: (
-                  <Zoom in={CheckApellidos}>
-                    <InputAdornment position='end'
-                      style={{ color: !ErrorApellidos ? ColorSuccess : ColorError }}>
-                      <FAI icon={!ErrorApellidos ? faCheck : faTimes} />
-                    </InputAdornment>
-                  </Zoom>
-                )
-              }}
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <TextField
-              required
-              fullWidth
-              value={Email}
-              error={ErrorEmail}
-              label='Correo electrónico'
-              helperText={TxtEmail}
-              inputProps={{ maxLength: 100 }}
-              placeholder='aug_coello@himno.hn'
-              onChange={e => setEmail(e.target.value)}
-              onBlur={e => handleBlur(e.target.value, 'Email')}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position='start'>
-                    <FAI icon={faEnvelope} />
-                  </InputAdornment>
-                ),
-                endAdornment: (
-                  <Zoom in={CheckEmail}>
-                    <InputAdornment position='end'
-                      style={{ color: !ErrorEmail ? ColorSuccess : ColorError }}>
-                      <FAI icon={!ErrorEmail ? faCheck : faTimes} />
-                    </InputAdornment>
-                  </Zoom>
-                )
-              }}
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <Typography align='left' variant='h6' className='mt-4'>
-              Información de Reserva
-            </Typography>
-          </Grid>
-          <Grid item xs={12}>
-            <TextField
-              required
-              fullWidth
-              value={Institucion}
-              error={ErrorInstitucion}
-              inputProps={{ maxLength: 100 }}
-              helperText={TxtInstitucion}
-              label='Institución que representa'
-              onChange={e => setInstitucion(e.target.value)}
-              onBlur={e => handleBlur(e.target.value, 'Institucion')}
-              InputProps={{
-                endAdornment: (
-                  <Zoom in={CheckInstitucion}>
-                    <InputAdornment position='end'
-                      style={{ color: !ErrorInstitucion ? ColorSuccess : ColorError }}>
-                      <FAI icon={!ErrorInstitucion ? faCheck : faTimes} />
-                    </InputAdornment>
-                  </Zoom>
-                )
-              }}
-            />
-          </Grid>
-          <Grid item xs={6} md={4}>
-            <FormControl required fullWidth error={ErrorDepto}>
-              <InputLabel id='Depto'>
-                Departamento
-              </InputLabel>
-              <Select
-                value={Depto}
-                labelId='Depto'
-                onChange={e => handleChange(e.target.value.toString(), 'Depto')}
-                onBlur={e => handleBlur(e.target.value, 'Depto')}
-              >
-                <MenuItem value={10}>Ten</MenuItem>
-                <MenuItem value={20}>Twenty</MenuItem>
-                <MenuItem value={30}>Thirty</MenuItem>
-              </Select>
-              <FormHelperText>{TxtDepto}</FormHelperText>
-            </FormControl>
-          </Grid>
-          <Grid item xs={6} md={4}>
-            <FormControl required fullWidth error={ErrorMunicipio}>
-              <InputLabel id='Municipio'>
-                Municipio
-              </InputLabel>
-              <Select
-                value={Municipio}
-                labelId='Municipio'
-                onChange={e => handleChange(e.target.value.toString(), 'Municipio')}
-                onBlur={e => handleBlur(e.target.value, 'Municipio')}
-              >
-                <MenuItem value={10}>Ten</MenuItem>
-                <MenuItem value={20}>Twenty</MenuItem>
-                <MenuItem value={30}>Thirty</MenuItem>
-              </Select>
-              <FormHelperText>{TxtMunicipio}</FormHelperText>
-            </FormControl>
-          </Grid>
-          <Grid item xs={12} md={4}>
-            <TextField
-              required
-              fullWidth
-              label='Dirección'
-              value={Direccion}
-              error={ErrorDireccion}
-              helperText={TxtDireccion}
-              inputProps={{ maxLength: 50 }}
-              onChange={e => setDireccion(e.target.value)}
-              onBlur={e => handleBlur(e.target.value, 'Direccion')}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position='start'>
-                    <FAI icon={faMapMarkerAlt} />
-                  </InputAdornment>
-                ),
-                endAdornment: (
-                  <Zoom in={CheckDireccion}>
-                    <InputAdornment position='end'
-                      style={{ color: !ErrorDireccion ? ColorSuccess : ColorError }}>
-                      <FAI icon={!ErrorDireccion ? faCheck : faTimes} />
-                    </InputAdornment>
-                  </Zoom>
-                )
-              }}
-            />
-          </Grid>
-          <Grid item xs={12} md={4}>
-            <Typography id='cantPersonas' gutterBottom color={!ColorSld ? 'textSecondary' : 'primary'}>
-              Cantidad de personas que visitarán *
-            </Typography>
-            <Box pt={0.7}>
-              <Slider
-                min={1}
-                max={100}
-                defaultValue={1}
-                valueLabelDisplay='auto'
-                aria-labelledby='cantPersonas'
-                onFocus={() => setColorSld(true)}
-                onChangeCommitted={(_, v) => setCantPersonas(v)}
-                onBlur={() => setColorSld(false)}
+                  ),
+                  endAdornment: (
+                    <Zoom in={CheckID}>
+                      <InputAdornment position='end'
+                        style={{ color: !ErrorID ? ColorSuccess : ColorError }}>
+                        <FAI icon={!ErrorID ? faCheck : faTimes} />
+                      </InputAdornment>
+                    </Zoom>
+                  )
+                }}
               />
-            </Box>
-          </Grid>
-          <Grid item xs={12} md={4}>
-            <MuiPickersUtilsProvider utils={MomentUtils}>
-              <DatePicker
-                autoOk
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <TextField
                 required
                 fullWidth
-                disablePast
-                disableToolbar
-                variant='inline'
-                format='D/MM/YYYY'
-                value={FechaVisita}
-                label='Fecha de visita'
-                minDate={moment().add(1, 'day')}
-                onChange={date => setFechaVisita(date.toDate())}
-                shouldDisableDate={disableWeekends}
+                label='Teléfono'
+                error={ErrorTel}
+                value={Telefono}
+                placeholder='9999-9999'
+                helperText={TxtTel}
+                inputProps={{ maxLength: 9 }}
+                onBlur={e => handleBlur(e.target.value, 'Tel')}
+                onChange={e => setTelefono(e.target.value)}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position='start'>
+                      <FAI icon={faPhoneAlt} />
+                    </InputAdornment>
+                  ),
+                  endAdornment: (
+                    <Zoom in={CheckTel}>
+                      <InputAdornment position='end'
+                        style={{ color: !ErrorTel ? ColorSuccess : ColorError }}>
+                        <FAI icon={!ErrorTel ? faCheck : faTimes} />
+                      </InputAdornment>
+                    </Zoom>
+                  )
+                }}
               />
-            </MuiPickersUtilsProvider>
-          </Grid>
-          <Grid item xs={12} md={4}>
-            <FormControl required fullWidth error={ErrorHorario}>
-              <InputLabel id='Horario'>
-                Horario
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <TextField
+                required
+                fullWidth
+                value={Nombres}
+                label='Nombres'
+                error={ErrorNombres}
+                helperText={TxtNombres}
+                inputProps={{ maxLength: 50 }}
+                placeholder='Augusto Constantino'
+                onChange={e => setNombres(e.target.value)}
+                onBlur={e => handleBlur(e.target.value, 'Nombres')}
+                InputProps={{
+                  endAdornment: (
+                    <Zoom in={CheckNombres}>
+                      <InputAdornment position='end'
+                        style={{ color: !ErrorNombres ? ColorSuccess : ColorError }}>
+                        <FAI icon={!ErrorNombres ? faCheck : faTimes} />
+                      </InputAdornment>
+                    </Zoom>
+                  )
+                }}
+              />
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <TextField
+                required
+                fullWidth
+                value={Apellidos}
+                label='Apellidos'
+                error={ErrorApellidos}
+                placeholder='Coello Estévez'
+                helperText={TxtApellidos}
+                inputProps={{ maxLength: 50 }}
+                onChange={e => setApellidos(e.target.value)}
+                onBlur={e => handleBlur(e.target.value, 'Apellidos')}
+                InputProps={{
+                  endAdornment: (
+                    <Zoom in={CheckApellidos}>
+                      <InputAdornment position='end'
+                        style={{ color: !ErrorApellidos ? ColorSuccess : ColorError }}>
+                        <FAI icon={!ErrorApellidos ? faCheck : faTimes} />
+                      </InputAdornment>
+                    </Zoom>
+                  )
+                }}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                required
+                fullWidth
+                value={Email}
+                error={ErrorEmail}
+                label='Correo electrónico'
+                helperText={TxtEmail}
+                inputProps={{ maxLength: 100 }}
+                placeholder='aug_coello@himno.hn'
+                onChange={e => setEmail(e.target.value)}
+                onBlur={e => handleBlur(e.target.value, 'Email')}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position='start'>
+                      <FAI icon={faEnvelope} />
+                    </InputAdornment>
+                  ),
+                  endAdornment: (
+                    <Zoom in={CheckEmail}>
+                      <InputAdornment position='end'
+                        style={{ color: !ErrorEmail ? ColorSuccess : ColorError }}>
+                        <FAI icon={!ErrorEmail ? faCheck : faTimes} />
+                      </InputAdornment>
+                    </Zoom>
+                  )
+                }}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <Typography align='left' variant='h6' className='mt-4'>
+                Información de Reserva
+            </Typography>
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                required
+                fullWidth
+                value={Institucion}
+                error={ErrorInstitucion}
+                inputProps={{ maxLength: 100 }}
+                helperText={TxtInstitucion}
+                label='Institución que representa'
+                onChange={e => setInstitucion(e.target.value)}
+                onBlur={e => handleBlur(e.target.value, 'Institucion')}
+                InputProps={{
+                  endAdornment: (
+                    <Zoom in={CheckInstitucion}>
+                      <InputAdornment position='end'
+                        style={{ color: !ErrorInstitucion ? ColorSuccess : ColorError }}>
+                        <FAI icon={!ErrorInstitucion ? faCheck : faTimes} />
+                      </InputAdornment>
+                    </Zoom>
+                  )
+                }}
+              />
+            </Grid>
+            <Grid item xs={6} md={4}>
+              <FormControl required fullWidth error={ErrorDepto}>
+                <InputLabel id='Depto'>
+                  Departamento
               </InputLabel>
-              <Select
-                value={Horario}
-                labelId='Horario'
-                onChange={e => handleChange(e.target.value.toString(), 'Horario')}
-                onBlur={e => handleBlur(e.target.value, 'Horario')}
-              >
-                <MenuItem value={10}>Ten</MenuItem>
-                <MenuItem value={20}>Twenty</MenuItem>
-                <MenuItem value={30}>Thirty</MenuItem>
-              </Select>
-              <FormHelperText>{TxtHorario}</FormHelperText>
-            </FormControl>
-          </Grid>
-          <Grid item xs={6} md={4}>
-            <FormControl component='fieldset' required>
-              <FormLabel component='legend'>Charla académica</FormLabel>
-              <RadioGroup row value={Charla} onChange={e => handleCharla(e.target.value)}>
-                <FormControlLabel
-                  value={true}
-                  control={<Radio color='primary' />}
-                  label='Sí'
+                <Select
+                  value={Depto}
+                  labelId='Depto'
+                  onChange={e => handleChange(e.target.value.toString(), 'Depto')}
+                  onBlur={e => handleBlur(e.target.value, 'Depto')}
+                >
+                  <MenuItem value={10}>Ten</MenuItem>
+                  <MenuItem value={20}>Twenty</MenuItem>
+                  <MenuItem value={30}>Thirty</MenuItem>
+                </Select>
+                <FormHelperText>{TxtDepto}</FormHelperText>
+              </FormControl>
+            </Grid>
+            <Grid item xs={6} md={4}>
+              <FormControl required fullWidth error={ErrorMunicipio}>
+                <InputLabel id='Municipio'>
+                  Municipio
+              </InputLabel>
+                <Select
+                  value={Municipio}
+                  labelId='Municipio'
+                  onChange={e => handleChange(e.target.value.toString(), 'Municipio')}
+                  onBlur={e => handleBlur(e.target.value, 'Municipio')}
+                >
+                  <MenuItem value={10}>Ten</MenuItem>
+                  <MenuItem value={20}>Twenty</MenuItem>
+                  <MenuItem value={30}>Thirty</MenuItem>
+                </Select>
+                <FormHelperText>{TxtMunicipio}</FormHelperText>
+              </FormControl>
+            </Grid>
+            <Grid item xs={12} md={4}>
+              <TextField
+                required
+                fullWidth
+                label='Dirección'
+                value={Direccion}
+                error={ErrorDireccion}
+                helperText={TxtDireccion}
+                inputProps={{ maxLength: 50 }}
+                onChange={e => setDireccion(e.target.value)}
+                onBlur={e => handleBlur(e.target.value, 'Direccion')}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position='start'>
+                      <FAI icon={faMapMarkerAlt} />
+                    </InputAdornment>
+                  ),
+                  endAdornment: (
+                    <Zoom in={CheckDireccion}>
+                      <InputAdornment position='end'
+                        style={{ color: !ErrorDireccion ? ColorSuccess : ColorError }}>
+                        <FAI icon={!ErrorDireccion ? faCheck : faTimes} />
+                      </InputAdornment>
+                    </Zoom>
+                  )
+                }}
+              />
+            </Grid>
+            <Grid item xs={12} md={4}>
+              <Typography id='cantPersonas' gutterBottom color={!ColorSld ? 'textSecondary' : 'primary'}>
+                Cantidad de personas que visitarán *
+            </Typography>
+              <Box pt={0.7}>
+                <Slider
+                  min={1}
+                  max={100}
+                  defaultValue={1}
+                  valueLabelDisplay='auto'
+                  aria-labelledby='cantPersonas'
+                  onFocus={() => setColorSld(true)}
+                  onChangeCommitted={(_, v) => setCantPersonas(v)}
+                  onBlur={() => setColorSld(false)}
                 />
-                <FormControlLabel
-                  value={false}
-                  control={<Radio color='primary' />}
-                  label='No' />
-              </RadioGroup>
-            </FormControl>
-          </Grid>
-          <Grid item xs={6} md={4}>
-            <FormControl
-              fullWidth
-              error={ErrorTema}
-              required={ReqTema}
-              disabled={!ReqTema}
-            >
-              <InputLabel id='Tema'>
-                Tema
+              </Box>
+            </Grid>
+            <Grid item xs={12} md={4}>
+              <MuiPickersUtilsProvider utils={MomentUtils}>
+                <DatePicker
+                  autoOk
+                  required
+                  fullWidth
+                  disablePast
+                  disableToolbar
+                  variant='inline'
+                  format='D/MM/YYYY'
+                  value={FechaVisita}
+                  label='Fecha de visita'
+                  minDate={moment().add(1, 'day')}
+                  onChange={date => setFechaVisita(date.toDate())}
+                  shouldDisableDate={disableWeekends}
+                />
+              </MuiPickersUtilsProvider>
+            </Grid>
+            <Grid item xs={12} md={4}>
+              <FormControl required fullWidth error={ErrorHorario}>
+                <InputLabel id='Horario'>
+                  Horario
               </InputLabel>
-              <Select
-                value={Tema}
-                labelId='Tema'
-                onChange={e => handleTema(e.target.value.toString())}
-                onBlur={e => handleBlur(e.target.value, 'Tema')}
+                <Select
+                  value={Horario}
+                  labelId='Horario'
+                  onChange={e => handleChange(e.target.value.toString(), 'Horario')}
+                  onBlur={e => handleBlur(e.target.value, 'Horario')}
+                >
+                  <MenuItem value={10}>Ten</MenuItem>
+                  <MenuItem value={20}>Twenty</MenuItem>
+                  <MenuItem value={30}>Thirty</MenuItem>
+                </Select>
+                <FormHelperText>{TxtHorario}</FormHelperText>
+              </FormControl>
+            </Grid>
+            <Grid item xs={6} md={4}>
+              <FormControl component='fieldset' required>
+                <FormLabel component='legend'>Charla académica</FormLabel>
+                <RadioGroup row value={Charla} onChange={e => handleCharla(e.target.value)}>
+                  <FormControlLabel
+                    value={true}
+                    control={<Radio color='primary' />}
+                    label='Sí'
+                  />
+                  <FormControlLabel
+                    value={false}
+                    control={<Radio color='primary' />}
+                    label='No' />
+                </RadioGroup>
+              </FormControl>
+            </Grid>
+            <Grid item xs={6} md={4}>
+              <FormControl
+                fullWidth
+                error={ErrorTema}
+                required={ReqTema}
+                disabled={!ReqTema}
               >
-                <MenuItem value='Economía'>Economía</MenuItem>
-                <MenuItem value='Sistema de Pagos'>Sistema de Pagos</MenuItem>
-                <MenuItem value='Treinta'>Thirty</MenuItem>
-                <MenuItem value='Otro'>Otro - Especificar</MenuItem>
-              </Select>
-              <FormHelperText>{TxtTema}</FormHelperText>
-            </FormControl>
-          </Grid>
-          <Grid item xs={12} md={4}>
-            <TextField
-              fullWidth
-              value={TemaEsp}
-              error={ErrorTemaEsp}
-              required={ReqTemaEsp}
-              disabled={!ReqTemaEsp}
-              label='Tema específico'
-              helperText={TxtTemaEsp}
-              inputProps={{ maxLength: 20 }}
-              onChange={e => setTemaEsp(e.target.value)}
-              onBlur={e => handleBlur(e.target.value, 'TemaEsp')}
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <Typography gutterBottom>
-              Listado de personas
+                <InputLabel id='Tema'>
+                  Tema
+              </InputLabel>
+                <Select
+                  value={Tema}
+                  labelId='Tema'
+                  onChange={e => handleTema(e.target.value.toString())}
+                  onBlur={e => handleBlur(e.target.value, 'Tema')}
+                >
+                  <MenuItem value='Economía'>Economía</MenuItem>
+                  <MenuItem value='Sistema de Pagos'>Sistema de Pagos</MenuItem>
+                  <MenuItem value='Emisión y Tesorería'>Emisión y Tesorería</MenuItem>
+                  <MenuItem value='Otro'>Otro - Especificar</MenuItem>
+                </Select>
+                <FormHelperText>{TxtTema}</FormHelperText>
+              </FormControl>
+            </Grid>
+            <Grid item xs={12} md={4}>
+              <TextField
+                fullWidth
+                value={TemaEsp}
+                error={ErrorTemaEsp}
+                required={ReqTemaEsp}
+                disabled={!ReqTemaEsp}
+                label='Tema específico'
+                helperText={TxtTemaEsp}
+                inputProps={{ maxLength: 20 }}
+                onChange={e => setTemaEsp(e.target.value)}
+                onBlur={e => handleBlur(e.target.value, 'TemaEsp')}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <Typography gutterBottom>
+                Listado de personas
             </Typography>
-            <Typography gutterBottom variant='body2'>
-              Adjunte un listado con los nombres de todas las personas del grupo que desean visitar los Centros Culturales. (Se deben incluir los nombres de los profesores).
+              <Typography gutterBottom variant='body2'>
+                Adjunte un listado con los nombres de todas las personas del grupo que desean visitar los Centros Culturales. (Se deben incluir los nombres de los profesores).
             </Typography>
-            <input
-              hidden
-              type='file'
-              id='listado'
-              ref={RefListado}
-              accept='.pdf, .doc, .docx'
-              onChange={e => handleFiles(e.target.id)}
-            />
-            <label htmlFor='listado'>
-              <Button variant='contained' component='span'>
-                {FileListadoTxt}
-              </Button>
-            </label>
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <Typography gutterBottom>
-              Nota al Gerente
+              <input
+                hidden
+                type='file'
+                id='listado'
+                ref={RefListado}
+                accept='.pdf, .doc, .docx'
+                onChange={e => handleFiles(e.target.id)}
+              />
+              <label htmlFor='listado'>
+                <Button
+                  size='small'
+                  component='span'
+                  variant='contained'
+                  startIcon={<FAI icon={faFileUpload} />}
+                >
+                  {FileListadoTxt}
+                </Button>
+              </label>
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <Typography gutterBottom>
+                Nota al Gerente
             </Typography>
-            <Typography gutterBottom variant='body2'>
-              Adjunte la nota dirigida al gerente solicitando la aprobación de la visita a los Centros Culturales y de la charla académica en caso de que aplique.
+              <Typography gutterBottom variant='body2'>
+                Adjunte la nota dirigida al gerente solicitando la aprobación de la visita a los Centros Culturales y de la charla académica en caso de que aplique.
             </Typography>
-            <input
-              hidden
-              id='nota'
-              type='file'
-              ref={RefNota}
-              accept='.pdf, .doc, .docx'
-              onChange={e => handleFiles(e.target.id)}
-            />
-            <label htmlFor='nota'>
-              <Button variant='contained' component='span'>
-                {FileNotaTxt}
-              </Button>
-            </label>
+              <input
+                hidden
+                id='nota'
+                type='file'
+                ref={RefNota}
+                accept='.pdf, .doc, .docx'
+                onChange={e => handleFiles(e.target.id)}
+              />
+              <label htmlFor='nota'>
+                <Button
+                  size='small'
+                  component='span'
+                  variant='contained'
+                  startIcon={<FAI icon={faFileUpload} />}
+                >
+                  {FileNotaTxt}
+                </Button>
+              </label>
+            </Grid>
+            <Grid item xs={12} style={{ textAlign: 'center' }}>
+              <Box py={2}>
+                <Button
+                  size='large'
+                  color='primary'
+                  variant='contained'
+                  onClick={handleSubmit}
+                  endIcon={<FAI icon={faPaperPlane} />}
+                >
+                  Enviar Solicitud
+                </Button>
+              </Box>
+            </Grid>
           </Grid>
-          <Grid item xs={12} style={{ textAlign: 'center' }}>
-            <Box py={2}>
-              <Button
-                color='primary'
-                variant='contained'
-                onClick={handleSubmit}
-              >
-                Enviar Solicitud
-            </Button>
-            </Box>
-          </Grid>
-        </Grid>
-      </Container>
+        </Container>
+      </Paper>
     </React.Fragment>
   );
 }
