@@ -52,6 +52,7 @@ function CrearSolicitud() {
 
   useEffect(() => {
     req();
+    document.title = 'Reserva de Visita a Centros Culturales';
   }, []);
 
   /**

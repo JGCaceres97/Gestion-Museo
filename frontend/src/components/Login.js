@@ -1,16 +1,14 @@
 // @ts-check
 import { faAt, faKey, faSignInAlt, faTimesCircle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon as FAI } from '@fortawesome/react-fontawesome';
-import { Box, Button, Container, Divider, Grid, IconButton, InputAdornment, makeStyles, Paper, Snackbar, SnackbarContent, TextField, Typography } from '@material-ui/core';
+import { Box, Button, Container, Divider, Grid, IconButton, InputAdornment, LinearProgress, makeStyles, Paper, Snackbar, SnackbarContent, TextField, Typography } from '@material-ui/core';
 import { Close, Visibility, VisibilityOff } from '@material-ui/icons';
 import axios from 'axios';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { Redirect } from 'react-router-dom';
 import useLocalStorage from '../customHooks/useLocalStorage';
 
 const useStyles = makeStyles(theme => ({
-  paper: {
-    padding: theme.spacing(3, 2)
-  },
   grid: {
     width: '100%'
   },
@@ -41,6 +39,10 @@ function Login() {
   // @ts-ignore
   const classes = useStyles();
 
+  useEffect(() => {
+    document.title = 'Inicio de Sesión';
+  }, []);
+
   const [Email, setEmail] = useState('');
   const [Password, setPassword] = useState('');
 
@@ -50,9 +52,13 @@ function Login() {
   const [TxtPassword, setTxtPassword] = useState('');
 
   const [ShowPassword, setShowPassword] = useState(false);
+  const [ShowProgress, setShowProgress] = useState(false);
   const [SnackOpen, setSnackOpen] = useState(false);
   const [SnackTxt, setSnackTxt] = useState('');
-  const [Token, setToken] = useLocalStorage('Token', '');
+  const [BtnTxt, setBtnTxt] = useState('Iniciar Sesión');
+  const [BtnDisabled, setBtnDisabled] = useState(false);
+  const [SuccessLogin, setSuccessLogin] = useState(false);
+  const [, setToken] = useLocalStorage('Token', '');
 
   /**
    * Método que maneja las acciones cuando se pierde el foco en un componente.
@@ -69,6 +75,15 @@ function Login() {
         } else {
           setErrorEmail(false);
           setTxtEmail('');
+        }
+        break;
+      case 'Password':
+        if (value === '') {
+          setErrorPassword(true);
+          setTxtPassword('Por favor complete el campo requerido.');
+        } else {
+          setErrorPassword(false);
+          setTxtPassword('');
         }
         break;
       default:
@@ -89,25 +104,41 @@ function Login() {
   /**
    * Método para manejar el ingreso al sistema.
    */
-  const handleSubmit = async () => {
-    Password === '' ? setErrorPassword(true) : setErrorPassword(false);
+  const handleSubmit = () => {
     if (!ErrorEmail && !ErrorPassword) {
-      try {
-        const res = await axios.post('http://35.185.124.104:4000/api/auth/ingresar', {
-          Email,
-          Password
-        });
-
-        setToken(res.headers.auth);
-      } catch (e) {
-        setSnackOpen(true);
-        setSnackTxt(e.response.data.message);
-      }
+      setSnackOpen(false);
+      setBtnDisabled(true);
+      setBtnTxt('Iniciando...');
+      setShowProgress(true);
+      setTimeout(Login, 3000);
     } else {
       setSnackOpen(true);
       setSnackTxt('Complete los campos requeridos.');
     }
   }
+
+  /**
+   * Método para iniciar sesión en el sistema y obtener un token de acceso.
+   */
+  const Login = async () => {
+    try {
+      const res = await axios.post('http://35.185.124.104:4000/api/auth/ingresar', {
+        Email,
+        Password
+      });
+
+      setToken(res.headers.auth);
+      setSuccessLogin(true);
+    } catch (e) {
+      setShowProgress(false);
+      setBtnDisabled(false);
+      setBtnTxt('Iniciar Sesión');
+      setSnackTxt(e.response.data.message);
+      setSnackOpen(true);
+    }
+  }
+
+  if (SuccessLogin) return <Redirect push to='/crearSolicitud' />
 
   return (
     <React.Fragment>
@@ -118,76 +149,83 @@ function Login() {
           justify='center'
           direction='column'
           alignItems='center'
-          style={{ minHeight: '95vh' }}
+          style={{ minHeight: '97vh' }}
         >
-          <Grid item xs={12} sm={10} md={5} xl={3} className={classes.grid}>
-            <Paper className={classes.paper}>
+          <Grid item xs={12} sm={10} md={4} xl={3} className={classes.grid}>
+            <Paper>
+              {ShowProgress ?
+                <LinearProgress /> : ''
+              }
               <Box p={2}>
-                <Typography align='center' variant='h4'>
-                  Inicio de Sesión
+                <Box pt={1} pb={2} px={2}>
+                  <Typography align='center' variant='h4'>
+                    Inicio de Sesión
                 </Typography>
-                <Divider />
-              </Box>
-              <Box p={2}>
-                <TextField
-                  required
-                  autoFocus
-                  fullWidth
-                  value={Email}
-                  error={ErrorEmail}
-                  helperText={TxtEmail}
-                  placeholder='aug_coello@himno.hn'
-                  label='Correo electrónico'
-                  inputProps={{ maxLength: 50 }}
-                  onChange={e => setEmail(e.target.value)}
-                  onBlur={e => handleBlur(e.target.value, 'Email')}
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position='start'>
-                        <FAI icon={faAt} />
-                      </InputAdornment>
-                    )
-                  }}
-                />
-              </Box>
-              <Box p={2}>
-                <TextField
-                  required
-                  fullWidth
-                  value={Password}
-                  label='Contraseña'
-                  error={ErrorPassword}
-                  inputProps={{ maxLength: 50 }}
-                  type={!ShowPassword ? 'password' : 'text'}
-                  helperText={TxtPassword}
-                  onChange={e => setPassword(e.target.value)}
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position='start'>
-                        <FAI icon={faKey} />
-                      </InputAdornment>
-                    ),
-                    endAdornment: (
-                      <InputAdornment position='end'>
-                        <IconButton onClick={() => setShowPassword(!ShowPassword)} size='small'>
-                          {!ShowPassword ? <Visibility /> : <VisibilityOff />}
-                        </IconButton>
-                      </InputAdornment>
-                    )
-                  }}
-                />
-              </Box>
-              <Box p={2} className={classes.button}>
-                <Button
-                  fullWidth
-                  size='large'
-                  color='primary'
-                  variant='contained'
-                  onClick={handleSubmit}
-                  endIcon={<FAI icon={faSignInAlt} />}
-                >
-                  Iniciar Sesión
+                  <Divider />
+                </Box>
+                <Box p={2}>
+                  <TextField
+                    required
+                    autoFocus
+                    fullWidth
+                    value={Email}
+                    error={ErrorEmail}
+                    helperText={TxtEmail}
+                    placeholder='aug_coello@himno.hn'
+                    label='Correo electrónico'
+                    inputProps={{ maxLength: 50 }}
+                    onChange={e => setEmail(e.target.value)}
+                    onBlur={e => handleBlur(e.target.value, 'Email')}
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position='start'>
+                          <FAI icon={faAt} />
+                        </InputAdornment>
+                      )
+                    }}
+                  />
+                </Box>
+                <Box p={2}>
+                  <TextField
+                    required
+                    fullWidth
+                    value={Password}
+                    label='Contraseña'
+                    error={ErrorPassword}
+                    helperText={TxtPassword}
+                    inputProps={{ maxLength: 50 }}
+                    type={!ShowPassword ? 'password' : 'text'}
+                    onChange={e => setPassword(e.target.value)}
+                    onBlur={e => handleBlur(e.target.value, 'Password')}
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position='start'>
+                          <FAI icon={faKey} />
+                        </InputAdornment>
+                      ),
+                      endAdornment: (
+                        <InputAdornment position='end'>
+                          <IconButton onClick={() => setShowPassword(!ShowPassword)} size='small'>
+                            {!ShowPassword ? <Visibility /> : <VisibilityOff />}
+                          </IconButton>
+                        </InputAdornment>
+                      )
+                    }}
+                  />
+                </Box>
+                <Box p={2} className={classes.button}>
+                  <Button
+                    fullWidth
+                    size='large'
+                    color='primary'
+                    variant='contained'
+                    disabled={BtnDisabled}
+                    onClick={handleSubmit}
+                    endIcon={<FAI icon={faSignInAlt} />}
+                  >
+                    {BtnTxt}
                   </Button>
+                </Box>
               </Box>
             </Paper>
           </Grid>
