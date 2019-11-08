@@ -24,7 +24,7 @@ const usuarioSchema = new Schema({
     type: String,
     required: true,
     unique: true,
-    maxlength: 100,
+    maxlength: 50,
     lowercase: true,
     match: /\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,4}/
   },

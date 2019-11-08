@@ -29,7 +29,7 @@ const solicitudSchema = new Schema({
     type: String,
     required: true,
     unique: true,
-    maxlength: 100,
+    maxlength: 50,
     lowercase: true,
     match: /^\w+([.-]?\w+)*@\w+([-]?\w+)*(\.\w{2,4})+$/
   },

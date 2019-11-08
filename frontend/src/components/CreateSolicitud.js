@@ -523,7 +523,7 @@ function CrearSolicitud() {
                 error={ErrorEmail}
                 label='Correo electrónico'
                 helperText={TxtEmail}
-                inputProps={{ maxLength: 100 }}
+                inputProps={{ maxLength: 50 }}
                 placeholder='aug_coello@himno.hn'
                 onChange={e => setEmail(e.target.value)}
                 onBlur={e => handleBlur(e.target.value, 'Email')}
