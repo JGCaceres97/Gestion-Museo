@@ -32,7 +32,7 @@ auth.signUp = async (req, res) => {
       expiresIn: 60 * 60 * 24
     });
 
-    res.header('auth-token', token).json(usuarioGuardado);
+    res.header('auth', token).json(usuarioGuardado);
   } catch (e) {
     console.error(e);
     res.json({ message: 'Ha ocurrido un error al registrar el usuario.' });
@@ -67,7 +67,7 @@ auth.signIn = async (req, res) => {
       expiresIn: 60 * 60 * 24
     });
 
-    res.header('auth-token', token).json({
+    res.header('auth', token).json({
       auth: true,
       message: 'Inicio de sesión satisfactorio.'
     });

@@ -7,7 +7,9 @@ const app = express();
 app.set('port', 4000);
 
 // Middlewares
-app.use(cors());
+app.use(cors({
+  exposedHeaders: 'auth'
+}));
 app.use(morgan('dev'));
 app.use(express.json());
 
