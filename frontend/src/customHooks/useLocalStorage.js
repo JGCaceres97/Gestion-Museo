@@ -1,5 +1,11 @@
+// @ts-check
 import { useState } from 'react';
 
+/**
+ * Custom hook para guardar datos en el Local Storage.
+ * @param {string} key Clave que identifica el valor almacenado.
+ * @param {any} initialValue Valor inicial que tendrá el registro.
+ */
 function useLocalStorage(key, initialValue) {
   const [storedValue, setStoredValue] = useState(() => {
     try {
@@ -10,6 +16,10 @@ function useLocalStorage(key, initialValue) {
     }
   });
 
+  /**
+   * Método para guardar el valor en el Local Storage.
+   * @param {any} value Valor a ser almacenado.
+   */
   const setValue = value => {
     try {
       setStoredValue(value);
@@ -22,4 +32,4 @@ function useLocalStorage(key, initialValue) {
   return [storedValue, setValue];
 }
 
-export { useLocalStorage };
+export default useLocalStorage;
