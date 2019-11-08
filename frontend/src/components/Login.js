@@ -93,14 +93,15 @@ function Login() {
     Password === '' ? setErrorPassword(true) : setErrorPassword(false);
     if (!ErrorEmail && !ErrorPassword) {
       try {
-        const res = await axios.post('http://localhost:4000/api/auth/ingresar', {
+        const res = await axios.post('http://35.185.124.104:4000/api/auth/ingresar', {
           Email,
           Password
         });
 
         setToken(res.headers.auth);
       } catch (e) {
-        console.error(e);
+        setSnackOpen(true);
+        setSnackTxt(e.response.data.message);
       }
     } else {
       setSnackOpen(true);
@@ -119,7 +120,7 @@ function Login() {
           alignItems='center'
           style={{ minHeight: '95vh' }}
         >
-          <Grid item xs={12} sm={10} md={4} xl={3} className={classes.grid}>
+          <Grid item xs={12} sm={10} md={5} xl={3} className={classes.grid}>
             <Paper className={classes.paper}>
               <Box p={2}>
                 <Typography align='center' variant='h4'>

@@ -48,11 +48,11 @@ auth.signIn = async (req, res) => {
 
     // Buscando usuario
     const usuario = await Usuario.findOne({ Email });
-    if (!usuario) return res.status(400).json({ message: 'El usuario no existe en la base de datos.' });
+    if (!usuario) return res.status(400).json({ message: 'El usuario no existe. Intente nuevamente.' });
 
     // Verificando contraseña
     const correctPassword = await usuario.decryptPassword(Password);
-    if (!correctPassword) return res.status(400).json({ message: 'La contraseña es incorrecta.' });
+    if (!correctPassword) return res.status(400).json({ message: 'Contraseña incorrecta. Intente nuevamente.' });
 
     // Asignando última conexión
     await Usuario.findOneAndUpdate({ Email }, {
