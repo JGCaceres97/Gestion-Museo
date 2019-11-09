@@ -1,6 +1,5 @@
 import React from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
-import './App.css';
 
 import AddLibro from './components/AddLibro';
 import CrearSolicitud from './components/CreateSolicitud';
