@@ -3,9 +3,6 @@ const cors = require('cors');
 const morgan = require('morgan');
 const app = express();
 
-// Settings
-app.set('port', 4000);
-
 // Middlewares
 app.use(cors({
   exposedHeaders: 'auth'

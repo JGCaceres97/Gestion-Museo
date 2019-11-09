@@ -1,14 +1,12 @@
 const jwt = require('jsonwebtoken');
+const config = require('../../config');
 
 const verifyToken = (req, res, next) => {
   try {
-    const token = req.header('auth');
-    if (!token) return res.status(401).json({
-      auth: false,
-      message: 'Acceso denegado.'
-    });
-
-    const payload = jwt.verify(token, process.env.TOKEN_SECRET || 'FraseSecreta');
+    const bearerHeader = req.header('auth');
+    if (!bearerHeader) return res.sendStatus(401);
+    const bearerToken = bearerHeader.split(' ').pop();
+    const payload = jwt.verify(bearerToken, config.secretKey);
     req.usuarioId = payload._id;
     req.rolId = payload._rol;
 

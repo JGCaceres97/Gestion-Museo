@@ -1,5 +1,6 @@
 const Usuario = require('../models/Usuario');
 const jwt = require('jsonwebtoken');
+const config = require('../../config');
 const auth = {};
 
 auth.signUp = async (req, res) => {
@@ -28,7 +29,7 @@ auth.signUp = async (req, res) => {
     const token = jwt.sign({
       _id: usuarioGuardado._id,
       _rol: usuarioGuardado.IDRol
-    }, process.env.TOKEN_SECRET || 'FraseSecreta', {
+    }, config.secretKey, {
       expiresIn: 60 * 60 * 24
     });
 
@@ -63,7 +64,7 @@ auth.signIn = async (req, res) => {
     const token = jwt.sign({
       _id: usuario._id,
       _rol: usuario.IDRol
-    }, process.env.TOKEN_SECRET || 'FraseSecreta', {
+    }, config.secretKey, {
       expiresIn: 60 * 60 * 24
     });
 
