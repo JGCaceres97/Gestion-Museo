@@ -1,15 +1,20 @@
 const mongoose = require('mongoose');
+const config = require('../config');
 
-const URI = process.env.MONGODB_URI ? process.env.MONGODB_URI : 'mongodb://mongo:27017/CentrosCulturales';
+async function Connect() {
+  try {
+    await mongoose.connect(config.db, {
+      useNewUrlParser: true,
+      useCreateIndex: true,
+      useFindAndModify: false,
+      useUnifiedTopology: true
+    });
 
-mongoose.connect(URI, {
-  useNewUrlParser: true,
-  useCreateIndex: true,
-  useFindAndModify: false,
-  useUnifiedTopology: true
-})
-  .then(() => console.log('DB is connected'))
-  .catch(e => {
+    console.log('DB is connected');
+  } catch (e) {
     console.error('DB connection error: ', e);
     process.exit(1);
-  });
+  }
+}
+
+Connect();
