@@ -4,10 +4,10 @@ import { FontAwesomeIcon as FAI } from '@fortawesome/react-fontawesome';
 import { Box, Button, Container, Divider, Grid, IconButton, InputAdornment, LinearProgress, makeStyles, Paper, Snackbar, SnackbarContent, TextField, Typography } from '@material-ui/core';
 import { Close, Visibility, VisibilityOff } from '@material-ui/icons';
 import axios from 'axios';
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Redirect } from 'react-router-dom';
-import useLocalStorage from '../customHooks/useLocalStorage';
 import config from '../config';
+import useLocalStorage from '../customHooks/useLocalStorage';
 
 const useStyles = makeStyles(theme => ({
   grid: {
@@ -94,7 +94,7 @@ function Login() {
 
   /**
    * Método que maneja las acciones al cerrar un snackbar.
-   * @param {React.MouseEvent<HTMLButtonElement> | React.SyntheticEvent<Event>} e Evento en cuestión.
+   * @param {React.MouseEvent<HTMLButtonElement> | React.SyntheticEvent<Event>} e Evento de cierre en cuestión.
    * @param {string} [reason] Razón de cierre del snackbar.
    */
   const handleSnackClose = (e, reason) => {
