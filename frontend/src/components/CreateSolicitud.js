@@ -1,12 +1,14 @@
 // @ts-check
 import MomentUtils from '@date-io/moment';
-import { faCheck, faEnvelope, faFileUpload, faIdCard, faMapMarkerAlt, faPaperPlane, faPhoneAlt, faTimes } from '@fortawesome/free-solid-svg-icons';
+import { faCheck, faCheckCircle, faEnvelope, faFileUpload, faIdCard, faMapMarkerAlt, faPaperPlane, faPhoneAlt, faTimes, faTimesCircle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon as FAI } from '@fortawesome/react-fontawesome';
-//import axios from 'axios';
-import { Box, Button, Container, Divider, FormControl, FormControlLabel, FormHelperText, FormLabel, Grid, InputAdornment, InputLabel, makeStyles, MenuItem, Paper, Radio, RadioGroup, Select, Slider, TextField, Typography, Zoom } from '@material-ui/core';
+import { Box, Button, Container, Divider, FormControl, FormControlLabel, FormHelperText, FormLabel, Grid, IconButton, InputAdornment, InputLabel, makeStyles, MenuItem, Paper, Radio, RadioGroup, Select, Slider, Snackbar, SnackbarContent, TextField, Typography, Zoom } from '@material-ui/core';
+import { Close } from '@material-ui/icons';
 import { DatePicker, MuiPickersUtilsProvider } from '@material-ui/pickers';
+import axios from 'axios';
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
+import config from '../config';
 
 moment.locale('es-us');
 moment.updateLocale('es-us', {
@@ -25,6 +27,24 @@ const useStyles = makeStyles(theme => ({
   paper: {
     padding: theme.spacing(3, 2),
     margin: theme.spacing(1)
+  },
+  messageSnack: {
+    display: 'flex',
+    alignItems: 'center'
+  },
+  iconSnack: {
+    fontSize: 20,
+    opacity: 0.9,
+    marginRight: theme.spacing(1)
+  },
+  iconClose: {
+    fontSize: 20
+  },
+  successSnack: {
+    backgroundColor: '#008000'
+  },
+  errorSnack: {
+    backgroundColor: theme.palette.error.dark
   }
 }));
 
@@ -34,26 +54,6 @@ const useStyles = makeStyles(theme => ({
 function CrearSolicitud() {
   // @ts-ignore
   const classes = useStyles();
-
-  const req = async () => {
-    /* const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZDlhYmM5ZWU1NzMwOTAyNzNkODRjMGQiLCJpYXQiOjE1NzI3Mjk5MDQsImV4cCI6MTU3MjgxNjMwNH0.uTO6GeJVHK6x6Bjlx9o2gqEIOXkuj2VESa3VB3LDu9k';
-
-    const headers = {
-      headers: { 'auth-token': token }
-    }
-
-    try {
-      const res = await axios.get('http://35.185.124.104:4000/api/solicitudes', headers);
-      console.log(res);
-    } catch (e) {
-      console.error(e);
-    } */
-  }
-
-  useEffect(() => {
-    req();
-    document.title = 'Reserva de Visita a Centros Culturales';
-  }, []);
 
   /**
    * Método para asignar el día inicial en el calendario.
@@ -75,12 +75,10 @@ function CrearSolicitud() {
   const [Apellidos, setApellidos] = useState('');
   const [Email, setEmail] = useState('');
   const [Institucion, setInstitucion] = useState('');
-  const [Depto, setDepto] = useState('');
-  const [Municipio, setMunicipio] = useState('');
   const [Direccion, setDireccion] = useState('');
-  const [, setCantPersonas] = useState(1 || []);
+  const [CantPersonas, setCantPersonas] = useState(1 || []);
   const [FechaVisita, setFechaVisita] = useState(initialDate);
-  const [Horario, setHorario] = useState('');
+  const [IDHorario, setIDHorario] = useState('');
   const [Charla, setCharla] = useState(true);
   const [Tema, setTema] = useState('');
   const [TemaEsp, setTemaEsp] = useState('');
@@ -97,10 +95,6 @@ function CrearSolicitud() {
   const [TxtEmail, setTxtEmail] = useState('');
   const [ErrorInstitucion, setErrorInstitucion] = useState(false);
   const [TxtInstitucion, setTxtInstitucion] = useState('');
-  const [ErrorDepto, setErrorDepto] = useState(false);
-  const [TxtDepto, setTxtDepto] = useState('');
-  const [ErrorMunicipio, setErrorMunicipio] = useState(false);
-  const [TxtMunicipio, setTxtMunicipio] = useState('');
   const [ErrorDireccion, setErrorDireccion] = useState(false);
   const [TxtDireccion, setTxtDireccion] = useState('');
   const [ErrorHorario, setErrorHorario] = useState(false);
@@ -122,12 +116,32 @@ function CrearSolicitud() {
   const [FileListadoTxt, setFileListadoTxt] = useState('Elegir Archivo');
   const [FileNotaTxt, setFileNotaTxt] = useState('Elegir Archivo');
   const [ColorSld, setColorSld] = useState(false);
+  const [SnackOpen, setSnackOpen] = useState(false);
+  const [isSnackError, setIsSnackError] = useState(false);
+  const [SnackTxt, setSnackTxt] = useState('');
+  const [BtnTxt, setBtnTxt] = useState('Enviar Solicitud');
+  const [BtnDisabled, setBtnDisabled] = useState(false);
+  const [Horarios, setHorarios] = useState([]);
 
   const ColorError = '#DC143C';
   const ColorSuccess = '#008000';
   const MaxFileSize = 5 //Máximo tamaño de archivos en MB.
   const RefListado = React.createRef();
   const RefNota = React.createRef();
+
+  const reqHorarios = async () => {
+    try {
+      const res = await axios.get(`http://${config.address}:${config.port}/api/horarios`);
+      setHorarios(res.data);
+    } catch (e) {
+      console.error(e.response.data.message);
+    }
+  }
+
+  useEffect(() => {
+    document.title = 'Reserva de Visita a Centros Culturales';
+    reqHorarios();
+  }, []);
 
   /**
    * Método que maneja las acciones cuando se pierde el foco en un componente.
@@ -201,18 +215,6 @@ function CrearSolicitud() {
           setTxtInstitucion('');
         }
         break;
-      case 'Depto':
-        if (value === '') {
-          setErrorDepto(true);
-          setTxtDepto(txt);
-        }
-        break;
-      case 'Municipio':
-        if (value === '') {
-          setErrorMunicipio(true);
-          setTxtMunicipio(txt);
-        }
-        break;
       case 'Direccion':
         setCheckDireccion(true);
         if (value === '') {
@@ -257,20 +259,10 @@ function CrearSolicitud() {
    * @param {string} value Valor contenido en el campo.
    * @param {string} field Campo al que se hace referencia.
    */
-  const handleChange = (value, field) => {
+  const handleSelectChange = (value, field) => {
     switch (field) {
-      case 'Depto':
-        setDepto(value);
-        setTxtDepto('');
-        setErrorDepto(false);
-        break;
-      case 'Municipio':
-        setMunicipio(value);
-        setTxtMunicipio('');
-        setErrorMunicipio(false);
-        break;
       case 'Horario':
-        setHorario(value);
+        setIDHorario(value);
         setTxtHorario('');
         setErrorHorario(false);
         break;
@@ -315,7 +307,7 @@ function CrearSolicitud() {
    * @param {string} value Valor que contiene el campo.
    */
   const handleTema = value => {
-    handleChange(value, 'Tema');
+    handleSelectChange(value, 'Tema');
     if (value === 'Otro') {
       setReqTemaEsp(true);
     } else {
@@ -366,7 +358,7 @@ function CrearSolicitud() {
           RefNota.current.value = '';
           setFileNotaTxt('Elegir Archivo');
         }
-        //Notificar el error de extensión.
+        showSnack(true, 'El archivo debe ser PDF o Word.');
       } else {
         if (size <= (MaxFileSize * 1048576)) {
           isListado ? setFileListadoTxt(name) : setFileNotaTxt(name);
@@ -378,9 +370,71 @@ function CrearSolicitud() {
             RefNota.current.value = '';
             setFileNotaTxt('Elegir Archivo');
           }
-          // Notificar error de peso;
+          showSnack(true, `El peso máximo del archivo es ${MaxFileSize} MB.`)
         }
       }
+    }
+  }
+
+  /**
+   * Método que maneja las acciones al cerrar un snackbar.
+   * @param {React.MouseEvent<HTMLButtonElement> | React.SyntheticEvent<Event>} e Evento del cierre en cuestión.
+   * @param {string} [reason] Razón de cierre del snackbar.
+   */
+  const handleSnackClose = (e, reason) => {
+    if (reason === 'clickaway') return;
+    setSnackOpen(false);
+  }
+
+  /**
+   * Método para mostrar los snack con un mensaje personalizado.
+   * @param {boolean} isError ¿El snack es para un error?
+   * @param {string} txt Texto a mostrar en el snack.
+   */
+  const showSnack = (isError, txt) => {
+    setIsSnackError(isError);
+    setSnackTxt(txt);
+    setSnackOpen(true);
+  }
+
+  /**
+   * Método para cambiar la apariencia del botón de enviar solicitud.
+   * @param {boolean} disable ¿Botón deshabilitado?
+   * @param {string} txt Texto a mostrar en el botón.
+   */
+  const toggleBtn = (disable, txt) => {
+    setBtnDisabled(disable);
+    setBtnTxt(txt);
+  }
+
+  /**
+   * Método para verificar que todos los campos requeridos se encuentren llenados correctamente.
+   */
+  const validateForm = () => {
+    let validID = false;
+    let validTel = false;
+    let validNombres = false;
+    let validApellidos = false;
+    let validEmail = false;
+    let validInstitucion = false;
+    let validDireccion = false;
+    let validHorario = false;
+    let validTema = false;
+
+    validID = ErrorID || Identidad === '' ? false : true;
+    validTel = ErrorTel || Telefono === '' ? false : true;
+    validNombres = ErrorNombres || Nombres === '' ? false : true;
+    validApellidos = ErrorApellidos || Apellidos === '' ? false : true;
+    validEmail = ErrorEmail || Email === '' ? false : true;
+    validInstitucion = ErrorInstitucion || Institucion === '' ? false : true;
+    validDireccion = ErrorDireccion || Direccion === '' ? false : true;
+    validHorario = ErrorHorario || IDHorario === '' ? false : true;
+    validTema = ReqTema ? ErrorTema || Tema === '' ? false : true : true;
+
+    if (validID && validTel && validNombres && validApellidos && validEmail && validInstitucion && validDireccion && validHorario && validTema) {
+      return true;
+    } else {
+      return false;
     }
   }
 
@@ -388,7 +442,44 @@ function CrearSolicitud() {
    * Método para manejar el envío de las solicitudes.
    */
   const handleSubmit = () => {
-    alert('Enviado');
+    setSnackOpen(false);
+    enviarSolicitud();
+  }
+
+  const enviarSolicitud = async () => {
+    toggleBtn(true, 'Enviando...');
+    if (validateForm()) {
+      try {
+        const estado = await axios.get(`http://${config.address}:${config.port}/api/estados/En proceso`);
+        await axios.post(`http://${config.address}:${config.port}/api/solicitudes`, {
+          Identidad,
+          Nombres,
+          Apellidos,
+          Telefono,
+          Email,
+          Institucion,
+          Direccion,
+          CantPersonas,
+          FechaVisita,
+          IDHorario,
+          Charla,
+          Tema: Charla ? Tema === 'Otro' ? TemaEsp : Tema : '',
+          IDEstado: estado.data._id
+        });
+
+        showSnack(false, 'Solicitud enviada.');
+        // Resetear el formulario al estado inicial.
+      } catch (e) {
+        showSnack(true, e.response.data.message);
+      }
+    } else {
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+      showSnack(true, 'Hay campos requeridos sin completar.');
+    }
+    toggleBtn(false, 'Enviar Solicitud');
   }
 
   return (
@@ -573,43 +664,7 @@ function CrearSolicitud() {
                 }}
               />
             </Grid>
-            <Grid item xs={6} md={4}>
-              <FormControl required fullWidth error={ErrorDepto}>
-                <InputLabel id='Depto'>
-                  Departamento
-              </InputLabel>
-                <Select
-                  value={Depto}
-                  labelId='Depto'
-                  onChange={e => handleChange(e.target.value.toString(), 'Depto')}
-                  onBlur={e => handleBlur(e.target.value, 'Depto')}
-                >
-                  <MenuItem value={10}>Ten</MenuItem>
-                  <MenuItem value={20}>Twenty</MenuItem>
-                  <MenuItem value={30}>Thirty</MenuItem>
-                </Select>
-                <FormHelperText>{TxtDepto}</FormHelperText>
-              </FormControl>
-            </Grid>
-            <Grid item xs={6} md={4}>
-              <FormControl required fullWidth error={ErrorMunicipio}>
-                <InputLabel id='Municipio'>
-                  Municipio
-              </InputLabel>
-                <Select
-                  value={Municipio}
-                  labelId='Municipio'
-                  onChange={e => handleChange(e.target.value.toString(), 'Municipio')}
-                  onBlur={e => handleBlur(e.target.value, 'Municipio')}
-                >
-                  <MenuItem value={10}>Ten</MenuItem>
-                  <MenuItem value={20}>Twenty</MenuItem>
-                  <MenuItem value={30}>Thirty</MenuItem>
-                </Select>
-                <FormHelperText>{TxtMunicipio}</FormHelperText>
-              </FormControl>
-            </Grid>
-            <Grid item xs={12} md={4}>
+            <Grid item xs={12}>
               <TextField
                 required
                 fullWidth
@@ -678,14 +733,14 @@ function CrearSolicitud() {
                   Horario
               </InputLabel>
                 <Select
-                  value={Horario}
+                  value={IDHorario}
                   labelId='Horario'
-                  onChange={e => handleChange(e.target.value.toString(), 'Horario')}
+                  onChange={e => handleSelectChange(e.target.value.toString(), 'Horario')}
                   onBlur={e => handleBlur(e.target.value, 'Horario')}
                 >
-                  <MenuItem value={10}>Ten</MenuItem>
-                  <MenuItem value={20}>Twenty</MenuItem>
-                  <MenuItem value={30}>Thirty</MenuItem>
+                  {Horarios.map((item, i) => (
+                    <MenuItem key={i} value={item._id}>{item.Hora}</MenuItem>
+                  ))}
                 </Select>
                 <FormHelperText>{TxtHorario}</FormHelperText>
               </FormControl>
@@ -802,16 +857,42 @@ function CrearSolicitud() {
                   size='large'
                   color='primary'
                   variant='contained'
+                  disabled={BtnDisabled}
                   onClick={handleSubmit}
                   endIcon={<FAI icon={faPaperPlane} />}
                 >
-                  Enviar Solicitud
+                  {BtnTxt}
                 </Button>
               </Box>
             </Grid>
           </Grid>
         </Container>
       </Paper>
+      <Snackbar
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'right'
+        }}
+        open={SnackOpen}
+        autoHideDuration={5000}
+        onClose={handleSnackClose}
+      >
+        <SnackbarContent
+          className={!isSnackError ? classes.successSnack : classes.errorSnack}
+          aria-describedby='snackbar'
+          message={
+            <span className={classes.messageSnack} id='snackbar'>
+              <FAI icon={!isSnackError ? faCheckCircle : faTimesCircle} className={classes.iconSnack} />
+              {SnackTxt}
+            </span>
+          }
+          action={[
+            <IconButton key='close' aria-label='close' color='inherit' onClick={handleSnackClose}>
+              <Close className={classes.iconClose} />
+            </IconButton>
+          ]}
+        />
+      </Snackbar>
     </React.Fragment>
   );
 }
