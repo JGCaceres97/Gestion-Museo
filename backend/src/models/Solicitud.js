@@ -39,7 +39,7 @@ const solicitudSchema = new Schema({
     trim: true,
     maxlength: 100
   },
-  Procedencia: {
+  Direccion: {
     type: String,
     required: true,
     trim: true,
