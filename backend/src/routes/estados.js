@@ -15,7 +15,7 @@ router.route('/api/estados')
   .post(verifyToken, createEstado);
 
 router.route('/api/estados/:id')
-  .get(verifyToken, getEstado)
+  .get(getEstado)
   .put(verifyToken, updateEstado)
   .delete(verifyToken, deleteEstado);
 

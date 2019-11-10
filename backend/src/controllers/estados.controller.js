@@ -31,7 +31,9 @@ estadoCtrl.createEstado = async (req, res) => {
 
 estadoCtrl.getEstado = async (req, res) => {
   try {
-    const estado = await Estado.findById(req.params.id);
+    const estado = await Estado.findOne({
+      Nombre: req.params.id
+    });
     res.json(estado);
   } catch (e) {
     console.error(e);
