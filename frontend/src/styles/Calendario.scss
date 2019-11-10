@@ -1,0 +1,16 @@
+@import '~@fullcalendar/core/main.css';
+@import '~@fullcalendar/daygrid/main.css';
+
+.calendario {
+  font-family: 'Roboto';
+
+  .fc-toolbar {
+    h2:first-letter {
+      text-transform: capitalize;
+    }
+  }
+  
+  .fc-head {
+    text-transform: capitalize;
+  }
+}
