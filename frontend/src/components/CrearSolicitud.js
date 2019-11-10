@@ -358,7 +358,7 @@ function CrearSolicitud() {
           RefNota.current.value = '';
           setFileNotaTxt('Elegir Archivo');
         }
-        showSnack(true, 'El archivo debe ser PDF o Word.');
+        showSnack('Error', 'El archivo debe ser PDF o Word.');
       } else {
         if (size <= (MaxFileSize * 1048576)) {
           isListado ? setFileListadoTxt(name) : setFileNotaTxt(name);
@@ -370,7 +370,7 @@ function CrearSolicitud() {
             RefNota.current.value = '';
             setFileNotaTxt('Elegir Archivo');
           }
-          showSnack(true, `El peso máximo del archivo es ${MaxFileSize} MB.`)
+          showSnack('Error', `El peso máximo del archivo es ${MaxFileSize} MB.`)
         }
       }
     }
@@ -388,11 +388,18 @@ function CrearSolicitud() {
 
   /**
    * Método para mostrar los snack con un mensaje personalizado.
-   * @param {boolean} isError ¿El snack es para un error?
+   * @param {'Error' | 'Success'} type Tipo de snack a mostrar.
    * @param {string} txt Texto a mostrar en el snack.
    */
-  const showSnack = (isError, txt) => {
-    setIsSnackError(isError);
+  const showSnack = (type, txt) => {
+    switch (type) {
+      case 'Error':
+        setIsSnackError(true);
+        break;
+      default:
+        setIsSnackError(false);
+        break;
+    }
     setSnackTxt(txt);
     setSnackOpen(true);
   }
@@ -467,17 +474,17 @@ function CrearSolicitud() {
           IDEstado: estado.data._id
         });
 
-        showSnack(false, 'Solicitud enviada.');
+        showSnack('Success', 'Solicitud enviada.');
         // Resetear el formulario al estado inicial.
       } catch (e) {
-        showSnack(true, e.response.data.message);
+        showSnack('Error', e.response.data.message);
       }
     } else {
       window.scrollTo({
         top: 0,
         behavior: 'smooth'
       });
-      showSnack(true, 'Hay campos requeridos sin completar.');
+      showSnack('Error', 'Hay campos requeridos sin completar.');
     }
     toggleBtn(false, 'Enviar Solicitud');
   }
@@ -878,11 +885,11 @@ function CrearSolicitud() {
         onClose={handleSnackClose}
       >
         <SnackbarContent
-          className={!isSnackError ? classes.successSnack : classes.errorSnack}
+          className={isSnackError ? classes.errorSnack : classes.successSnack}
           aria-describedby='snackbar'
           message={
             <span className={classes.messageSnack} id='snackbar'>
-              <FAI icon={!isSnackError ? faCheckCircle : faTimesCircle} className={classes.iconSnack} />
+              <FAI icon={isSnackError ? faTimesCircle : faCheckCircle} className={classes.iconSnack} />
               {SnackTxt}
             </span>
           }

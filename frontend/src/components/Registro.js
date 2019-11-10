@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-class FormRegister extends Component {
+class Registro extends Component {
   state = {
     Nombre: '',
     Apellido: '',
@@ -23,4 +23,4 @@ class FormRegister extends Component {
   }
 }
 
-export default FormRegister;
+export default Registro;
