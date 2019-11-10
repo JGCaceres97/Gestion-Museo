@@ -108,14 +108,31 @@ function Login() {
   const handleSubmit = () => {
     if (!ErrorEmail && !ErrorPassword) {
       setSnackOpen(false);
-      setBtnDisabled(true);
-      setBtnTxt('Iniciando...');
+      toggleBtn(true, 'Iniciando...');
       setShowProgress(true);
       setTimeout(Login, 3000);
     } else {
-      setSnackOpen(true);
-      setSnackTxt('Complete los campos requeridos.');
+      showSnack('Complete los campos requeridos.');
     }
+  }
+
+  /**
+   * Método para mostrar los snack con un mensaje personalizado.
+   * @param {string} txt Texto a mostrar en el snack.
+   */
+  const showSnack = (txt) => {
+    setSnackTxt(txt);
+    setSnackOpen(true);
+  }
+
+  /**
+   * Método para cambiar la apariencia del botón de inicio de sesión.
+   * @param {boolean} disable ¿Botón deshabilitado?
+   * @param {string} txt Texto a mostrar en el botón.
+   */
+  const toggleBtn = (disable, txt) => {
+    setBtnDisabled(disable);
+    setBtnTxt(txt);
   }
 
   /**
@@ -132,10 +149,8 @@ function Login() {
       setSuccessLogin(true);
     } catch (e) {
       setShowProgress(false);
-      setBtnDisabled(false);
-      setBtnTxt('Iniciar Sesión');
-      setSnackTxt(e.response.data.message);
-      setSnackOpen(true);
+      toggleBtn(false, 'Iniciar Sesión');
+      showSnack(e.response.data.message);
     }
   }
 
