@@ -50,8 +50,9 @@ const useStyles = makeStyles(theme => ({
 
 /**
  * Formulario de Reservaciones de Visita a los Centros Culturales.
+ * @param {any} props Propiedades que puede recibir de otro componente.
  */
-function CrearSolicitud() {
+function CrearSolicitud(props) {
   // @ts-ignore
   const classes = useStyles();
 
@@ -77,9 +78,9 @@ function CrearSolicitud() {
   const [Institucion, setInstitucion] = useState('');
   const [Direccion, setDireccion] = useState('');
   const [CantPersonas, setCantPersonas] = useState(1 || []);
-  const [FechaVisita, setFechaVisita] = useState(initialDate);
+  const [FechaVisita, setFechaVisita] = useState(props.Fecha || initialDate);
   const [IDHorario, setIDHorario] = useState('');
-  const [Charla, setCharla] = useState(true);
+  const [Charla, setCharla] = useState(false);
   const [Tema, setTema] = useState('');
   const [TemaEsp, setTemaEsp] = useState('');
 
@@ -111,7 +112,7 @@ function CrearSolicitud() {
   const [CheckEmail, setCheckEmail] = useState(false);
   const [CheckInstitucion, setCheckInstitucion] = useState(false);
   const [CheckDireccion, setCheckDireccion] = useState(false);
-  const [ReqTema, setReqTema] = useState(true);
+  const [ReqTema, setReqTema] = useState(Charla ? true : false);
   const [ReqTemaEsp, setReqTemaEsp] = useState(false);
   const [FileListadoTxt, setFileListadoTxt] = useState('Elegir Archivo');
   const [FileNotaTxt, setFileNotaTxt] = useState('Elegir Archivo');
@@ -729,8 +730,10 @@ function CrearSolicitud() {
                   value={FechaVisita}
                   label='Fecha de visita'
                   minDate={moment().add(1, 'day')}
-                  onChange={date => setFechaVisita(date.toDate())}
                   shouldDisableDate={disableWeekends}
+                  disabled={props.Fecha ? true : false}
+                  onChange={date => setFechaVisita(date.toDate())}
+                  minDateMessage='La fecha no puede ser menor al día actual.'
                 />
               </MuiPickersUtilsProvider>
             </Grid>

@@ -1,17 +1,21 @@
 // @ts-check
-import { faCheckCircle, faTimesCircle, faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
+import { faCheckCircle, faExclamationCircle, faTimesCircle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon as FAI } from '@fortawesome/react-fontawesome';
 import esUsLocale from '@fullcalendar/core/locales/es-us';
 import DayGridPlugin from '@fullcalendar/daygrid';
 import InteractionPlugin from '@fullcalendar/interaction';
 import FullCalendar from '@fullcalendar/react';
-import { Container, Grid, IconButton, makeStyles, Paper, Snackbar, SnackbarContent } from '@material-ui/core';
+import { AppBar, Container, Dialog, DialogContent, Grid, IconButton, makeStyles, Paper, Slide, Snackbar, SnackbarContent, Toolbar, Typography } from '@material-ui/core';
 import { Close } from '@material-ui/icons';
 import axios from 'axios';
+import moment from 'moment';
 import React, { useEffect, useState } from 'react';
 import config from '../config';
 import useLocalStorage from '../customHooks/useLocalStorage';
 import '../styles/Calendario.scss';
+import CrearSolicitud from './CrearSolicitud';
+
+moment.locale('es-us');
 
 const useStyles = makeStyles(theme => ({
   paper: {
@@ -38,8 +42,19 @@ const useStyles = makeStyles(theme => ({
   },
   infoSnack: {
     backgroundColor: theme.palette.primary.main
+  },
+  appBar: {
+    position: 'relative'
+  },
+  title: {
+    marginLeft: theme.spacing(2),
+    flex: 1
   }
 }));
+
+const Transition = React.forwardRef((props, ref) => {
+  return <Slide direction='up' ref={ref} {...props} />;
+});
 
 /**
  * Calendario de reservaciones a los Centros Culturales.
@@ -50,12 +65,15 @@ function Calendario() {
 
   const [Eventos, setEventos] = useState([]);
   const [Token] = useLocalStorage('Token', '');
+  const [DateClicked, setDateClicked] = useState(moment());
 
   const [Reload, setReload] = useState(false);
   const [SnackOpen, setSnackOpen] = useState(false);
   const [isSnackError, setIsSnackError] = useState(false);
   const [isSnackInfo, setIsSnackInfo] = useState(false);
   const [SnackTxt, setSnackTxt] = useState('');
+  const [ShowDialog, setShowDialog] = useState(false);
+  const [DialogHeader, setDialogHeader] = useState('');
 
   useEffect(() => {
     document.title = 'Calendario de Reservaciones';
@@ -66,10 +84,8 @@ function Calendario() {
             auth: Token
           }
         });
-
-        console.log(res.data[1].FechaVisita);
-        console.log(res.data[1].IDHorario.Hora);
-
+        //console.log(res.data[1].FechaVisita);
+        //console.log(res.data[1].IDHorario.Hora);
         setEventos(res.data.map(ev => {
           return {
             id: ev._id,
@@ -79,8 +95,10 @@ function Calendario() {
             textColor: 'white'
           }
         }));
+        showSnack('Info', 'Calendario actualizado.');
       } catch (e) {
-        showSnack('Error', e.response.data.message);
+        showSnack('Error', 'Error obteniendo las solicitudes.');
+        console.log(e);
       }
     }
 
@@ -126,7 +144,15 @@ function Calendario() {
    * @param {{ date: Date }} info Información del día clicado.
    */
   const dateClicked = (info) => {
-    alert('Date: ' + info.date);
+    const date = moment(info.date);
+    if (date.isSameOrBefore(moment())) {
+      showSnack('Info', 'La fecha de la nueva solicitud no es válida.');
+    } else {
+      setSnackOpen(false);
+      setDateClicked(date);
+      setDialogHeader(`Ingresar Solicitud - ${date.format('D [de] MMMM')}`);
+      setShowDialog(true);
+    }
   }
 
   /**
@@ -134,7 +160,9 @@ function Calendario() {
    * @param {{ event: { id: string } }} info Información del evento clicado.
    */
   const eventClicked = (info) => {
-    alert('Event ID: ' + info.event.id);
+    //alert('Event ID: ' + info.event.id);
+    setDialogHeader('Solicitud de Reserva');
+    setShowDialog(true);
   }
 
   return (
@@ -153,10 +181,7 @@ function Calendario() {
                 customButtons={{
                   Reload: {
                     text: 'Recargar',
-                    click: () => {
-                      setReload(!Reload);
-                      showSnack('Info', 'Calendario actualizado.');
-                    }
+                    click: () => setReload(!Reload)
                   }
                 }}
 
@@ -194,12 +219,36 @@ function Calendario() {
 
                 locale={esUsLocale}
                 firstDay={1}
-                timeZone='America/Tegucigalpa'
+                timeZone='local'
               />
             </Grid>
           </Grid>
         </Container>
       </Paper>
+      <Dialog
+        fullScreen
+        open={ShowDialog}
+        onClose={() => setShowDialog(false)}
+        // @ts-ignore
+        TransitionComponent={Transition}>
+        <AppBar className={classes.appBar}>
+          <Toolbar>
+            <IconButton edge='start' color='inherit' onClick={() => setShowDialog(false)} aria-label='close'>
+              <Close />
+            </IconButton>
+            <Typography variant='h6' className={classes.title}>
+              {DialogHeader}
+            </Typography>
+          </Toolbar>
+        </AppBar>
+        <DialogContent>
+          {DialogHeader.includes('Ingresar') ?
+            <CrearSolicitud Fecha={DateClicked} />
+            :
+            'Texto'
+          }
+        </DialogContent>
+      </Dialog>
       <Snackbar
         anchorOrigin={{
           vertical: 'bottom',
