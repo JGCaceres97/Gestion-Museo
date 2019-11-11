@@ -6,7 +6,7 @@ const horarioSchema = new Schema({
     unique: true,
     required: true,
     trim: true,
-    maxlength: 10,
+    maxlength: 10
   }
 }, {
   timestamps: true

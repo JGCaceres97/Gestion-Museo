@@ -28,7 +28,6 @@ const solicitudSchema = new Schema({
   Email: {
     type: String,
     required: true,
-    unique: true,
     maxlength: 50,
     lowercase: true,
     match: /^\w+([.-]?\w+)*@\w+([-]?\w+)*(\.\w{2,4})+$/
@@ -78,7 +77,7 @@ const solicitudSchema = new Schema({
   IDEstado: {
     type: Schema.Types.ObjectId,
     ref: 'Estado',
-    required: true,
+    required: true
   }
 }, {
   timestamps: true
