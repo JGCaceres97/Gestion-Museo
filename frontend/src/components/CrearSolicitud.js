@@ -16,7 +16,7 @@ moment.updateLocale('es-us', {
   monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
   weekdays: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'],
   weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
-  weekdaysMin: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa'],
+  weekdaysMin: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sá'],
   week: {
     dow: 1,
     doy: 4
@@ -130,17 +130,18 @@ function CrearSolicitud(props) {
   const RefListado = React.createRef();
   const RefNota = React.createRef();
 
-  const reqHorarios = async () => {
-    try {
-      const res = await axios.get(`http://${config.address}:${config.port}/api/horarios`);
-      setHorarios(res.data);
-    } catch (e) {
-      console.error(e.response.data.message);
-    }
-  }
 
   useEffect(() => {
     document.title = 'Reserva de Visita a Centros Culturales';
+    const reqHorarios = async () => {
+      try {
+        const res = await axios.get(`http://${config.address}:${config.port}/api/horarios`);
+        setHorarios(res.data);
+      } catch (e) {
+        console.error(e.response.data.message);
+      }
+    }
+
     reqHorarios();
   }, []);
 
@@ -260,12 +261,13 @@ function CrearSolicitud(props) {
    * @param {string} value Valor contenido en el campo.
    * @param {string} field Campo al que se hace referencia.
    */
-  const handleSelectChange = (value, field) => {
+  const handleSelect = (value, field) => {
     switch (field) {
       case 'Horario':
         setIDHorario(value);
         setTxtHorario('');
         setErrorHorario(false);
+        handleFechaYHora(value);
         break;
       case 'Tema':
         setTema(value);
@@ -308,7 +310,7 @@ function CrearSolicitud(props) {
    * @param {string} value Valor que contiene el campo.
    */
   const handleTema = value => {
-    handleSelectChange(value, 'Tema');
+    handleSelect(value, 'Tema');
     if (value === 'Otro') {
       setReqTemaEsp(true);
     } else {
@@ -331,6 +333,29 @@ function CrearSolicitud(props) {
   }
 
   /**
+   * Método para asignar la hora de visita a la fecha elegida.
+   * @param {string} _id ID que identifica la hora seleccionada.
+   */
+  const handleFechaYHora = (_id) => {
+    const hora = Horarios.find(item => item._id === _id).Hora;
+    const fecha = FechaVisita.toISOString();
+    let horaISO;
+
+    if (hora.split(' ').pop() === 'PM') {
+      horaISO = parseInt(hora.split(':').shift(), 10) + 12;
+    } else {
+      if (hora.split(':').shift().length === 1) {
+        horaISO = '0'.concat(hora.split(':').shift());
+      } else {
+        horaISO = hora.split(':').shift();
+      }
+    }
+
+    const fechaConHora = moment(`${fecha.split('T').shift()}T${horaISO}`).toDate();
+    setFechaVisita(fechaConHora);
+  }
+
+  /**
    * Método para manejar los archivos adjuntos del formulario.
    * @param {string} id ID del input que fue afectado por el cambio.
    */
@@ -349,7 +374,9 @@ function CrearSolicitud(props) {
       const size = files[0].size;
       const ext = files[0].name.split('.').pop();
       const split = files[0].name.split('.').shift();
-      const name = split.length > 30 ? split.substring(0, 30).concat('...') : split;
+      const name = split.length > 30 ?
+        split.substring(0, 30).concat(`...${ext}`)
+        : split.concat(`.${ext}`);
 
       if (['pdf', 'doc', 'docx'].indexOf(ext) === -1) {
         if (isListado) {
@@ -505,7 +532,7 @@ function CrearSolicitud(props) {
           <Grid container spacing={2}>
             <Grid item xs={12}>
               <Typography align='left' variant='h6' className='mt-4'>
-                Información Personal
+                Información de Contacto
             </Typography>
             </Grid>
             <Grid item xs={12} md={6}>
@@ -647,7 +674,7 @@ function CrearSolicitud(props) {
             <Grid item xs={12}>
               <Typography align='left' variant='h6' className='mt-4'>
                 Información de Reserva
-            </Typography>
+              </Typography>
             </Grid>
             <Grid item xs={12}>
               <TextField
@@ -703,7 +730,7 @@ function CrearSolicitud(props) {
             <Grid item xs={12} md={4}>
               <Typography id='cantPersonas' gutterBottom color={!ColorSld ? 'textSecondary' : 'primary'}>
                 Cantidad de personas que visitarán *
-            </Typography>
+              </Typography>
               <Box pt={0.7}>
                 <Slider
                   min={1}
@@ -741,11 +768,11 @@ function CrearSolicitud(props) {
               <FormControl required fullWidth error={ErrorHorario}>
                 <InputLabel id='Horario'>
                   Horario
-              </InputLabel>
+                </InputLabel>
                 <Select
                   value={IDHorario}
                   labelId='Horario'
-                  onChange={e => handleSelectChange(e.target.value.toString(), 'Horario')}
+                  onChange={e => handleSelect(e.target.value.toString(), 'Horario')}
                   onBlur={e => handleBlur(e.target.value, 'Horario')}
                 >
                   {Horarios.map((item, i) => (
@@ -760,14 +787,15 @@ function CrearSolicitud(props) {
                 <FormLabel component='legend'>Charla académica</FormLabel>
                 <RadioGroup row value={Charla} onChange={e => handleCharla(e.target.value)}>
                   <FormControlLabel
+                    label='Sí'
                     value={true}
                     control={<Radio color='primary' />}
-                    label='Sí'
                   />
                   <FormControlLabel
+                    label='No'
                     value={false}
                     control={<Radio color='primary' />}
-                    label='No' />
+                  />
                 </RadioGroup>
               </FormControl>
             </Grid>
