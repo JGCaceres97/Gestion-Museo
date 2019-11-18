@@ -106,11 +106,12 @@ function Login() {
    * Método para manejar el ingreso al sistema.
    */
   const handleSubmit = () => {
-    if (!ErrorEmail && !ErrorPassword) {
+    if (!ErrorEmail && !ErrorPassword
+      && Email !== '' && Password !== '') {
       setSnackOpen(false);
       toggleBtn(true, 'Iniciando...');
       setShowProgress(true);
-      setTimeout(Login, 3000);
+      setTimeout(Login, 2000);
     } else {
       showSnack('Complete los campos requeridos.');
     }
@@ -133,6 +134,17 @@ function Login() {
   const toggleBtn = (disable, txt) => {
     setBtnDisabled(disable);
     setBtnTxt(txt);
+  }
+
+  /**
+   * Método para manejar las acciones al presionar 'Enter' en un Textfield.
+   * @param {React.KeyboardEvent<HTMLDivElement>} ev Evento al presionar una tecla.
+   */
+  const onEnterKeyPress = (ev) => {
+    if (ev.key === 'Enter') {
+      ev.preventDefault();
+      handleSubmit();
+    }
   }
 
   /**
@@ -187,6 +199,7 @@ function Login() {
                     value={Email}
                     error={ErrorEmail}
                     helperText={TxtEmail}
+                    onKeyPress={onEnterKeyPress}
                     placeholder='aug_coello@himno.hn'
                     label='Correo electrónico'
                     inputProps={{ maxLength: 50 }}
@@ -209,6 +222,7 @@ function Login() {
                     label='Contraseña'
                     error={ErrorPassword}
                     helperText={TxtPassword}
+                    onKeyPress={onEnterKeyPress}
                     inputProps={{ maxLength: 50 }}
                     type={!ShowPassword ? 'password' : 'text'}
                     onChange={e => setPassword(e.target.value)}
