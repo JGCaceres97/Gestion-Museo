@@ -13,4 +13,33 @@
   .fc-head {
     text-transform: capitalize;
   }
+
+  .fc-toolbar.fc-header-toolbar {
+    top: 0;
+    z-index: 2;
+    height: 3.7em;
+    margin-bottom: 0;
+    background: white;
+    background-color: white;
+    position: sticky;
+    border-bottom: 1px solid black;
+  }
+
+  .fc-button-primary {
+    background-color: #E0E0E0;
+    border-color: #E0E0E0;
+    color: rgba(0, 0, 0, 0.87);
+    text-transform: uppercase;
+    font-weight: 500;
+    letter-spacing: 0.02857em;
+    font-size: 0.9rem;
+    box-shadow: 0px 3px 1px -2px rgba(0,0,0,0.2), 0px 2px 2px 0px rgba(0,0,0,0.14), 0px 1px 5px 0px rgba(0,0,0,0.12);
+  }
+
+  .fc-button-primary:hover {
+    background-color: #D5D5D5;
+    border-color: #D5D5D5;
+    color: rgba(0, 0, 0, 0.87);
+    box-shadow: 0px 3px 1px -2px rgba(0,0,0,0.2), 0px 2px 2px 0px rgba(0,0,0,0.14), 0px 1px 5px 0px rgba(0,0,0,0.12);
+  }
 }

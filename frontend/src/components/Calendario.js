@@ -14,12 +14,13 @@ import config from '../config';
 import useLocalStorage from '../customHooks/useLocalStorage';
 import '../styles/Calendario.scss';
 import CrearSolicitud from './CrearSolicitud';
+import InfoSolicitud from './InfoSolicitud';
 
 moment.locale('es-us');
 
 const useStyles = makeStyles(theme => ({
   paper: {
-    padding: theme.spacing(3, 1),
+    padding: theme.spacing(2, 1, 3),
     margin: theme.spacing(1)
   },
   messageSnack: {
@@ -66,6 +67,7 @@ function Calendario() {
   const [Eventos, setEventos] = useState([]);
   const [Token] = useLocalStorage('Token', '');
   const [DateClicked, setDateClicked] = useState(moment());
+  const [IDClicked, setIDClicked] = useState('');
 
   const [Reload, setReload] = useState(false);
   const [SnackOpen, setSnackOpen] = useState(false);
@@ -77,6 +79,9 @@ function Calendario() {
 
   useEffect(() => {
     document.title = 'Calendario de Reservaciones';
+  });
+
+  useEffect(() => {
     const getSolicitudes = async () => {
       try {
         const res = await axios.get(`http://${config.address}:${config.port}/api/solicitudes`, {
@@ -84,8 +89,7 @@ function Calendario() {
             auth: Token
           }
         });
-        //console.log(res.data[1].FechaVisita);
-        //console.log(res.data[1].IDHorario.Hora);
+
         setEventos(res.data.map(ev => {
           return {
             id: ev._id,
@@ -148,10 +152,8 @@ function Calendario() {
     if (date.isSameOrBefore(moment())) {
       showSnack('Info', 'La fecha de la nueva solicitud no es válida.');
     } else {
-      setSnackOpen(false);
       setDateClicked(date);
-      setDialogHeader(`Ingresar Solicitud - ${date.format('D [de] MMMM')}`);
-      setShowDialog(true);
+      nuevoEvento(`Ingresar Solicitud - ${date.format('D [de] MMMM')}`);
     }
   }
 
@@ -160,8 +162,19 @@ function Calendario() {
    * @param {{ event: { id: string } }} info Información del evento clicado.
    */
   const eventClicked = (info) => {
-    //alert('Event ID: ' + info.event.id);
-    setDialogHeader('Solicitud de Reserva');
+    setSnackOpen(false);
+    setDialogHeader('Información de Solicitud');
+    setIDClicked(info.event.id);
+    setShowDialog(true);
+  }
+
+  /**
+   * Método para agregar eventos al calendario.
+   * @param {string} txt Texto a mostrar en el encabezado.
+   */
+  const nuevoEvento = (txt) => {
+    setSnackOpen(false);
+    setDialogHeader(txt);
     setShowDialog(true);
   }
 
@@ -173,15 +186,19 @@ function Calendario() {
             <Grid item xs={12} className='calendario'>
               <FullCalendar
                 header={{
-                  right: 'Reload, today, prev,next'
+                  right: 'Nuevo, Recargar, today, prev,next'
                 }}
                 buttonText={{
                   today: 'Hoy'
                 }}
                 customButtons={{
-                  Reload: {
+                  Recargar: {
                     text: 'Recargar',
                     click: () => setReload(!Reload)
+                  },
+                  Nuevo: {
+                    text: 'Nuevo',
+                    click: () => nuevoEvento('Ingresar Solicitud')
                   }
                 }}
 
@@ -242,10 +259,13 @@ function Calendario() {
           </Toolbar>
         </AppBar>
         <DialogContent>
-          {DialogHeader.includes('Ingresar') ?
+          {DialogHeader.includes('-') ?
             <CrearSolicitud Fecha={DateClicked} />
             :
-            'Texto'
+            DialogHeader.includes('Ingresar') ?
+              <CrearSolicitud />
+              :
+              <InfoSolicitud _id={IDClicked} />
           }
         </DialogContent>
       </Dialog>
