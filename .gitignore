@@ -1,7 +1,9 @@
 ### Backend ###
 backend/node_modules
 backend/.env
-
+backend/public/*
+!backend/public/files
+backend/public/files/*
 
 ### Frontend ###
 # dependencies
@@ -25,4 +27,3 @@ frontend/.env.production.local
 frontend/npm-debug.log*
 frontend/yarn-debug.log*
 frontend/yarn-error.log*
-
