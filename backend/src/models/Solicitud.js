@@ -78,6 +78,16 @@ const solicitudSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'Estado',
     required: true
+  },
+  Adjuntos: {
+    Listado: {
+      type: String,
+      default: ''
+    },
+    Nota: {
+      type: String,
+      default: '',
+    }
   }
 }, {
   timestamps: true
