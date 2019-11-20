@@ -123,13 +123,12 @@ function CrearSolicitud(props) {
   const [BtnTxt, setBtnTxt] = useState('Enviar Solicitud');
   const [BtnDisabled, setBtnDisabled] = useState(false);
   const [Horarios, setHorarios] = useState([]);
+  const [FileListado, setFileListado] = useState(null);
+  const [FileNota, setFileNota] = useState(null);
 
   const ColorError = '#DC143C';
   const ColorSuccess = '#008000';
   const MaxFileSize = 5 //Máximo tamaño de archivos en MB.
-  const RefListado = React.createRef();
-  const RefNota = React.createRef();
-
 
   useEffect(() => {
     document.title = 'Reserva de Visita a Centros Culturales';
@@ -357,18 +356,12 @@ function CrearSolicitud(props) {
 
   /**
    * Método para manejar los archivos adjuntos del formulario.
-   * @param {string} id ID del input que fue afectado por el cambio.
+   * @param {React.ChangeEvent<HTMLInputElement>} event ID del input que fue afectado por el cambio.
    */
-  const handleFiles = id => {
-    let files;
+  const handleFiles = event => {
+    const files = event.target.files;
     let isListado;
-    if (id === 'listado') {
-      files = RefListado.current.files;
-      isListado = true;
-    } else {
-      files = RefNota.current.files;
-      isListado = false;
-    }
+    event.target.id === 'listado' ? isListado = true : isListado = false;
 
     if (files.length === 1) {
       const size = files[0].size;
@@ -380,24 +373,32 @@ function CrearSolicitud(props) {
 
       if (['pdf', 'doc', 'docx'].indexOf(ext) === -1) {
         if (isListado) {
-          RefListado.current.value = '';
           setFileListadoTxt('Elegir Archivo');
+          setFileListado(null);
         } else {
-          RefNota.current.value = '';
           setFileNotaTxt('Elegir Archivo');
+          setFileNota(null);
         }
+        event.target.value = '';
         showSnack('Error', 'El archivo debe ser PDF o Word.');
       } else {
         if (size <= (MaxFileSize * 1048576)) {
-          isListado ? setFileListadoTxt(name) : setFileNotaTxt(name);
+          if (isListado) {
+            setFileListadoTxt(name);
+            setFileListado(files[0]);
+          } else {
+            setFileNotaTxt(name);
+            setFileNota(files[0]);
+          }
         } else {
           if (isListado) {
-            RefListado.current.value = '';
             setFileListadoTxt('Elegir Archivo');
+            setFileListado(null);
           } else {
-            RefNota.current.value = '';
             setFileNotaTxt('Elegir Archivo');
+            setFileNota(null);
           }
+          event.target.value = '';
           showSnack('Error', `El peso máximo del archivo es ${MaxFileSize} MB.`)
         }
       }
@@ -486,26 +487,29 @@ function CrearSolicitud(props) {
     if (validateForm()) {
       try {
         const estado = await axios.get(`http://${config.address}:${config.port}/api/estados/En proceso`);
-        await axios.post(`http://${config.address}:${config.port}/api/solicitudes`, {
-          Identidad,
-          Nombres,
-          Apellidos,
-          Telefono,
-          Email,
-          Institucion,
-          Direccion,
-          CantPersonas,
-          FechaVisita,
-          IDHorario,
-          Charla,
-          Tema: Charla ? Tema === 'Otro' ? TemaEsp : Tema : '',
-          IDEstado: estado.data._id
-        });
+        const Solicitud = new FormData();
+        Solicitud.append('Identidad', Identidad);
+        Solicitud.append('Nombres', Nombres);
+        Solicitud.append('Apellidos', Apellidos);
+        Solicitud.append('Telefono', Telefono);
+        Solicitud.append('Email', Email);
+        Solicitud.append('Institucion', Institucion);
+        Solicitud.append('Direccion', Direccion);
+        Solicitud.append('CantPersonas', JSON.stringify(CantPersonas));
+        Solicitud.append('FechaVisita', FechaVisita);
+        Solicitud.append('IDHorario', IDHorario);
+        Solicitud.append('Charla', JSON.stringify(Charla));
+        Solicitud.append('Tema', Charla ? Tema === 'Otro' ? TemaEsp : Tema : '');
+        Solicitud.append('IDEstado', estado.data._id);
+        Solicitud.append('Adjuntos', FileListado);
+        Solicitud.append('Adjuntos', FileNota);
+
+        await axios.post(`http://${config.address}:${config.port}/api/solicitudes`, Solicitud);
 
         showSnack('Success', 'Solicitud enviada.');
         // Resetear el formulario al estado inicial.
       } catch (e) {
-        showSnack('Error', e.response.data.message);
+        showSnack('Error', 'Error al enviar la solicitud.');
       }
     } else {
       window.scrollTo({
@@ -848,9 +852,8 @@ function CrearSolicitud(props) {
                 hidden
                 type='file'
                 id='listado'
-                ref={RefListado}
                 accept='.pdf, .doc, .docx'
-                onChange={e => handleFiles(e.target.id)}
+                onChange={handleFiles}
               />
               <label htmlFor='listado'>
                 <Button
@@ -874,9 +877,8 @@ function CrearSolicitud(props) {
                 hidden
                 id='nota'
                 type='file'
-                ref={RefNota}
                 accept='.pdf, .doc, .docx'
-                onChange={e => handleFiles(e.target.id)}
+                onChange={handleFiles}
               />
               <label htmlFor='nota'>
                 <Button

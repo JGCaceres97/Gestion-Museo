@@ -12,6 +12,7 @@ solicitudCtrl.getSolicitudes = async (req, res) => {
 };
 
 solicitudCtrl.createSolicitud = async (req, res) => {
+  const URL = req.protocol + '://' + req.get('host') + '/';
   try {
     const {
       Identidad,
@@ -41,13 +42,17 @@ solicitudCtrl.createSolicitud = async (req, res) => {
       IDHorario,
       Charla,
       TemaCharla,
-      IDEstado
+      IDEstado,
+      Adjuntos: {
+        Listado: req.files[0] ? URL + req.files[0].path : '',
+        Nota: req.files[1] ? URL + req.files[1].path : ''
+      }
     });
     await nuevaSolicitud.save();
-    res.json({ message: 'Solicitud enviada.' });
+    res.status(201).json({ message: 'Solicitud enviada.' });
   } catch (e) {
     console.error(e);
-    res.json({ message: 'Ha ocurrido un error al registrar la solicitud.' });
+    res.status(500).json({ message: 'Ha ocurrido un error al registrar la solicitud.' });
   }
 };
 
