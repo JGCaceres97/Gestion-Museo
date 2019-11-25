@@ -33,10 +33,10 @@ auth.signUp = async (req, res) => {
       expiresIn: 60 * 60 * 24
     });
 
-    res.header('auth', token).json(usuarioGuardado);
+    res.status(200).json(token);
   } catch (e) {
     console.error(e);
-    res.json({ message: 'Ha ocurrido un error al registrar el usuario.' });
+    res.status(500).json({ message: 'Ha ocurrido un error al registrar el usuario.' });
   }
 };
 
@@ -49,11 +49,11 @@ auth.signIn = async (req, res) => {
 
     // Buscando usuario
     const usuario = await Usuario.findOne({ Email });
-    if (!usuario) return res.status(400).json({ message: 'El usuario no existe. Intente nuevamente.' });
+    if (!usuario) return res.status(401).json({ message: 'El usuario no existe. Intente nuevamente.' });
 
     // Verificando contraseña
     const correctPassword = await usuario.decryptPassword(Password);
-    if (!correctPassword) return res.status(400).json({ message: 'Contraseña incorrecta. Intente nuevamente.' });
+    if (!correctPassword) return res.status(401).json({ message: 'Contraseña incorrecta. Intente nuevamente.' });
 
     // Asignando última conexión
     await Usuario.findOneAndUpdate({ Email }, {
@@ -68,13 +68,14 @@ auth.signIn = async (req, res) => {
       expiresIn: 60 * 60 * 24
     });
 
-    res.header('auth', token).json({
-      auth: true,
-      message: 'Inicio de sesión satisfactorio.'
+    res.status(200).json({
+      token,
+      userId: usuario._id,
+      rolId: usuario.IDRol
     });
   } catch (e) {
     console.error(e);
-    res.json({ message: 'Ha ocurrido un error al realizar la consulta.' });
+    res.status(500).json({ message: 'Ha ocurrido un error al realizar la consulta.' });
   }
 };
 
@@ -86,10 +87,10 @@ auth.profile = async (req, res) => {
 
     const usuario = await Usuario.findById(usuarioId, { Password: 0, createdAt: 0, updatedAt: 0 });
     if (!usuario) return res.status(404).json({ message: 'Usuario no encontrado.' });
-    res.json(usuario);
+    res.status(200).json(usuario);
   } catch (e) {
     console.error(e);
-    res.json({ message: 'Ha ocurrido un error al realizar la consulta.' });
+    res.status(500).json({ message: 'Ha ocurrido un error al realizar la consulta.' });
   }
 };
 
