@@ -10,10 +10,22 @@ import config from '../config';
 import useLocalStorage from '../customHooks/useLocalStorage';
 
 const useStyles = makeStyles(theme => ({
+  container: {
+    minHeight: '100vh',
+    minWidth: '100%',
+    backgroundImage: 'url(/img/bgLogin.webp)',
+    backgroundPosition: 'center'
+  },
+  containerGrid: {
+    minHeight: '100vh'
+  },
+  paper: {
+    backgroundColor: 'rgba(255, 255, 255, 0.8)'
+  },
   grid: {
     width: '100%'
   },
-  button: {
+  alignCenter: {
     textAlign: 'center'
   },
   messageSnack: {
@@ -60,6 +72,8 @@ function Login() {
   const [BtnDisabled, setBtnDisabled] = useState(false);
   const [SuccessLogin, setSuccessLogin] = useState(false);
   const [, setToken] = useLocalStorage('Token', '');
+  const [, setUserId] = useLocalStorage('UserId', '');
+  const [, setRolId] = useLocalStorage('RolId', '');
 
   /**
    * Método que maneja las acciones cuando se pierde el foco en un componente.
@@ -72,7 +86,7 @@ function Login() {
         const RegExpEmail = /^\w+([.-]?\w+)*@\w+([-]?\w+)*(\.\w{2,4})+$/;
         if (value.search(RegExpEmail) !== 0 || value === '') {
           setErrorEmail(true);
-          setTxtEmail('Por favor complete el campo requerido con el formato "ejem.plo@ejemplo.com".');
+          setTxtEmail('Complete el campo requerido con el formato "ejem.plo@ejemplo.com".');
         } else {
           setErrorEmail(false);
           setTxtEmail('');
@@ -81,7 +95,7 @@ function Login() {
       case 'Password':
         if (value === '') {
           setErrorPassword(true);
-          setTxtPassword('Por favor complete el campo requerido.');
+          setTxtPassword('Complete el campo requerido.');
         } else {
           setErrorPassword(false);
           setTxtPassword('');
@@ -100,21 +114,6 @@ function Login() {
   const handleSnackClose = (e, reason) => {
     if (reason === 'clickaway') return;
     setSnackOpen(false);
-  }
-
-  /**
-   * Método para manejar el ingreso al sistema.
-   */
-  const handleSubmit = () => {
-    if (!ErrorEmail && !ErrorPassword
-      && Email !== '' && Password !== '') {
-      setSnackOpen(false);
-      toggleBtn(true, 'Iniciando...');
-      setShowProgress(true);
-      setTimeout(Login, 2000);
-    } else {
-      showSnack('Complete los campos requeridos.');
-    }
   }
 
   /**
@@ -148,47 +147,71 @@ function Login() {
   }
 
   /**
+   * Método para manejar el ingreso al sistema.
+   */
+  const handleSubmit = () => {
+    if (!ErrorEmail && !ErrorPassword
+      && Email !== '' && Password !== '') {
+      setSnackOpen(false);
+      toggleBtn(true, 'Iniciando...');
+      setShowProgress(true);
+      setTimeout(Login, 500);
+    } else {
+      showSnack('Complete los campos requeridos.');
+    }
+  }
+
+  /**
    * Método para iniciar sesión en el sistema y obtener un token de acceso.
    */
   const Login = async () => {
     try {
-      const res = await axios.post(`http://${config.address}:${config.port}/api/auth/ingresar`, {
+      const res = await axios.post(`http://${config.address}:${config.port}/api/auth/signIn`, {
         Email,
         Password
       });
 
-      setToken(res.headers.auth);
+      setToken(`Bearer ${res.data.token}`);
+      setUserId(res.data.userId);
+      setRolId(res.data.rolId);
       setSuccessLogin(true);
     } catch (e) {
       setShowProgress(false);
       toggleBtn(false, 'Iniciar Sesión');
-      showSnack(e.response.data.message);
+      showSnack('Error al iniciar sesión. Intente de nuevo.');
     }
   }
 
-  if (SuccessLogin) return <Redirect push to='/crearSolicitud' />
+  if (SuccessLogin) return <Redirect push to='/' />
 
   return (
     <React.Fragment>
-      <Container>
+      <Container className={classes.container}>
         <Grid
           container
-          spacing={2}
+          spacing={0}
           justify='center'
           direction='column'
           alignItems='center'
-          style={{ minHeight: '97vh' }}
+          className={classes.containerGrid}
         >
           <Grid item xs={12} sm={10} md={4} xl={3} className={classes.grid}>
-            <Paper>
+            <Paper className={classes.paper} >
               {ShowProgress ?
                 <LinearProgress /> : ''
               }
               <Box p={2}>
-                <Box pt={1} pb={2} px={2}>
+                <Box className={classes.alignCenter}>
+                  <img
+                    width='60%'
+                    src='/img/logo.png'
+                    alt='Logo de Centros Culturales, BCH'
+                  />
+                </Box>
+                <Box pb={2} px={2}>
                   <Typography align='center' variant='h4'>
                     Inicio de Sesión
-                </Typography>
+                  </Typography>
                   <Divider />
                 </Box>
                 <Box p={2}>
@@ -196,6 +219,7 @@ function Login() {
                     required
                     autoFocus
                     fullWidth
+                    type='email'
                     value={Email}
                     error={ErrorEmail}
                     helperText={TxtEmail}
@@ -243,7 +267,7 @@ function Login() {
                     }}
                   />
                 </Box>
-                <Box p={2} className={classes.button}>
+                <Box p={2} className={classes.alignCenter}>
                   <Button
                     fullWidth
                     size='large'
