@@ -59,7 +59,11 @@ function InfoSolicitud({ _id }) {
     Institucion: '',
     Nombres: '',
     Telefono: '',
-    TemaCharla: ''
+    TemaCharla: '',
+    Adjuntos: {
+      Listado: '',
+      Nota: ''
+    }
   });
 
   const [Estados, setEstados] = useState([]);
@@ -74,38 +78,31 @@ function InfoSolicitud({ _id }) {
     IDHorario, Identidad, Institucion, Nombres, Telefono, TemaCharla } = Solicitud;
 
   useEffect(() => {
-    const reqEstados = async () => {
-      try {
-        const res = await axios.get(`http://${config.address}:${config.port}/api/estados`, {
-          headers: {
-            auth: Token
-          }
-        });
-        setEstados(res.data);
-      } catch (e) {
-        console.error(e.response.data.message);
-      }
-    }
-    reqEstados();
-  }, [Token]);
-
-  useEffect(() => {
     showSnack('Info', 'Cargando...');
     document.title = 'Información de Solicitud';
-    const reqSolicitud = async () => {
+
+    const reqInfo = async () => {
       try {
-        const res = await axios.get(`http://${config.address}:${config.port}/api/solicitudes/${_id}`, {
+        const resSolicitud = await axios.get(`http://${config.address}:${config.port}/api/solicitudes/${_id}`, {
           headers: {
-            auth: Token
+            authorization: Token
           }
         });
-        setSolicitud(res.data);
+        const resEstados = await axios.get(`http://${config.address}:${config.port}/api/estados`, {
+          headers: {
+            authorization: Token
+          }
+        });
+
+        setEstados(resEstados.data);
+        setSolicitud(resSolicitud.data);
         showSnack('Info', 'Información cargada.');
-      } catch (e) {
-        console.error(e.response.data.message);
+      } catch {
+        showSnack('Error', 'Error obteniendo la información.');
       }
     }
-    reqSolicitud();
+
+    reqInfo();
   }, [Token, _id]);
 
   /**
@@ -116,6 +113,7 @@ function InfoSolicitud({ _id }) {
   const handleSnackClose = (e, reason) => {
     if (reason === 'clickaway') return;
     setSnackOpen(false);
+    setSnackTxt('');
   }
 
   /**
@@ -167,12 +165,13 @@ function InfoSolicitud({ _id }) {
    * Método para guardar la actualización de estado de la solicitud.
    */
   const handleSubmit = async () => {
+    setSnackOpen(false);
     toggleBtn(true, 'Actualizando...');
     try {
       await axios.put(`http://${config.address}:${config.port}/api/solicitudes/${_id}`,
         Solicitud, {
         headers: {
-          auth: Token
+          authorization: Token
         }
       });
 
@@ -323,7 +322,7 @@ function InfoSolicitud({ _id }) {
                 value={IDHorario.Hora}
               />
             </Grid>
-            <Grid item xs={6} md={4}>
+            <Grid item xs={12} md={4}>
               <FormControl component='fieldset'>
                 <FormLabel component='legend'>Charla académica</FormLabel>
                 <RadioGroup row value={Charla}>
@@ -340,14 +339,14 @@ function InfoSolicitud({ _id }) {
                 </RadioGroup>
               </FormControl>
             </Grid>
-            <Grid item xs={6} md={4}>
+            <Grid item xs={12} md={4}>
               <TextField
                 fullWidth
                 label='Tema'
                 InputProps={{
                   readOnly: true
                 }}
-                value={Charla ? TemaCharla : 'N/A'}
+                value={TemaCharla}
               />
             </Grid>
             <Grid item xs={12} md={4}>
