@@ -8,8 +8,8 @@ const {
   profile
 } = require('../controllers/auth.controller');
 
-router.post('/api/auth/registrar', signUp);
-router.post('/api/auth/ingresar', signIn);
+router.post('/api/auth/signUp', signUp);
+router.post('/api/auth/signIn', signIn);
 
 router.get('/api/auth/perfil', verifyToken, profile);
 

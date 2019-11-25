@@ -20,8 +20,9 @@ moment.locale('es-us');
 
 const useStyles = makeStyles(theme => ({
   paper: {
-    padding: theme.spacing(2, 1, 3),
-    margin: theme.spacing(1)
+    padding: theme.spacing(2, 1),
+    margin: theme.spacing(1),
+    height: '100%'
   },
   messageSnack: {
     display: 'flex',
@@ -50,6 +51,9 @@ const useStyles = makeStyles(theme => ({
   title: {
     marginLeft: theme.spacing(2),
     flex: 1
+  },
+  noSpace: {
+    height: '100%'
   }
 }));
 
@@ -82,11 +86,12 @@ function Calendario() {
   });
 
   useEffect(() => {
+    setSnackOpen(false);
     const getSolicitudes = async () => {
       try {
         const res = await axios.get(`http://${config.address}:${config.port}/api/solicitudes`, {
           headers: {
-            auth: Token
+            authorization: Token
           }
         });
 
@@ -100,9 +105,8 @@ function Calendario() {
           }
         }));
         showSnack('Info', 'Calendario actualizado.');
-      } catch (e) {
+      } catch {
         showSnack('Error', 'Error obteniendo las solicitudes.');
-        console.log(e);
       }
     }
 
@@ -117,6 +121,7 @@ function Calendario() {
   const handleSnackClose = (e, reason) => {
     if (reason === 'clickaway') return;
     setSnackOpen(false);
+    setSnackTxt('');
   }
 
   /**
@@ -150,7 +155,7 @@ function Calendario() {
   const dateClicked = (info) => {
     const date = moment(info.date);
     if (date.isSameOrBefore(moment())) {
-      showSnack('Info', 'La fecha de la nueva solicitud no es válida.');
+      showSnack('Info', 'Fecha de nueva solicitud inválida.');
     } else {
       setDateClicked(date);
       nuevoEvento(`Ingresar Solicitud - ${date.format('D [de] MMMM')}`);
@@ -181,8 +186,8 @@ function Calendario() {
   return (
     <React.Fragment>
       <Paper className={classes.paper}>
-        <Container>
-          <Grid container>
+        <Container className={classes.noSpace}>
+          <Grid container className={classes.noSpace}>
             <Grid item xs={12} className='calendario'>
               <FullCalendar
                 header={{
@@ -201,6 +206,7 @@ function Calendario() {
                     click: () => nuevoEvento('Ingresar Solicitud')
                   }
                 }}
+                height='parent'
 
                 plugins={[DayGridPlugin, InteractionPlugin]}
                 defaultView='dayGridMonth'

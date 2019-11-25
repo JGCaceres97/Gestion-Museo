@@ -72,7 +72,8 @@ const solicitudSchema = new Schema({
     type: String,
     trim: true,
     required: false,
-    maxlength: 20
+    maxlength: 20,
+    default: 'N/A'
   },
   IDEstado: {
     type: Schema.Types.ObjectId,

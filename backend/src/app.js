@@ -4,9 +4,7 @@ const morgan = require('morgan');
 const app = express();
 
 // Middlewares
-app.use(cors({
-  exposedHeaders: 'auth'
-}));
+app.use(cors());
 app.use(morgan('dev'));
 app.use(express.json());
 app.use('/public', express.static('public'));

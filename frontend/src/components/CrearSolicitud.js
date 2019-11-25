@@ -136,8 +136,8 @@ function CrearSolicitud(props) {
       try {
         const res = await axios.get(`http://${config.address}:${config.port}/api/horarios`);
         setHorarios(res.data);
-      } catch (e) {
-        console.error(e.response.data.message);
+      } catch {
+        showSnack('Error', 'Error obteniendo los horarios.');
       }
     }
 
@@ -413,6 +413,7 @@ function CrearSolicitud(props) {
   const handleSnackClose = (e, reason) => {
     if (reason === 'clickaway') return;
     setSnackOpen(false);
+    setSnackTxt('');
   }
 
   /**
@@ -499,7 +500,7 @@ function CrearSolicitud(props) {
         Solicitud.append('FechaVisita', FechaVisita);
         Solicitud.append('IDHorario', IDHorario);
         Solicitud.append('Charla', JSON.stringify(Charla));
-        Solicitud.append('Tema', Charla ? Tema === 'Otro' ? TemaEsp : Tema : '');
+        Solicitud.append('TemaCharla', Charla ? Tema === 'Otro' ? TemaEsp : Tema : '');
         Solicitud.append('IDEstado', estado.data._id);
         Solicitud.append('Adjuntos', FileListado);
         Solicitud.append('Adjuntos', FileNota);
@@ -537,7 +538,7 @@ function CrearSolicitud(props) {
             <Grid item xs={12}>
               <Typography align='left' variant='h6' className='mt-4'>
                 Información de Contacto
-            </Typography>
+              </Typography>
             </Grid>
             <Grid item xs={12} md={6}>
               <TextField
@@ -573,11 +574,12 @@ function CrearSolicitud(props) {
               <TextField
                 required
                 fullWidth
+                type='tel'
                 label='Teléfono'
                 error={ErrorTel}
                 value={Telefono}
-                placeholder='9999-9999'
                 helperText={TxtTel}
+                placeholder='9999-9999'
                 inputProps={{ maxLength: 9 }}
                 onBlur={e => handleBlur(e.target.value, 'Tel')}
                 onChange={e => setTelefono(e.target.value)}
@@ -650,6 +652,7 @@ function CrearSolicitud(props) {
               <TextField
                 required
                 fullWidth
+                type='email'
                 value={Email}
                 error={ErrorEmail}
                 label='Correo electrónico'
@@ -786,7 +789,7 @@ function CrearSolicitud(props) {
                 <FormHelperText>{TxtHorario}</FormHelperText>
               </FormControl>
             </Grid>
-            <Grid item xs={6} md={4}>
+            <Grid item xs={12} md={4}>
               <FormControl component='fieldset' required>
                 <FormLabel component='legend'>Charla académica</FormLabel>
                 <RadioGroup row value={Charla} onChange={e => handleCharla(e.target.value)}>
@@ -803,7 +806,7 @@ function CrearSolicitud(props) {
                 </RadioGroup>
               </FormControl>
             </Grid>
-            <Grid item xs={6} md={4}>
+            <Grid item xs={12} md={4}>
               <FormControl
                 fullWidth
                 error={ErrorTema}
