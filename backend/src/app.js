@@ -12,11 +12,14 @@ app.use('/public', express.static('public'));
 // Routes
 app.use(require('./routes/auth'));
 app.use(require('./routes/bitacora'));
+app.use(require('./routes/departamentos'));
 app.use(require('./routes/estados'));
 app.use(require('./routes/etiquetas'));
 app.use(require('./routes/horarios'));
 app.use(require('./routes/libros'));
+app.use(require('./routes/municipios'));
 app.use(require('./routes/roles'));
 app.use(require('./routes/solicitudes'));
+app.use(require('./routes/usuarios'));
 
 module.exports = app;
