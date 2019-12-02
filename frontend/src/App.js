@@ -8,6 +8,7 @@ import CrearSolicitud from './components/CrearSolicitud';
 import Dashboard from './components/Dashboard';
 import Login from './components/Login';
 import PageNotFound from './components/PageNotFound';
+import ResetPassword from './components/ResetPassword';
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
         <Route exact path='/' component={Dashboard} />
         <Route exact path={routes.login} component={Login} />
         <Route exact path={routes.solicitud} component={CrearSolicitud} />
+        <Route exact path={routes.resetPassword} component={ResetPassword} />
         <Route component={PageNotFound} />
       </Switch>
     </Router>
