@@ -8,7 +8,7 @@ const useStyle = makeStyles(() => ({
     height: '103.8%',
     maxWidth: '100%',
     filter: 'grayscale(20%)',
-    backgroundPosition: 'center',
+    backgroundPosition: 'bottom',
     backgroundImage: 'url(/img/books.jpg)'
   },
   grid: {

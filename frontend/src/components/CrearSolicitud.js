@@ -413,7 +413,6 @@ function CrearSolicitud(props) {
   const handleSnackClose = (e, reason) => {
     if (reason === 'clickaway') return;
     setSnackOpen(false);
-    setSnackTxt('');
   }
 
   /**

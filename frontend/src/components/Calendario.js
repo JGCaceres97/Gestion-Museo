@@ -21,8 +21,8 @@ moment.locale('es-us');
 const useStyles = makeStyles(theme => ({
   paper: {
     padding: theme.spacing(2, 1),
-    margin: theme.spacing(1),
-    height: '100%'
+    height: '100.8%',
+    margin: theme.spacing(1)
   },
   messageSnack: {
     display: 'flex',
@@ -121,7 +121,6 @@ function Calendario() {
   const handleSnackClose = (e, reason) => {
     if (reason === 'clickaway') return;
     setSnackOpen(false);
-    setSnackTxt('');
   }
 
   /**

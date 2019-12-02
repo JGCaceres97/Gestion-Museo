@@ -7,7 +7,10 @@ const storage = multer.diskStorage({
     cb(null, './public/files');
   },
   filename: (req, file, cb) => {
-    const fileName = file.originalname.toLowerCase().split(' ').join('-');
+    const fileName = file.originalname
+      .toLowerCase()
+      .split(' ')
+      .join('-');
     cb(null, uuidv4() + '-' + fileName);
   }
 });
@@ -27,6 +30,6 @@ const fileHandler = multer({
         break;
     }
   }
-})
+});
 
 module.exports = fileHandler;
