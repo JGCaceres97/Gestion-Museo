@@ -1,7 +1,39 @@
 // @ts-check
-import { faCheckCircle, faEnvelope, faExclamationCircle, faIdCard, faPhoneAlt, faTimesCircle } from '@fortawesome/free-solid-svg-icons';
+import {
+  faCheckCircle,
+  faEnvelope,
+  faExclamationCircle,
+  faFilePdf,
+  faFileWord,
+  faIdCard,
+  faPhoneAlt,
+  faTimesCircle
+} from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon as FAI } from '@fortawesome/react-fontawesome';
-import { Box, Button, Container, Divider, FormControl, FormControlLabel, FormHelperText, FormLabel, Grid, IconButton, InputAdornment, InputLabel, makeStyles, MenuItem, Paper, Radio, RadioGroup, Select, Snackbar, SnackbarContent, TextField, Typography } from '@material-ui/core';
+import {
+  Box,
+  Button,
+  Container,
+  Divider,
+  FormControl,
+  FormControlLabel,
+  FormHelperText,
+  FormLabel,
+  Grid,
+  IconButton,
+  InputAdornment,
+  InputLabel,
+  makeStyles,
+  MenuItem,
+  Paper,
+  Radio,
+  RadioGroup,
+  Select,
+  Snackbar,
+  SnackbarContent,
+  TextField,
+  Typography
+} from '@material-ui/core';
 import { Close } from '@material-ui/icons';
 import axios from 'axios';
 import moment from 'moment';
@@ -60,10 +92,12 @@ function InfoSolicitud({ _id }) {
     Nombres: '',
     Telefono: '',
     TemaCharla: '',
-    Adjuntos: {
-      Listado: '',
-      Nota: ''
-    }
+    Adjuntos: [
+      {
+        Nombre: '',
+        Path: ''
+      }
+    ]
   });
 
   const [Estados, setEstados] = useState([]);
@@ -74,8 +108,26 @@ function InfoSolicitud({ _id }) {
   const [isSnackError, setIsSnackError] = useState(false);
   const [isSnackInfo, setIsSnackInfo] = useState(false);
   const [Token] = useLocalStorage('Token', '');
-  const { Apellidos, CantPersonas, Charla, Direccion, Email, FechaVisita, IDEstado,
-    IDHorario, Identidad, Institucion, Nombres, Telefono, TemaCharla } = Solicitud;
+  const {
+    Adjuntos,
+    Apellidos,
+    CantPersonas,
+    Charla,
+    Direccion,
+    Email,
+    FechaVisita,
+    IDEstado,
+    IDHorario,
+    Identidad,
+    Institucion,
+    Nombres,
+    Telefono,
+    TemaCharla
+  } = Solicitud;
+
+  if (Adjuntos.some(item => item.Nombre === '')) {
+    Adjuntos.shift();
+  }
 
   useEffect(() => {
     showSnack('Info', 'Cargando...');
@@ -83,11 +135,14 @@ function InfoSolicitud({ _id }) {
 
     const reqInfo = async () => {
       try {
-        const resSolicitud = await axios.get(`http://${config.address}:${config.port}/api/solicitudes/${_id}`, {
-          headers: {
-            authorization: Token
+        const resSolicitud = await axios.get(
+          `http://${config.address}:${config.port}/api/solicitudes/${_id}`,
+          {
+            headers: {
+              authorization: Token
+            }
           }
-        });
+        );
         const resEstados = await axios.get(`http://${config.address}:${config.port}/api/estados`, {
           headers: {
             authorization: Token
@@ -100,7 +155,7 @@ function InfoSolicitud({ _id }) {
       } catch {
         showSnack('Error', 'Error obteniendo la información.');
       }
-    }
+    };
 
     reqInfo();
   }, [Token, _id]);
@@ -113,8 +168,7 @@ function InfoSolicitud({ _id }) {
   const handleSnackClose = (e, reason) => {
     if (reason === 'clickaway') return;
     setSnackOpen(false);
-    setSnackTxt('');
-  }
+  };
 
   /**
    * Método para mostrar los snack con un mensaje personalizado.
@@ -138,7 +192,7 @@ function InfoSolicitud({ _id }) {
     }
     setSnackTxt(txt);
     setSnackOpen(true);
-  }
+  };
 
   /**
    * Método para cambiar la apariencia del botón de guardar.
@@ -148,18 +202,18 @@ function InfoSolicitud({ _id }) {
   const toggleBtn = (disable, txt) => {
     setBtnDisabled(disable);
     setBtnTxt(txt);
-  }
+  };
 
   /**
    * Método para actualizar el estado de una solicitud.
    * @param {string} _id ID del nuevo estado seleccionado.
    */
-  const handleEstado = (_id) => {
+  const handleEstado = _id => {
     setSolicitud({
       ...Solicitud,
       IDEstado: { _id }
     });
-  }
+  };
 
   /**
    * Método para guardar la actualización de estado de la solicitud.
@@ -168,8 +222,7 @@ function InfoSolicitud({ _id }) {
     setSnackOpen(false);
     toggleBtn(true, 'Actualizando...');
     try {
-      await axios.put(`http://${config.address}:${config.port}/api/solicitudes/${_id}`,
-        Solicitud, {
+      await axios.put(`http://${config.address}:${config.port}/api/solicitudes/${_id}`, Solicitud, {
         headers: {
           authorization: Token
         }
@@ -182,7 +235,7 @@ function InfoSolicitud({ _id }) {
     } finally {
       toggleBtn(false, 'Actualizar');
     }
-  }
+  };
 
   return (
     <React.Fragment>
@@ -326,16 +379,8 @@ function InfoSolicitud({ _id }) {
               <FormControl component='fieldset'>
                 <FormLabel component='legend'>Charla académica</FormLabel>
                 <RadioGroup row value={Charla}>
-                  <FormControlLabel
-                    label='Sí'
-                    value={true}
-                    control={<Radio color='primary' />}
-                  />
-                  <FormControlLabel
-                    label='No'
-                    value={false}
-                    control={<Radio color='primary' />}
-                  />
+                  <FormControlLabel label='Sí' value={true} control={<Radio color='primary' />} />
+                  <FormControlLabel label='No' value={false} control={<Radio color='primary' />} />
                 </RadioGroup>
               </FormControl>
             </Grid>
@@ -351,20 +396,60 @@ function InfoSolicitud({ _id }) {
             </Grid>
             <Grid item xs={12} md={4}>
               <FormControl fullWidth>
-                <InputLabel id='Estado'>
-                  Estado
-                </InputLabel>
+                <InputLabel id='Estado'>Estado</InputLabel>
                 <Select
                   value={IDEstado._id}
                   labelId='Estado'
                   onChange={e => handleEstado(e.target.value.toString())}
                 >
                   {Estados.map((item, i) => (
-                    <MenuItem key={i} value={item._id}>{item.Nombre}</MenuItem>
+                    <MenuItem key={i} value={item._id}>
+                      {item.Nombre}
+                    </MenuItem>
                   ))}
                 </Select>
                 <FormHelperText>El solicitante será notificado en caso de cambio.</FormHelperText>
               </FormControl>
+            </Grid>
+            <Grid item xs={12}>
+              <Typography align='left' variant='h6' className='mt-4'>
+                Documentos adjuntos
+              </Typography>
+            </Grid>
+            <Grid item xs={12}>
+              <Grid container>
+                {Adjuntos.length > 0 ? (
+                  Adjuntos.map((item, i) => (
+                    <Grid key={i} item md={4} xs={6}>
+                      <Button
+                        href={item.Path}
+                        startIcon={
+                          <FAI
+                            icon={
+                              item.Nombre.split('.')
+                                .pop()
+                                .toUpperCase() === 'PDF'
+                                ? faFilePdf
+                                : faFileWord
+                            }
+                          />
+                        }
+                      >
+                        {item.Nombre.split('.').shift().length > 30
+                          ? item.Nombre.split('.')
+                              .shift()
+                              .substring(0, 30)
+                              .concat('...')
+                          : item.Nombre.split('.').shift()}
+                      </Button>
+                    </Grid>
+                  ))
+                ) : (
+                  <Typography variant='body1'>
+                    No hay documentos adjuntos a la solicitud.
+                  </Typography>
+                )}
+              </Grid>
             </Grid>
             <Grid item xs={12} style={{ textAlign: 'center' }}>
               <Box py={2}>
@@ -392,11 +477,22 @@ function InfoSolicitud({ _id }) {
         onClose={handleSnackClose}
       >
         <SnackbarContent
-          className={isSnackError ? classes.errorSnack : isSnackInfo ? classes.infoSnack : classes.successSnack}
+          className={
+            isSnackError
+              ? classes.errorSnack
+              : isSnackInfo
+              ? classes.infoSnack
+              : classes.successSnack
+          }
           aria-describedby='snackbar'
           message={
             <span className={classes.messageSnack} id='snackbar'>
-              <FAI icon={isSnackError ? faTimesCircle : isSnackInfo ? faExclamationCircle : faCheckCircle} className={classes.iconSnack} />
+              <FAI
+                icon={
+                  isSnackError ? faTimesCircle : isSnackInfo ? faExclamationCircle : faCheckCircle
+                }
+                className={classes.iconSnack}
+              />
               {SnackTxt}
             </span>
           }
