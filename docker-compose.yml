@@ -10,7 +10,7 @@ services:
       - ./backend:/usr/src/app
     depends_on:
       - mongo
-  
+
   frontend:
     container_name: frontend
     restart: always
@@ -29,7 +29,9 @@ services:
     restart: always
     expose:
       - '27017'
-  
+    volumes:
+      - ./db:/data/db
+
   adminMongo:
     container_name: adminMongo
     image: mrvautin/adminmongo
@@ -39,5 +41,6 @@ services:
       - HOST=0.0.0.0
       - DB_HOST=mongo
       - CONN_NAME=adminMongo
+      - DB_NAME=CentrosCulturales
     depends_on:
       - mongo
