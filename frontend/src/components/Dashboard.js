@@ -1,12 +1,43 @@
 // @ts-check
-import { faCalendarAlt, faChartLine, faClock, faFlag, faGlobe, faGlobeAmericas, faHome, faTags, faUserCircle, faUsers, faUserTag } from '@fortawesome/free-solid-svg-icons';
+import {
+  faCalendarAlt,
+  faChartLine,
+  faClock,
+  faFlag,
+  faGlobe,
+  faGlobeAmericas,
+  faHome,
+  faTags,
+  faUserCircle,
+  faUsers,
+  faUserTag
+} from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon as FAI } from '@fortawesome/react-fontawesome';
-import { AppBar, CssBaseline, Divider, Drawer, IconButton, List, ListItem, ListItemIcon, ListItemText, ListSubheader, makeStyles, Menu, MenuItem, Toolbar, Typography } from '@material-ui/core';
+import {
+  AppBar,
+  CssBaseline,
+  Divider,
+  Drawer,
+  IconButton,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  ListSubheader,
+  makeStyles,
+  Menu,
+  MenuItem,
+  Toolbar,
+  Typography
+} from '@material-ui/core';
 import { Menu as MenuIcon } from '@material-ui/icons';
 import clsx from 'clsx';
 import React, { useEffect, useState } from 'react';
 import Calendario from './Calendario';
+import Estados from './Estados';
+import Etiquetas from './Etiquetas';
 import Inicio from './Inicio';
+import Horarios from './Horarios';
 
 const drawerWidth = 240;
 
@@ -39,14 +70,16 @@ const useStyles = makeStyles(theme => ({
       duration: theme.transitions.duration.leavingScreen
     }),
     overflowX: 'hidden',
-    width: theme.spacing(6.75),
+    width: theme.spacing(
+      8
+    ) /* ,
     '&:hover': {
       width: drawerWidth,
       transition: theme.transitions.create('width', {
         easing: theme.transitions.easing.sharp,
         duration: theme.transitions.duration.enteringScreen
       })
-    }
+    } */
   },
   list: {
     width: '100%',
@@ -108,7 +141,7 @@ function Dashboard() {
   const menuOpen = Boolean(anchorEl);
 
   useEffect(() => {
-    document.title = 'Sistema de Gestión'
+    document.title = 'Sistema de Gestión';
   });
 
   /**
@@ -117,7 +150,7 @@ function Dashboard() {
    */
   const handleListClick = index => {
     setSelectedIndex(index);
-  }
+  };
 
   /**
    * Método para mostrar el contenido de la opción seleccionada en el menú.
@@ -125,43 +158,40 @@ function Dashboard() {
   const showSelected = () => {
     switch (selectedIndex) {
       case 'Calendario':
-        return <Calendario />
+        return <Calendario />;
       case 'Estados':
-        return 'Estados'
+        return <Estados />;
       case 'Etiquetas':
-        return 'Etiquetas'
+        return <Etiquetas />;
       case 'Deptos':
-        return 'Deptos'
+        return 'Deptos';
       case 'Horarios':
-        return 'Horarios'
+        return <Horarios />;
       case 'Municipios':
-        return 'Municipios'
+        return 'Municipios';
       case 'Roles':
-        return 'Roles'
+        return 'Roles';
       case 'Usuarios':
-        return 'Usuarios'
+        return 'Usuarios';
       case 'Visitas':
-        return 'Visitas'
+        return 'Visitas';
       default:
-        return <Inicio />
+        return <Inicio />;
     }
-  }
+  };
 
   /**
    * Método para cerrar la sesión del usuario.
    */
   const logout = () => {
     localStorage.clear();
-  }
+  };
 
   return (
     <React.Fragment>
       <div className={classes.root}>
         <CssBaseline />
-        <AppBar
-          position='fixed'
-          className={classes.appBar}
-        >
+        <AppBar position='fixed' className={classes.appBar}>
           <Toolbar className={classes.appToolbar}>
             <IconButton
               color='inherit'
@@ -172,11 +202,7 @@ function Dashboard() {
             >
               <MenuIcon />
             </IconButton>
-            <Typography
-              noWrap
-              variant='h6'
-              className={classes.title}
-            >
+            <Typography noWrap variant='h6' className={classes.title}>
               Sistema de Gestión
             </Typography>
             <div>
@@ -215,13 +241,13 @@ function Dashboard() {
           variant='permanent'
           className={clsx(classes.drawer, {
             [classes.drawerOpen]: drawerOpen,
-            [classes.drawerClose]: !drawerOpen,
+            [classes.drawerClose]: !drawerOpen
           })}
           classes={{
             paper: clsx({
               [classes.drawerOpen]: drawerOpen,
-              [classes.drawerClose]: !drawerOpen,
-            }),
+              [classes.drawerClose]: !drawerOpen
+            })
           }}
           open={drawerOpen}
         >
@@ -250,9 +276,11 @@ function Dashboard() {
             <Divider />
             <li className={classes.li}>
               <ul className={classes.ul}>
-                <ListSubheader className={clsx({
-                  [classes.hide]: !drawerOpen
-                })}>
+                <ListSubheader
+                  className={clsx({
+                    [classes.hide]: !drawerOpen
+                  })}
+                >
                   Mantenimiento
                 </ListSubheader>
                 <ListItem
@@ -330,9 +358,11 @@ function Dashboard() {
             <Divider />
             <li className={classes.li}>
               <ul className={classes.ul}>
-                <ListSubheader className={clsx({
-                  [classes.hide]: !drawerOpen
-                })}>
+                <ListSubheader
+                  className={clsx({
+                    [classes.hide]: !drawerOpen
+                  })}
+                >
                   Reportería
                 </ListSubheader>
                 <ListItem
@@ -351,12 +381,10 @@ function Dashboard() {
         </Drawer>
         <main className={classes.content}>
           <div className={classes.toolbar} />
-          <div className={classes.contentSpace}>
-            {showSelected()}
-          </div>
+          <div className={classes.contentSpace}>{showSelected()}</div>
         </main>
       </div>
-    </React.Fragment >
+    </React.Fragment>
   );
 }
 
