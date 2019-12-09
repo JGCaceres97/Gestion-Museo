@@ -1,8 +1,8 @@
 module.exports = {
   address: '35.185.124.104',
-  frontendPort: 3000,
   port: 4000,
   routes: {
+    home: '/',
     login: '/login',
     solicitud: '/crearSolicitud',
     resetPassword: '/reset/:token'
@@ -21,7 +21,7 @@ module.exports = {
       }
     },
     grouping: {
-      placeholder: 'Arrastrar encabezado...'
+      placeholder: 'Arrastre encabezados para agruparlos...'
     },
     header: {
       actions: 'Acciones'
