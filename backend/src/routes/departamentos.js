@@ -12,7 +12,7 @@ const {
 
 router
   .route('/api/deptos')
-  .get(verifyToken, getDeptos)
+  .get(getDeptos)
   .post(verifyToken, createDepto);
 
 router

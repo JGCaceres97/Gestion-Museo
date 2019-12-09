@@ -70,7 +70,7 @@ function ResetPassword(props) {
   const classes = useStyles();
 
   useEffect(() => {
-    document.title = 'Restablecimiento de Contraseña';
+    document.title = 'Actualizar Contraseña';
   }, []);
 
   const [Email, setEmail] = useState('');
@@ -79,7 +79,7 @@ function ResetPassword(props) {
 
   const [SnackOpen, setSnackOpen] = useState(false);
   const [SnackTxt, setSnackTxt] = useState('');
-  const [BtnTxt, setBtnTxt] = useState('Restablecer');
+  const [BtnTxt, setBtnTxt] = useState('Actualizar');
   const [BtnDisabled, setBtnDisabled] = useState(false);
   const [ErrorPassword, setErrorPassword] = useState(false);
   const [ErrorConfirmPassword, setErrorConfirmPassword] = useState(false);
@@ -90,6 +90,8 @@ function ResetPassword(props) {
   const [IsSnackError, setIsSnackError] = useState(false);
   const [IsLoading, setIsLoading] = useState(true);
   const [Redirected, setRedirected] = useState(false);
+  const [Success, setSuccess] = useState(false);
+  const [SuccessTimeout, setSuccessTimeout] = useState(0);
 
   useEffect(() => {
     const reset = async () => {
@@ -113,6 +115,17 @@ function ResetPassword(props) {
 
     reset();
   }, [props.match.params]);
+
+  useEffect(() => {
+    if (Success && SuccessTimeout < 100) {
+      const interval = setInterval(() => {
+        setSuccessTimeout(SuccessTimeout => SuccessTimeout + 20);
+      }, 1000);
+      return () => clearInterval(interval);
+    } else if (SuccessTimeout === 100) {
+      setRedirected(true);
+    }
+  }, [Success, SuccessTimeout]);
 
   /**
    * Método que maneja las acciones cuando se pierde el foco en un componente.
@@ -201,25 +214,26 @@ function ResetPassword(props) {
   const updatePassword = async () => {
     if (!ErrorPassword && !ErrorConfirmPassword) {
       try {
-        toggleBtn(true, 'Restableciendo...');
+        toggleBtn(true, 'Actualizando...');
         const res = await axios.put(`http://${address}:${port}/api/updatePassword`, {
           Email,
           Password
         });
 
         if (res.data === 'Contraseña actualizada.') {
-          showSnack('Success', 'Contraseña restablecida.');
+          showSnack('Success', 'Contraseña actualizada.');
+          setSuccess(true);
         } else {
           showSnack('Error', 'No se pudo actualizar la contraseña. Intente de nuevo.');
         }
       } catch (e) {
         console.error(e.data);
-        showSnack('Error', 'Error al restablecer la contraseña. Intente de nuevo.');
+        showSnack('Error', 'Error al actualizar la contraseña. Intente de nuevo.');
       }
     } else {
       showSnack('Error', 'Hay campos requeridos no completados correctamente.');
     }
-    toggleBtn(false, 'Restablecer');
+    toggleBtn(false, 'Actualizar');
   };
 
   if (Redirected) return <Redirect push to='/login' />;
@@ -237,6 +251,7 @@ function ResetPassword(props) {
         >
           <Grid item xs={12} sm={10} md={4} xl={3} className={classes.grid}>
             <Paper>
+              {Success ? <LinearProgress value={SuccessTimeout} variant='determinate' /> : ''}
               <Box p={2}>
                 <Box className={classes.alignCenter}>
                   <img width='60%' src='/img/logo.png' alt='Logo de Centros Culturales, BCH' />
@@ -247,7 +262,7 @@ function ResetPassword(props) {
                       ? 'Cargando...'
                       : ErrorToken
                       ? 'Token Inválido'
-                      : 'Restablecimiento de Contraseña'}
+                      : 'Actualización de Contraseña'}
                   </Typography>
                   <Divider />
                 </Box>
@@ -258,8 +273,8 @@ function ResetPassword(props) {
                 ) : ErrorToken ? (
                   <Box p={2} className={classes.alignCenter}>
                     <Typography variant='body1'>
-                      Solicite el restablecimiento de la contraseña de nuevo en la pantalla de
-                      inicio de sesión.
+                      Solicite la actualización de la contraseña de nuevo en la pantalla de inicio
+                      de sesión del sistema.
                     </Typography>
                     <Button
                       fullWidth
@@ -275,7 +290,9 @@ function ResetPassword(props) {
                       <TextField
                         required
                         fullWidth
+                        autoFocus
                         value={Password}
+                        spellCheck={false}
                         error={ErrorPassword}
                         label='Nueva contraseña'
                         helperText={TxtPassword}
@@ -294,6 +311,7 @@ function ResetPassword(props) {
                             <InputAdornment position='end'>
                               <IconButton
                                 size='small'
+                                tabIndex={-1}
                                 onClick={() => setShowPassword(!ShowPassword)}
                               >
                                 {!ShowPassword ? <Visibility /> : <VisibilityOff />}
@@ -307,6 +325,7 @@ function ResetPassword(props) {
                       <TextField
                         required
                         fullWidth
+                        spellCheck={false}
                         value={ConfirmPassword}
                         error={ErrorConfirmPassword}
                         label='Confirme la contraseña'
@@ -326,6 +345,7 @@ function ResetPassword(props) {
                             <InputAdornment position='end'>
                               <IconButton
                                 size='small'
+                                tabIndex={-1}
                                 onClick={() => setShowPassword(!ShowPassword)}
                               >
                                 {!ShowPassword ? <Visibility /> : <VisibilityOff />}

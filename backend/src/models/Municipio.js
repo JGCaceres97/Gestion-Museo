@@ -2,6 +2,11 @@ const { Schema, model } = require('mongoose');
 
 const municipioSchema = new Schema(
   {
+    IDDepartamento: {
+      type: Schema.Types.ObjectId,
+      ref: 'Departamento',
+      required: true
+    },
     Nombre: {
       type: String,
       required: true,

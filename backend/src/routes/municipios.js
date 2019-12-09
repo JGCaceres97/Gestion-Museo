@@ -12,7 +12,7 @@ const {
 
 router
   .route('/api/municipios')
-  .get(verifyToken, getMunicipios)
+  .get(getMunicipios)
   .post(verifyToken, createMunicipio);
 
 router

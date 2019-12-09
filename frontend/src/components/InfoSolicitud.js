@@ -36,6 +36,7 @@ import {
 } from '@material-ui/core';
 import { Close } from '@material-ui/icons';
 import axios from 'axios';
+import clsx from 'clsx';
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
 import config from '../config';
@@ -66,6 +67,12 @@ const useStyles = makeStyles(theme => ({
   },
   infoSnack: {
     backgroundColor: theme.palette.primary.main
+  },
+  pdfFile: {
+    color: 'crimson'
+  },
+  wordFile: {
+    color: theme.palette.primary.main
   }
 }));
 
@@ -432,6 +439,16 @@ function InfoSolicitud({ _id }) {
                                 ? faFilePdf
                                 : faFileWord
                             }
+                            className={clsx({
+                              [classes.pdfFile]:
+                                item.Nombre.split('.')
+                                  .pop()
+                                  .toUpperCase() === 'PDF',
+                              [classes.wordFile]:
+                                item.Nombre.split('.')
+                                  .pop()
+                                  .toUpperCase() !== 'PDF'
+                            })}
                           />
                         }
                       >

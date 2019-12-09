@@ -16,7 +16,7 @@ router
   .post(verifyToken, createRol);
 
 router
-  .route('/api/roles')
+  .route('/api/roles/:id')
   .get(verifyToken, getRol)
   .put(verifyToken, updateRol)
   .delete(verifyToken, deleteRol);

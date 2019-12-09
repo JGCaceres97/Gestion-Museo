@@ -14,7 +14,7 @@ function App() {
   return (
     <Router>
       <Switch>
-        <Route exact path='/' component={Dashboard} />
+        <Route exact path={routes.home} component={Dashboard} />
         <Route exact path={routes.login} component={Login} />
         <Route exact path={routes.solicitud} component={CrearSolicitud} />
         <Route exact path={routes.resetPassword} component={ResetPassword} />

@@ -5,6 +5,7 @@ import { useState } from 'react';
  * Custom hook para guardar datos en el Local Storage.
  * @param {string} key Clave que identifica el valor almacenado.
  * @param {any} initialValue Valor inicial que tendrá el registro en caso de no existir.
+ * @returns {[any, Function]} Regresa el valor contenido y una función para actualizarlo.
  */
 function useLocalStorage(key, initialValue) {
   const [storedValue, setStoredValue] = useState(() => {

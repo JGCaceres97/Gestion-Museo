@@ -110,11 +110,11 @@ function LayoutMantenimiento({
   const classes = useStyles();
 
   const [data, setData] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [IsLoading, setIsLoading] = useState(true);
   const [SnackOpen, setSnackOpen] = useState(false);
   const [SnackTxt, setSnackTxt] = useState('');
-  const [isSnackError, setIsSnackError] = useState(false);
-  const [isSnackInfo, setIsSnackInfo] = useState(false);
+  const [IsSnackError, setIsSnackError] = useState(false);
+  const [IsSnackInfo, setIsSnackInfo] = useState(false);
   const [Token] = useLocalStorage('Token', '');
 
   useEffect(() => {
@@ -254,23 +254,18 @@ function LayoutMantenimiento({
         title={Titulo}
         columns={Columnas}
         icons={tableIcons}
-        isLoading={isLoading}
-        //title='Etiquetas de Libros'
+        isLoading={IsLoading}
         localization={tableLocalization}
         style={{
           maxHeight: '100.8%',
           margin: '8px',
           overflowY: 'auto'
         }}
-        /* columns={[
-          { title: 'ID', field: '_id', editable: 'never' },
-          { title: 'Nombre', field: 'Nombre', emptyValue: 'N/A' },
-          { title: 'Descripción', field: 'Descripcion', emptyValue: 'N/A' }
-        ]} */
         options={{
+          pageSize: 10,
+          maxBodyHeight: 460,
           columnsButton: true,
-          emptyRowsWhenPaging: false,
-          maxBodyHeight: 460
+          emptyRowsWhenPaging: false
         }}
         editable={{
           onRowAdd,
@@ -300,16 +295,16 @@ function LayoutMantenimiento({
       >
         <SnackbarContent
           className={clsx({
-            [classes.errorSnack]: isSnackError,
-            [classes.infoSnack]: isSnackInfo,
-            [classes.successSnack]: !isSnackError && !isSnackInfo
+            [classes.errorSnack]: IsSnackError,
+            [classes.infoSnack]: IsSnackInfo,
+            [classes.successSnack]: !IsSnackError && !IsSnackInfo
           })}
           aria-describedby='snackbar'
           message={
             <span className={classes.messageSnack} id='snackbar'>
               <FAI
                 icon={
-                  isSnackError ? faTimesCircle : isSnackInfo ? faExclamationCircle : faCheckCircle
+                  IsSnackError ? faTimesCircle : IsSnackInfo ? faExclamationCircle : faCheckCircle
                 }
                 className={classes.iconSnack}
               />

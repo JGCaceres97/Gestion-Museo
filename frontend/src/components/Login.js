@@ -111,8 +111,8 @@ function Login() {
   const [SuccessLogin, setSuccessLogin] = useState(false);
   const [DialogOpen, setDialogOpen] = useState(false);
   const [, setToken] = useLocalStorage('Token', '');
-  const [, setUserId] = useLocalStorage('UserId', '');
-  const [, setRolId] = useLocalStorage('RolId', '');
+  const [, setUsuario] = useLocalStorage('Usuario', '');
+  const [, setPermisos] = useLocalStorage('Permisos', '');
 
   /**
    * Método que maneja las acciones cuando se pierde el foco en un componente.
@@ -340,8 +340,8 @@ function Login() {
       });
 
       setToken(`Bearer ${res.data.token}`);
-      setUserId(res.data.userId);
-      setRolId(res.data.rolId);
+      setUsuario(res.data.usuario);
+      setPermisos(res.data.permisos);
       setSuccessLogin(true);
     } catch (e) {
       setIsLoading(false);
@@ -388,6 +388,7 @@ function Login() {
                     fullWidth
                     type='email'
                     value={Email}
+                    spellCheck={false}
                     error={ErrorEmail}
                     helperText={TxtEmail}
                     placeholder='aug_coello@himno.hn'
@@ -411,6 +412,7 @@ function Login() {
                     fullWidth
                     value={Password}
                     label='Contraseña'
+                    spellCheck={false}
                     error={ErrorPassword}
                     helperText={TxtPassword}
                     inputProps={{ maxLength: 50 }}
@@ -426,7 +428,11 @@ function Login() {
                       ),
                       endAdornment: (
                         <InputAdornment position='end'>
-                          <IconButton onClick={() => setShowPassword(!ShowPassword)} size='small'>
+                          <IconButton
+                            size='small'
+                            tabIndex={-1}
+                            onClick={() => setShowPassword(!ShowPassword)}
+                          >
                             {!ShowPassword ? <Visibility /> : <VisibilityOff />}
                           </IconButton>
                         </InputAdornment>
@@ -481,6 +487,7 @@ function Login() {
               fullWidth
               type='email'
               margin='dense'
+              spellCheck={false}
               value={EmailToReset}
               error={ErrorEmailToReset}
               helperText={TxtEmailToReset}
