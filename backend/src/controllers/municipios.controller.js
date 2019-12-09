@@ -1,5 +1,6 @@
 const Municipio = require('../models/Municipio');
 const municipioCtrl = {};
+const { createRegistro } = require('./bitacora.controller');
 
 municipioCtrl.getMunicipios = async (req, res) => {
   try {
@@ -13,11 +14,20 @@ municipioCtrl.getMunicipios = async (req, res) => {
 
 municipioCtrl.createMunicipio = async (req, res) => {
   try {
-    const { Nombre } = req.body;
+    const { IDDepartamento, Nombre } = req.body;
     const nuevoMunicipio = new Municipio({
+      IDDepartamento,
       Nombre
     });
     await nuevoMunicipio.save();
+
+    await createRegistro({
+      IDUsuario: req.usuario.ID,
+      Email: req.usuario.Email,
+      IP: req.ip.split(':').pop(),
+      Accion: `Adición de municipio: ${Nombre}.`
+    });
+
     res.status(201).json({ message: 'Municipio ingresado.' });
   } catch (e) {
     console.error(e);
@@ -27,8 +37,16 @@ municipioCtrl.createMunicipio = async (req, res) => {
 
 municipioCtrl.getMunicipio = async (req, res) => {
   try {
-    const municipio = await Municipio.findById(req.params.id);
-    res.status(200).json(Municipio);
+    const municipio = await Municipio.findById(req.params.id).populate('IDDepartamento');
+
+    await createRegistro({
+      IDUsuario: req.usuario.ID,
+      Email: req.usuario.Email,
+      IP: req.ip.split(':').pop(),
+      Accion: `Lectura de municipio: ${municipio.Nombre}.`
+    });
+
+    res.status(200).json(municipio);
   } catch (e) {
     console.error(e);
     res.status(400).json({ message: 'Ha ocurrido un error al realizar la consulta.' });
@@ -37,8 +55,19 @@ municipioCtrl.getMunicipio = async (req, res) => {
 
 municipioCtrl.updateMunicipio = async (req, res) => {
   try {
-    const { Nombre } = req.body;
-    await Municipio.findOneAndUpdate({ _id: req.params.id }, { Nombre });
+    const { IDDepartamento, Nombre } = req.body;
+    const municipio = await Municipio.findOneAndUpdate(
+      { _id: req.params.id },
+      { IDDepartamento, Nombre }
+    );
+
+    await createRegistro({
+      IDUsuario: req.usuario.ID,
+      Email: req.usuario.Email,
+      IP: req.ip.split(':').pop(),
+      Accion: `Actualización de municipio: ${municipio.Nombre}.`
+    });
+
     res.status(200).json({ message: 'Municipio actualizado.' });
   } catch (e) {
     console.error(e);
@@ -48,7 +77,15 @@ municipioCtrl.updateMunicipio = async (req, res) => {
 
 municipioCtrl.deleteMunicipio = async (req, res) => {
   try {
-    await Municipio.findOneAndDelete({ _id: req.params.id });
+    const municipio = await Municipio.findOneAndDelete({ _id: req.params.id });
+
+    await createRegistro({
+      IDUsuario: req.usuario.ID,
+      Email: req.usuario.Email,
+      IP: req.ip.split(':').pop(),
+      Accion: `Eliminación de municipio: ${municipio.Nombre}.`
+    });
+
     res.status(200).json({ message: 'Municipio eliminado.' });
   } catch (e) {
     console.error(e);

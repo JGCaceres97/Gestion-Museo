@@ -1,9 +1,18 @@
 const Etiqueta = require('../models/Etiqueta');
 const etiquetaCtrl = {};
+const { createRegistro } = require('./bitacora.controller');
 
 etiquetaCtrl.getEtiquetas = async (req, res) => {
   try {
     const etiquetas = await Etiqueta.find();
+
+    await createRegistro({
+      IDUsuario: req.usuario.ID,
+      Email: req.usuario.Email,
+      IP: req.ip.split(':').pop(),
+      Accion: 'Lectura de listado de etiquetas para libros.'
+    });
+
     res.status(200).json(etiquetas);
   } catch (e) {
     console.error(e);
@@ -19,6 +28,14 @@ etiquetaCtrl.createEtiqueta = async (req, res) => {
       Descripcion
     });
     await nuevaEtiqueta.save();
+
+    await createRegistro({
+      IDUsuario: req.usuario.ID,
+      Email: req.usuario.Email,
+      IP: req.ip.split(':').pop(),
+      Accion: `Adición de etiqueta para libros: ${Nombre}.`
+    });
+
     res.status(201).json({ message: 'Etiqueta ingresada.' });
   } catch (e) {
     console.error(e);
@@ -29,6 +46,14 @@ etiquetaCtrl.createEtiqueta = async (req, res) => {
 etiquetaCtrl.getEtiqueta = async (req, res) => {
   try {
     const etiqueta = await Etiqueta.findById(req.params.id);
+
+    await createRegistro({
+      IDUsuario: req.usuario.ID,
+      Email: req.usuario.Email,
+      IP: req.ip.split(':').pop(),
+      Accion: `Lectura de etiqueta para libros: ${etiqueta.Nombre}.`
+    });
+
     res.status(200).json(etiqueta);
   } catch (e) {
     console.error(e);
@@ -39,13 +64,21 @@ etiquetaCtrl.getEtiqueta = async (req, res) => {
 etiquetaCtrl.updateEtiqueta = async (req, res) => {
   try {
     const { Nombre, Descripcion } = req.body;
-    await Etiqueta.findOneAndUpdate(
+    const etiqueta = await Etiqueta.findOneAndUpdate(
       { _id: req.params.id },
       {
         Nombre,
         Descripcion
       }
     );
+
+    await createRegistro({
+      IDUsuario: req.usuario.ID,
+      Email: req.usuario.Email,
+      IP: req.ip.split(':').pop(),
+      Accion: `Actualización de etiqueta para libros: ${etiqueta.Nombre}.`
+    });
+
     res.status(200).json({ message: 'Etiqueta actualizada.' });
   } catch (e) {
     console.error(e);
@@ -55,7 +88,15 @@ etiquetaCtrl.updateEtiqueta = async (req, res) => {
 
 etiquetaCtrl.deleteEtiqueta = async (req, res) => {
   try {
-    await Etiqueta.findOneAndDelete({ _id: req.params.id });
+    const etiqueta = await Etiqueta.findOneAndDelete({ _id: req.params.id });
+
+    await createRegistro({
+      IDUsuario: req.usuario.ID,
+      Email: req.usuario.Email,
+      IP: req.ip.split(':').pop(),
+      Accion: `Eliminación de etiqueta para libros: ${etiqueta.Nombre}.`
+    });
+
     res.status(200).json({ message: 'Etiqueta eliminada.' });
   } catch (e) {
     console.error(e);

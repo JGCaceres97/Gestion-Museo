@@ -1,5 +1,6 @@
 const Departamento = require('../models/Departamento');
 const departamentoCtrl = {};
+const { createRegistro } = require('./bitacora.controller');
 
 departamentoCtrl.getDeptos = async (req, res) => {
   try {
@@ -18,6 +19,14 @@ departamentoCtrl.createDepto = async (req, res) => {
       Nombre
     });
     await nuevoDepartamento.save();
+
+    await createRegistro({
+      IDUsuario: req.usuario.ID,
+      Email: req.usuario.Email,
+      IP: req.ip.split(':').pop(),
+      Accion: `Adición de departamento: ${Nombre}.`
+    });
+
     res.status(201).json({ message: 'Departamento ingresado.' });
   } catch (e) {
     console.error(e);
@@ -28,6 +37,14 @@ departamentoCtrl.createDepto = async (req, res) => {
 departamentoCtrl.getDepto = async (req, res) => {
   try {
     const departamento = await Departamento.findById(req.params.id);
+
+    await createRegistro({
+      IDUsuario: req.usuario.ID,
+      Email: req.usuario.Email,
+      IP: req.ip.split(':').pop(),
+      Accion: `Lectura de departamento: ${departamento.Nombre}.`
+    });
+
     res.status(200).json(departamento);
   } catch (e) {
     console.error(e);
@@ -38,7 +55,15 @@ departamentoCtrl.getDepto = async (req, res) => {
 departamentoCtrl.updateDepto = async (req, res) => {
   try {
     const { Nombre } = req.body;
-    await Departamento.findOneAndUpdate({ _id: req.params.id }, { Nombre });
+    const departamento = await Departamento.findOneAndUpdate({ _id: req.params.id }, { Nombre });
+
+    await createRegistro({
+      IDUsuario: req.usuario.ID,
+      Email: req.usuario.Email,
+      IP: req.ip.split(':').pop(),
+      Accion: `Actualización de departamento: ${departamento.Nombre} a ${Nombre}.`
+    });
+
     res.status(200).json({ message: 'Departamento actualizado.' });
   } catch (e) {
     console.error(e);
@@ -48,7 +73,15 @@ departamentoCtrl.updateDepto = async (req, res) => {
 
 departamentoCtrl.deleteDepto = async (req, res) => {
   try {
-    await Departamento.findOneAndDelete({ _id: req.params.id });
+    const departamento = await Departamento.findOneAndDelete({ _id: req.params.id });
+
+    await createRegistro({
+      IDUsuario: req.usuario.ID,
+      Email: req.usuario.Email,
+      IP: req.ip.split(':').pop(),
+      Accion: `Eliminación de departamento: ${departamento.Nombre}.`
+    });
+
     res.status(200).json({ message: 'Departamento eliminado.' });
   } catch (e) {
     console.error(e);

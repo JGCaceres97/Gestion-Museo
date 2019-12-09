@@ -2,13 +2,22 @@ const Usuario = require('../models/Usuario');
 const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
 const crypto = require('crypto');
-const { emailUser, emailPassword } = require('../../config');
-const { address, secretKey } = require('../../config');
+const { emailAddress, emailPassword } = require('../../config');
+const { address, defaultUserPass, secretKey } = require('../../config');
 const usuarioCtrl = {};
+const { createRegistro } = require('./bitacora.controller');
 
 usuarioCtrl.getUsuarios = async (req, res) => {
   try {
-    const usuarios = await Usuario.find().populate('IDRol');
+    const usuarios = await Usuario.find();
+
+    await createRegistro({
+      IDUsuario: req.usuario.ID,
+      Email: req.usuario.Email,
+      IP: req.ip.split(':').pop(),
+      Accion: 'Lectura de listado de usuarios.'
+    });
+
     res.status(200).json(usuarios);
   } catch (e) {
     console.error(e);
@@ -18,18 +27,52 @@ usuarioCtrl.getUsuarios = async (req, res) => {
 
 usuarioCtrl.signUp = async (req, res) => {
   try {
-    const { IDRol, Nombres, Apellidos, Email, Password } = req.body;
+    const { IDRol, Nombres, Apellidos, Email } = req.body;
+    const token = crypto.randomBytes(20).toString('hex');
 
     const usuario = new Usuario({
       IDRol,
       Nombres,
       Apellidos,
       Email,
-      Password
+      Password: defaultUserPass,
+      ResetToken: token,
+      ResetExpires: Date.now() + 3600000 * 24
     });
 
     usuario.Password = await usuario.encryptPassword(usuario.Password);
     await usuario.save();
+
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: `${emailAddress}`,
+        pass: `${emailPassword}`
+      }
+    });
+
+    const mailOptions = {
+      from: 'No-reply BCH <no-reply@bch.hn>',
+      to: `${usuario.Email}`,
+      subject: 'Creación de cuenta',
+      text:
+        `Buen día ${usuario.Nombres} ${usuario.Apellidos}:\n\n` +
+        'Está recibiendo este corro debido a que se ha creado una nueva cuenta en el Sistema de Gestión de Centros Culturales con su dirección de correo electrónico.\n\n' +
+        'Haga clic en el siguiente enlace, o copie y pegue el mismo en su navegador web para completar el proceso de creación y asignación de una nueva contraseña a la cuenta en un plazo de 24 horas desde que se recibio este correo.\n\n' +
+        `http://${address}/reset/${token}\n\n` +
+        'Si usted no hizo solicitud de cuenta, por favor comuníquelo al personal administrativo de los Centros Culturales para proceder a dar de baja la cuenta.\n'
+    };
+
+    transporter.sendMail(mailOptions, (err, info) => {
+      if (err) return console.error('Ha ocurrido un error: ', err);
+    });
+
+    await createRegistro({
+      IDUsuario: req.usuario.ID,
+      Email: req.usuario.Email,
+      IP: req.ip.split(':').pop(),
+      Accion: `Adición de usuario: ${usuario.Email}.`
+    });
 
     res.status(201).json({ message: 'Usuario ingresado' });
   } catch (e) {
@@ -49,14 +92,45 @@ usuarioCtrl.signIn = async (req, res) => {
 
     await Usuario.findOneAndUpdate({ Email }, { UltimaConexion: Date.now() });
 
-    const token = jwt.sign({ _id: usuario._id, _rol: usuario.IDRol }, secretKey, {
-      expiresIn: 60 * 60 * 12
+    const token = jwt.sign(
+      { _usuario: { ID: usuario._id, Email: usuario.Email }, _permisos: usuario.IDRol.Permisos },
+      secretKey,
+      {
+        expiresIn: 60 * 60 * 12
+      }
+    );
+
+    await createRegistro({
+      IDUsuario: usuario._id,
+      Email: usuario.Email,
+      IP: req.ip.split(':').pop(),
+      Accion: `Inicio de sesión: ${usuario.Email}.`
     });
 
-    res.status(200).json({ token, userId: usuario._id, rolId: usuario.IDRol });
+    res.status(200).json({
+      token,
+      usuario: usuario.Email,
+      permisos: usuario.IDRol.Permisos
+    });
   } catch (e) {
     console.error(e);
     res.status(400).json('Ha ocurrido un error al realizar la consulta.');
+  }
+};
+
+usuarioCtrl.signOut = async (req, res) => {
+  try {
+    await createRegistro({
+      IDUsuario: req.usuario.ID,
+      Email: req.usuario.Email,
+      IP: req.ip.split(':').pop(),
+      Accion: `Cierre de sesión: ${req.usuario.Email}.`
+    });
+
+    res.status(200).json({ message: 'Evento registrado.' });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ message: 'Ha ocurrido un error al registrar el evento.' });
   }
 };
 
@@ -69,6 +143,14 @@ usuarioCtrl.profile = async (req, res) => {
       updatedAt: 0
     });
     if (!usuario) return res.status(404).json({ message: 'Usuario no encontrado.' });
+
+    await createRegistro({
+      IDUsuario: req.usuario.ID,
+      Email: req.usuario.Email,
+      IP: req.ip.split(':').pop(),
+      Accion: `Lectura de usuario: ${usuario.Email}.`
+    });
+
     res.status(200).json(usuario);
   } catch (e) {
     console.error(e);
@@ -79,7 +161,15 @@ usuarioCtrl.profile = async (req, res) => {
 usuarioCtrl.updateUsuario = async (req, res) => {
   try {
     const { Nombres, Apellidos } = req.body;
-    await Usuario.findOneAndUpdate({ _id: req.params.id }, { Nombres, Apellidos });
+    const usuario = await Usuario.findOneAndUpdate({ _id: req.params.id }, { Nombres, Apellidos });
+
+    await createRegistro({
+      IDUsuario: req.usuario.ID,
+      Email: req.usuario.Email,
+      IP: req.ip.split(':').pop(),
+      Accion: `Actualización de usuario: ${usuario.Email}.`
+    });
+
     res.status(200).json({ message: 'Usuario actualizado.' });
   } catch (e) {
     console.error(e);
@@ -89,7 +179,15 @@ usuarioCtrl.updateUsuario = async (req, res) => {
 
 usuarioCtrl.deleteUsuario = async (req, res) => {
   try {
-    await Usuario.findOneAndDelete({ _id: req.params.id });
+    const usuario = await Usuario.findOneAndDelete({ _id: req.params.id });
+
+    await createRegistro({
+      IDUsuario: req.usuario.ID,
+      Email: req.usuario.Email,
+      IP: req.ip.split(':').pop(),
+      Accion: `Dada de baja de usuario: ${usuario.Email}.`
+    });
+
     res.status(200).json({ message: 'Usuario dado de baja.' });
   } catch (e) {
     console.error(e);
@@ -114,7 +212,7 @@ usuarioCtrl.forgotPassword = async (req, res) => {
     const transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
-        user: `${emailUser}`,
+        user: `${emailAddress}`,
         pass: `${emailPassword}`
       }
     });
@@ -124,15 +222,23 @@ usuarioCtrl.forgotPassword = async (req, res) => {
       to: `${usuario.Email}`,
       subject: 'Restablecimiento de contraseña',
       text:
-        'Está recibiendo esto debido a que usted (o alguien más) ha solicitado el restablecimiento de la contraseña para su cuenta.\n\n' +
-        'Haga clic en el siguiente enlace, o copie y pegue el mismo en su navegador web para completar el proceso en el plazo de una hora desde que se recibio:\n\n' +
+        `Buen día ${usuario.Nombres}:\n\n` +
+        'Está recibiendo esto debido a que usted (o alguien más) ha solicitado el restablecimiento de la contraseña para su cuenta en el Sistema de Gestión de los Centros Culturales.\n\n' +
+        'Haga clic en el siguiente enlace, o copie y pegue el mismo en su navegador web para completar el proceso en el plazo de una hora desde que se recibio este correo.\n\n' +
         `http://${address}/reset/${token}\n\n` +
-        'Si usted no hizo esta solicitud, por favor ignore este correo y su contraseña seguira igual.\n'
+        'Si usted no hizo esta solicitud, por favor ignore este correo.\n'
     };
 
     transporter.sendMail(mailOptions, (err, info) => {
       if (err) return console.error('Ha ocurrido un error: ', err);
       res.status(200).json('Correo de restablecimiento enviado.');
+    });
+
+    await createRegistro({
+      IDUsuario: usuario._id,
+      Email: usuario.Email,
+      IP: req.ip.split(':').pop(),
+      Accion: `Solicitud de restablecimiento de contraseña: ${usuario.Email}.`
     });
   } catch (e) {
     console.error(e);
@@ -150,20 +256,26 @@ usuarioCtrl.reset = async (req, res) => {
 
     if (!usuario) return res.status(200).json({ message: 'El enlace es inválido o ha expirado.' });
 
+    await createRegistro({
+      IDUsuario: usuario._id,
+      Email: usuario.Email,
+      IP: req.ip.split(':').pop(),
+      Accion: `Validación de token de actualización de contraseña: ${usuario.Email}.`
+    });
+
     res.status(200).json({
       Email: usuario.Email,
       message: 'Token válido.'
     });
   } catch (e) {
     console.error(e);
-    res.status(500).json('Error restableciendo la contraseña.');
+    res.status(500).json('Error actualizando la contraseña.');
   }
 };
 
 usuarioCtrl.updatePassword = async (req, res) => {
   try {
     const { Email, Password } = req.body;
-    console.log(Email, Password);
     const usuario = await Usuario.findOne({ Email });
 
     if (!usuario) return res.status(404).json('El usuario no existe. No se puede actualizar.');
@@ -173,6 +285,35 @@ usuarioCtrl.updatePassword = async (req, res) => {
       Password: encryptedPass,
       ResetToken: '',
       ResetExpires: ''
+    });
+
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: `${emailAddress}`,
+        pass: `${emailPassword}`
+      }
+    });
+
+    const mailOptions = {
+      from: 'No-reply BCH <no-reply@bch.hn>',
+      to: `${usuario.Email}`,
+      subject: 'Actualización de contraseña',
+      text:
+        `Buen día ${usuario.Nombres}:\n\n` +
+        'Está recibiendo este correo de notificación debido a que usted (o alguien más) ha realizado una actualización de contraseña para su cuenta en el Sistema de Gestión de los Centros Culturales.\n\n' +
+        'Si usted no realizó esta actualización, por favor comuníquelo al personal administrativo de los Centros Culturales para que se le pueda ayudar con la recuperación de la cuenta, en caso contrario ignore este mensaje.\n'
+    };
+
+    transporter.sendMail(mailOptions, (err, info) => {
+      if (err) return console.error('Ha ocurrido un error: ', err);
+    });
+
+    await createRegistro({
+      IDUsuario: usuario._id,
+      Email: usuario.Email,
+      IP: req.ip.split(':').pop(),
+      Accion: `Actualización de contraseña: ${usuario.Email}.`
     });
 
     res.status(200).json('Contraseña actualizada.');

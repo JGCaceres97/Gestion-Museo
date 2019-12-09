@@ -1,27 +1,28 @@
 const Libro = require('../models/Libro');
 const libroCtrl = {};
+const {} = require('./bitacora.controller');
 
 libroCtrl.getLibros = async (req, res) => {
   try {
     const libros = await Libro.find().populate('Etiquetas');
-    res.json(libros);
+
+    await createRegistro({
+      IDUsuario: req.usuario.ID,
+      Email: req.usuario.Email,
+      IP: req.ip.split(':').pop(),
+      Accion: 'Lectura de listado de libros.'
+    });
+
+    res.status(200).json(libros);
   } catch (e) {
     console.error(e);
-    res.json({ message: 'Ha ocurrido un error al realizar la consulta.' });
+    res.status(500).json({ message: 'Ha ocurrido un error al realizar la consulta.' });
   }
 };
 
 libroCtrl.createLibro = async (req, res) => {
   try {
-    const {
-      Autor,
-      Titulo,
-      Descripcion,
-      Año,
-      ISBN,
-      Editorial,
-      Etiquetas
-    } = req.body;
+    const { Autor, Titulo, Descripcion, Año, ISBN, Editorial, Etiquetas } = req.body;
     const nuevoLibro = new Libro({
       Autor,
       Titulo,
@@ -32,57 +33,84 @@ libroCtrl.createLibro = async (req, res) => {
       Etiquetas
     });
     await nuevoLibro.save();
-    res.json({ message: 'Libro ingresado.' });
+
+    await createRegistro({
+      IDUsuario: req.usuario.ID,
+      Email: req.usuario.Email,
+      IP: req.ip.split(':').pop(),
+      Accion: `Adición de libro: ${Titulo}, ${Autor}.`
+    });
+
+    res.status(201).json({ message: 'Libro ingresado.' });
   } catch (e) {
     console.error(e);
-    res.json({ message: 'Ha ocurrido un error al registrar el libro.' });
+    res.status(400).json({ message: 'Ha ocurrido un error al registrar el libro.' });
   }
 };
 
 libroCtrl.getLibro = async (req, res) => {
   try {
     const libro = await Libro.findById(req.params.id).populate('Etiquetas');
-    res.json(libro);
+
+    await createRegistro({
+      IDUsuario: req.usuario.ID,
+      Email: req.usuario.Email,
+      IP: req.ip.split(':').pop(),
+      Accion: `Lectura de libro: ${libro.Titulo}, ${libro.Autor}.`
+    });
+
+    res.status(200).json(libro);
   } catch (e) {
     console.error(e);
-    res.json({ message: 'Ha ocurrido un error al realizar la consulta.' });
+    res.status(400).json({ message: 'Ha ocurrido un error al realizar la consulta.' });
   }
 };
 
 libroCtrl.updateLibro = async (req, res) => {
   try {
-    const {
-      Autor,
-      Titulo,
-      Descripcion,
-      Año,
-      ISBN,
-      Editorial,
-      Etiquetas
-    } = req.body;
-    await Libro.findOneAndUpdate({ _id: req.params.id }, {
-      Autor,
-      Titulo,
-      Descripcion,
-      Año,
-      ISBN,
-      Editorial,
-      Etiquetas
+    const { Autor, Titulo, Descripcion, Año, ISBN, Editorial, Etiquetas } = req.body;
+    const libro = await Libro.findOneAndUpdate(
+      { _id: req.params.id },
+      {
+        Autor,
+        Titulo,
+        Descripcion,
+        Año,
+        ISBN,
+        Editorial,
+        Etiquetas
+      }
+    );
+
+    await createRegistro({
+      IDUsuario: req.usuario.ID,
+      Email: req.usuario.Email,
+      IP: req.ip.split(':').pop(),
+      Accion: `Actualización de libro: ${libro.Titulo}, ${libro.Autor}.`
     });
-    res.json({ message: 'Libro actualizado.' });
+
+    res.status(200).json({ message: 'Libro actualizado.' });
   } catch (e) {
     console.error(e);
-    res.json({ message: 'Ha ocurrido un error al actualizar el libro.' });
+    res.status(400).json({ message: 'Ha ocurrido un error al actualizar el libro.' });
   }
 };
 
 libroCtrl.deleteLibro = async (req, res) => {
   try {
-    await Libro.findOneAndDelete({ _id: req.params.id });
-    res.json({ message: 'Libro eliminado.' });
+    const libro = await Libro.findOneAndDelete({ _id: req.params.id });
+
+    await createRegistro({
+      IDUsuario: req.usuario.ID,
+      Email: req.usuario.Email,
+      IP: req.ip.split(':').pop(),
+      Accion: `Eliminación de libro: ${libro.Titulo}, ${libro.Autor}.`
+    });
+
+    res.status(200).json({ message: 'Libro eliminado.' });
   } catch (e) {
     console.error(e);
-    res.json({ message: 'Ha ocurrido un error al eliminar el libro.' });
+    res.status(400).json({ message: 'Ha ocurrido un error al eliminar el libro.' });
   }
 };
 

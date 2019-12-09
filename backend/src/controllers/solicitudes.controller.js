@@ -1,11 +1,21 @@
 const Solicitud = require('../models/Solicitud');
 const solicitudCtrl = {};
+const { createRegistro } = require('./bitacora.controller');
+const moment = require('moment');
 
 solicitudCtrl.getSolicitudes = async (req, res) => {
   try {
     const solicitudes = await Solicitud.find()
       .populate('IDHorario')
       .populate('IDEstado');
+
+    await createRegistro({
+      IDUsuario: req.usuario.ID,
+      Email: req.usuario.Email,
+      IP: req.ip.split(':').pop(),
+      Accion: 'Lectura de listado de solicitudes.'
+    });
+
     res.status(200).json(solicitudes);
   } catch (e) {
     console.error(e);
@@ -65,6 +75,16 @@ solicitudCtrl.getSolicitud = async (req, res) => {
     const solicitud = await Solicitud.findById(req.params.id)
       .populate('IDHorario')
       .populate('IDEstado');
+
+    await createRegistro({
+      IDUsuario: req.usuario.ID,
+      Email: req.usuario.Email,
+      IP: req.ip.split(':').pop(),
+      Accion: `Lectura de solicitud: ${solicitud.Institucion}, ${moment(solicitud.FechaVisita)
+        .utcOffset(-6)
+        .format('DD/MM/YYYY h:mm A')}.`
+    });
+
     res.status(200).json(solicitud);
   } catch (e) {
     console.error(e);
@@ -89,7 +109,7 @@ solicitudCtrl.updateSolicitud = async (req, res) => {
       TemaCharla,
       IDEstado
     } = req.body;
-    await Solicitud.findOneAndUpdate(
+    const solicitud = await Solicitud.findOneAndUpdate(
       { _id: req.params.id },
       {
         Identidad,
@@ -107,6 +127,16 @@ solicitudCtrl.updateSolicitud = async (req, res) => {
         IDEstado
       }
     );
+
+    await createRegistro({
+      IDUsuario: req.usuario.ID,
+      Email: req.usuario.Email,
+      IP: req.ip.split(':').pop(),
+      Accion: `Actualización de solicitud: ${solicitud.Institucion}, ${moment(solicitud.FechaVisita)
+        .utcOffset(-6)
+        .format('DD/MM/YYYY h:mm A')}.`
+    });
+
     res.status(200).json({ message: 'Solicitud actualizada.' });
   } catch (e) {
     console.error(e);
@@ -116,7 +146,17 @@ solicitudCtrl.updateSolicitud = async (req, res) => {
 
 solicitudCtrl.deleteSolicitud = async (req, res) => {
   try {
-    await Solicitud.findOneAndDelete({ _id: req.params.id });
+    const solicitud = await Solicitud.findOneAndDelete({ _id: req.params.id });
+
+    await createRegistro({
+      IDUsuario: req.usuario.ID,
+      Email: req.usuario.Email,
+      IP: req.ip.split(':').pop(),
+      Accion: `Eliminación de solicitud: ${solicitud.Institucion}, ${moment(solicitud.FechaVisita)
+        .utcOffset(-6)
+        .format('DD/MM/YYYY h:mm A')}.`
+    });
+
     res.status(200).json({ message: 'Solicitud eliminada.' });
   } catch (e) {
     console.error(e);

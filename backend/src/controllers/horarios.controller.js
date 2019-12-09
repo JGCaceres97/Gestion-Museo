@@ -1,5 +1,6 @@
 const Horario = require('../models/Horario');
 const horarioCtrl = {};
+const { createRegistro } = require('./bitacora.controller');
 
 horarioCtrl.getHorarios = async (req, res) => {
   try {
@@ -18,6 +19,14 @@ horarioCtrl.createHorario = async (req, res) => {
       Hora
     });
     await nuevoHorario.save();
+
+    await createRegistro({
+      IDUsuario: req.usuario.ID,
+      Email: req.usuario.Email,
+      IP: req.ip.split(':').pop(),
+      Accion: `Adición de horario disponible: ${Hora}.`
+    });
+
     res.status(200).json({ message: 'Horario agregado.' });
   } catch (e) {
     console.error(e);
@@ -28,6 +37,14 @@ horarioCtrl.createHorario = async (req, res) => {
 horarioCtrl.getHorario = async (req, res) => {
   try {
     const horario = await Horario.findById(req.params.id);
+
+    await createRegistro({
+      IDUsuario: req.usuario.ID,
+      Email: req.usuario.Email,
+      IP: req.ip.split(':').pop(),
+      Accion: `Lectura de horario: ${horario.Hora}.`
+    });
+
     res.status(200).json(horario);
   } catch (e) {
     console.error(e);
@@ -38,12 +55,20 @@ horarioCtrl.getHorario = async (req, res) => {
 horarioCtrl.updateHorario = async (req, res) => {
   try {
     const { Hora } = req.body;
-    await Horario.findOneAndUpdate(
+    const horario = await Horario.findOneAndUpdate(
       { _id: req.params.id },
       {
         Hora
       }
     );
+
+    await createRegistro({
+      IDUsuario: req.usuario.ID,
+      Email: req.usuario.Email,
+      IP: req.ip.split(':').pop(),
+      Accion: `Actualización de horario disponible: ${horario.Hora} a ${Hora}.`
+    });
+
     res.status(200).json({ message: 'Horario actualizado.' });
   } catch (e) {
     console.error(e);
@@ -53,7 +78,15 @@ horarioCtrl.updateHorario = async (req, res) => {
 
 horarioCtrl.deleteHorario = async (req, res) => {
   try {
-    await Horario.findOneAndDelete({ _id: req.params.id });
+    const horario = await Horario.findOneAndDelete({ _id: req.params.id });
+
+    await createRegistro({
+      IDUsuario: req.usuario.ID,
+      Email: req.usuario.Email,
+      IP: req.ip.split(':').pop(),
+      Accion: `Eliminación de horario disponible: ${horario.Hora}.`
+    });
+
     res.status(200).json({ message: 'Horario eliminado.' });
   } catch (e) {
     console.error(e);

@@ -7,15 +7,13 @@ const bitacoraSchema = new Schema(
       ref: 'Usuario',
       required: true
     },
-    IDSolicitud: {
-      type: Schema.Types.ObjectId,
-      ref: 'Solicitud',
-      required: false
-    },
-    IDLibro: {
-      type: Schema.Types.ObjectId,
-      ref: 'Libro',
-      required: false
+    Email: {
+      type: String,
+      required: true,
+      unique: false,
+      maxlength: 50,
+      lowercase: true,
+      match: /\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,4}/
     },
     IP: {
       type: String,
@@ -26,7 +24,7 @@ const bitacoraSchema = new Schema(
       type: String,
       required: true,
       trim: true,
-      maxlength: 100
+      maxlength: 250
     },
     MarcaDeTiempo: {
       type: Date,

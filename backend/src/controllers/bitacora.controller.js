@@ -3,36 +3,35 @@ const bitacoraCtrl = {};
 
 bitacoraCtrl.getRegistros = async (req, res) => {
   try {
-    const registros = await Bitacora.find().populate('IDUsuario').populate('IDSolicitud').populate('IDLibro');
-    res.json(registros);
+    await bitacoraCtrl.createRegistro({
+      IDUsuario: req.usuario.ID,
+      Email: req.usuario.Email,
+      IP: req.ip.split(':').pop(),
+      Accion: 'Lectura de bitácora.'
+    });
+
+    const registros = await Bitacora.find();
+    res.status(200).json(registros);
   } catch (e) {
     console.error(e);
-    res.json({ message: 'Ha ocurrido un error al realizar la consulta.' });
+    res.status(500).json({ message: 'Ha ocurrido un error al realizar la consulta.' });
   }
 };
 
-bitacoraCtrl.createRegistro = async (req, res) => {
+bitacoraCtrl.createRegistro = async req => {
   try {
-    const {
-      IDUsuario,
-      IDSolicitud,
-      IDLibro,
-      IP,
-      Accion
-    } = req.body;
+    const { IDUsuario, Email, IP, Accion } = req;
+
     const nuevoRegistro = new Bitacora({
       IDUsuario,
-      IDSolicitud,
-      IDLibro,
+      Email,
       IP,
       Accion,
       MarcaDeTiempo: Date.now()
     });
     await nuevoRegistro.save();
-    res.json({ message: 'Registro ingresado.' });
   } catch (e) {
-    console.error(e);
-    res.json({ message: 'Ha ocurrido un error al ingresar el registro.' });
+    console.error('Ha ocurrido un error al ingresar el registro en bitácora: ', e);
   }
 };
 

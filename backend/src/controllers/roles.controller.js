@@ -1,9 +1,18 @@
 const Rol = require('../models/Rol');
 const rolCtrl = {};
+const { createRegistro } = require('./bitacora.controller');
 
 rolCtrl.getRoles = async (req, res) => {
   try {
     const roles = await Rol.find();
+
+    await createRegistro({
+      IDUsuario: req.usuario.ID,
+      Email: req.usuario.Email,
+      IP: req.ip.split(':').pop(),
+      Accion: 'Lectura de listado de roles.'
+    });
+
     res.status(200).json(roles);
   } catch (e) {
     console.error(e);
@@ -20,6 +29,14 @@ rolCtrl.createRol = async (req, res) => {
       Descripcion
     });
     await nuevoRol.save();
+
+    await createRegistro({
+      IDUsuario: req.usuario.ID,
+      Email: req.usuario.Email,
+      IP: req.ip.split(':').pop(),
+      Accion: `Adición de rol: ${Nombre}.`
+    });
+
     res.status(201).json({ message: 'Rol ingresado.' });
   } catch (e) {
     console.error(e);
@@ -30,6 +47,14 @@ rolCtrl.createRol = async (req, res) => {
 rolCtrl.getRol = async (req, res) => {
   try {
     const rol = await Rol.findById(req.params.id);
+
+    await createRegistro({
+      IDUsuario: req.usuario.ID,
+      Email: req.usuario.Email,
+      IP: req.ip.split(':').pop(),
+      Accion: `Lectura de rol: ${rol.Nombre}.`
+    });
+
     res.status(200).json(rol);
   } catch (e) {
     console.error(e);
@@ -40,7 +65,7 @@ rolCtrl.getRol = async (req, res) => {
 rolCtrl.updateRol = async (req, res) => {
   try {
     const { Nombre, Permisos, Descripcion } = req.body;
-    await Rol.findOneAndUpdate(
+    const rol = await Rol.findOneAndUpdate(
       { _id: req.params.id },
       {
         Nombre,
@@ -48,6 +73,14 @@ rolCtrl.updateRol = async (req, res) => {
         Descripcion
       }
     );
+
+    await createRegistro({
+      IDUsuario: req.usuario.ID,
+      Email: req.usuario.Email,
+      IP: req.ip.split(':').pop(),
+      Accion: `Actualización de rol: ${rol.Nombre}.`
+    });
+
     res.status(200).json({ message: 'Rol actualizado.' });
   } catch (e) {
     console.error(e);
@@ -57,7 +90,15 @@ rolCtrl.updateRol = async (req, res) => {
 
 rolCtrl.deleteRol = async (req, res) => {
   try {
-    await Rol.findOneAndDelete({ _id: req.params.id });
+    const rol = await Rol.findOneAndDelete({ _id: req.params.id });
+
+    await createRegistro({
+      IDUsuario: req.usuario.ID,
+      Email: req.usuario.Email,
+      IP: req.ip.split(':').pop(),
+      Accion: `Eliminación de rol: ${rol.Nombre}.`
+    });
+
     res.status(200).json({ message: 'Rol eliminado.' });
   } catch (e) {
     console.error(e);
