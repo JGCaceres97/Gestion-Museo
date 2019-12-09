@@ -7,6 +7,7 @@ import {
   faGlobe,
   faGlobeAmericas,
   faHome,
+  faNewspaper,
   faTags,
   faUserCircle,
   faUsers,
@@ -31,13 +32,22 @@ import {
   Typography
 } from '@material-ui/core';
 import { Menu as MenuIcon } from '@material-ui/icons';
+import axios from 'axios';
 import clsx from 'clsx';
 import React, { useEffect, useState } from 'react';
+import { Redirect } from 'react-router-dom';
+import { address, port } from '../config';
+import useLocalStorage from '../customHooks/useLocalStorage';
+import Bitacora from './Bitacora';
 import Calendario from './Calendario';
+import Deptos from './Deptos';
 import Estados from './Estados';
 import Etiquetas from './Etiquetas';
-import Inicio from './Inicio';
 import Horarios from './Horarios';
+import Inicio from './Inicio';
+import Municipios from './Municipios';
+import Roles from './Roles';
+import Usuarios from './Usuarios';
 
 const drawerWidth = 240;
 
@@ -138,7 +148,10 @@ function Dashboard() {
   const [drawerOpen, setDrawerOpen] = useState(true);
   const [selectedIndex, setSelectedIndex] = useState('Inicio');
   const [anchorEl, setAnchorEl] = useState(null);
+  const [loggedOut, setLoggedOut] = useState(false);
   const menuOpen = Boolean(anchorEl);
+  const [Token] = useLocalStorage('Token', '');
+  const [Usuario] = useLocalStorage('Usuario', '');
 
   useEffect(() => {
     document.title = 'Sistema de Gestión';
@@ -164,17 +177,19 @@ function Dashboard() {
       case 'Etiquetas':
         return <Etiquetas />;
       case 'Deptos':
-        return 'Deptos';
+        return <Deptos />;
       case 'Horarios':
         return <Horarios />;
       case 'Municipios':
-        return 'Municipios';
+        return <Municipios />;
       case 'Roles':
-        return 'Roles';
+        return <Roles />;
       case 'Usuarios':
-        return 'Usuarios';
+        return <Usuarios />;
       case 'Visitas':
         return 'Visitas';
+      case 'Bitacora':
+        return <Bitacora />;
       default:
         return <Inicio />;
     }
@@ -183,9 +198,20 @@ function Dashboard() {
   /**
    * Método para cerrar la sesión del usuario.
    */
-  const logout = () => {
-    localStorage.clear();
+  const logout = async () => {
+    try {
+      await axios.get(`http://${address}:${port}/api/signOut`, {
+        headers: {
+          Authorization: Token
+        }
+      });
+
+      localStorage.clear();
+      setLoggedOut(true);
+    } catch (e) {}
   };
+
+  if (loggedOut) return <Redirect push to='/login' />;
 
   return (
     <React.Fragment>
@@ -230,7 +256,7 @@ function Dashboard() {
                 }}
                 onClose={() => setAnchorEl(null)}
               >
-                <MenuItem onClick={() => console.log('Perfil')}>Perfil</MenuItem>
+                <MenuItem disabled>{Usuario}</MenuItem>
                 <Divider />
                 <MenuItem onClick={logout}>Cerrar Sesión</MenuItem>
               </Menu>
@@ -374,6 +400,28 @@ function Dashboard() {
                     <FAI icon={faChartLine} className={classes.icon} />
                   </ListItemIcon>
                   <ListItemText primary='Visitas' />
+                </ListItem>
+              </ul>
+            </li>
+            <Divider />
+            <li className={classes.li}>
+              <ul className={classes.ul}>
+                <ListSubheader
+                  className={clsx({
+                    [classes.hide]: !drawerOpen
+                  })}
+                >
+                  Administración
+                </ListSubheader>
+                <ListItem
+                  button
+                  selected={selectedIndex === 'Bitacora'}
+                  onClick={() => handleListClick('Bitacora')}
+                >
+                  <ListItemIcon>
+                    <FAI icon={faNewspaper} className={classes.icon} />
+                  </ListItemIcon>
+                  <ListItemText primary='Bitácora de Eventos' />
                 </ListItem>
               </ul>
             </li>
