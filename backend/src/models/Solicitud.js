@@ -39,6 +39,16 @@ const solicitudSchema = new Schema(
       trim: true,
       maxlength: 100
     },
+    IDDepto: {
+      type: Schema.Types.ObjectId,
+      ref: 'Departamento',
+      required: true
+    },
+    IDMunicipio: {
+      type: Schema.Types.ObjectId,
+      ref: 'Municipio',
+      required: true
+    },
     Direccion: {
       type: String,
       required: true,

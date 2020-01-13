@@ -92,8 +92,10 @@ function InfoSolicitud({ _id }) {
     Direccion: '',
     Email: '',
     FechaVisita: '',
+    IDDepto: { Nombre: '' },
     IDEstado: { _id: '' },
     IDHorario: { Hora: '' },
+    IDMunicipio: { Nombre: '' },
     Identidad: '',
     Institucion: '',
     Nombres: '',
@@ -123,8 +125,10 @@ function InfoSolicitud({ _id }) {
     Direccion,
     Email,
     FechaVisita,
+    IDDepto,
     IDEstado,
     IDHorario,
+    IDMunicipio,
     Identidad,
     Institucion,
     Nombres,
@@ -142,7 +146,7 @@ function InfoSolicitud({ _id }) {
 
     const reqInfo = async () => {
       try {
-        const resSolicitud = await axios.get(
+        const getSolicitud = await axios.get(
           `http://${config.address}:${config.port}/api/solicitudes/${_id}`,
           {
             headers: {
@@ -150,14 +154,14 @@ function InfoSolicitud({ _id }) {
             }
           }
         );
-        const resEstados = await axios.get(`http://${config.address}:${config.port}/api/estados`, {
+        const getEstados = await axios.get(`http://${config.address}:${config.port}/api/estados`, {
           headers: {
             authorization: Token
           }
         });
 
-        setEstados(resEstados.data);
-        setSolicitud(resSolicitud.data);
+        setEstados(getEstados.data);
+        setSolicitud(getSolicitud.data);
         showSnack('Info', 'Información cargada.');
       } catch {
         showSnack('Error', 'Error obteniendo la información.');
@@ -342,6 +346,26 @@ function InfoSolicitud({ _id }) {
                 }}
               />
             </Grid>
+            <Grid item xs={12} md={6}>
+              <TextField
+                fullWidth
+                value={IDDepto.Nombre}
+                label='Departamento'
+                InputProps={{
+                  readOnly: true
+                }}
+              />
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <TextField
+                fullWidth
+                value={IDMunicipio.Nombre}
+                label='Municipio'
+                InputProps={{
+                  readOnly: true
+                }}
+              />
+            </Grid>
             <Grid item xs={12}>
               <TextField
                 fullWidth
@@ -398,7 +422,7 @@ function InfoSolicitud({ _id }) {
                 InputProps={{
                   readOnly: true
                 }}
-                value={TemaCharla}
+                value={Charla ? TemaCharla : 'N/A'}
               />
             </Grid>
             <Grid item xs={12} md={4}>

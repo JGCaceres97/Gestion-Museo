@@ -1,18 +1,68 @@
 // @ts-check
 import MomentUtils from '@date-io/moment';
-import { faCheck, faCheckCircle, faEnvelope, faFileUpload, faIdCard, faMapMarkerAlt, faPaperPlane, faPhoneAlt, faTimes, faTimesCircle } from '@fortawesome/free-solid-svg-icons';
+import {
+  faCheck,
+  faCheckCircle,
+  faEnvelope,
+  faFileUpload,
+  faIdCard,
+  faMapMarkerAlt,
+  faPaperPlane,
+  faPhoneAlt,
+  faTimes,
+  faTimesCircle
+} from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon as FAI } from '@fortawesome/react-fontawesome';
-import { Box, Button, Container, Divider, FormControl, FormControlLabel, FormHelperText, FormLabel, Grid, IconButton, InputAdornment, InputLabel, makeStyles, MenuItem, Paper, Radio, RadioGroup, Select, Slider, Snackbar, SnackbarContent, TextField, Typography, Zoom } from '@material-ui/core';
+import {
+  Box,
+  Button,
+  Container,
+  Divider,
+  FormControl,
+  FormControlLabel,
+  FormHelperText,
+  FormLabel,
+  Grid,
+  Grow,
+  IconButton,
+  InputAdornment,
+  InputLabel,
+  makeStyles,
+  MenuItem,
+  Paper,
+  Radio,
+  RadioGroup,
+  Select,
+  Slider,
+  Snackbar,
+  SnackbarContent,
+  TextField,
+  Typography,
+  Zoom
+} from '@material-ui/core';
 import { Close } from '@material-ui/icons';
 import { DatePicker, MuiPickersUtilsProvider } from '@material-ui/pickers';
 import axios from 'axios';
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
-import config from '../config';
+import { address, port, maxFileSize } from '../config';
 
 moment.locale('es-us');
 moment.updateLocale('es-us', {
-  months: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+  months: [
+    'Enero',
+    'Febrero',
+    'Marzo',
+    'Abril',
+    'Mayo',
+    'Junio',
+    'Julio',
+    'Agosto',
+    'Septiembre',
+    'Octubre',
+    'Noviembre',
+    'Diciembre'
+  ],
   monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
   weekdays: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'],
   weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
@@ -62,13 +112,19 @@ function CrearSolicitud(props) {
   const initialDate = () => {
     switch (moment().day()) {
       case 5:
-        return moment().add(3, 'days').toDate();
+        return moment()
+          .add(3, 'days')
+          .toDate();
       case 6:
-        return moment().add(2, 'days').toDate();
+        return moment()
+          .add(2, 'days')
+          .toDate();
       default:
-        return moment().add(1, 'day').toDate();
+        return moment()
+          .add(1, 'day')
+          .toDate();
     }
-  }
+  };
 
   const [Identidad, setIdentidad] = useState('');
   const [Telefono, setTelefono] = useState('');
@@ -76,6 +132,8 @@ function CrearSolicitud(props) {
   const [Apellidos, setApellidos] = useState('');
   const [Email, setEmail] = useState('');
   const [Institucion, setInstitucion] = useState('');
+  const [IDDepto, setIDDepto] = useState('');
+  const [IDMunicipio, setIDMunicipio] = useState('');
   const [Direccion, setDireccion] = useState('');
   const [CantPersonas, setCantPersonas] = useState(1 || []);
   const [FechaVisita, setFechaVisita] = useState(props.Fecha || initialDate);
@@ -96,6 +154,10 @@ function CrearSolicitud(props) {
   const [TxtEmail, setTxtEmail] = useState('');
   const [ErrorInstitucion, setErrorInstitucion] = useState(false);
   const [TxtInstitucion, setTxtInstitucion] = useState('');
+  const [ErrorDepto, setErrorDepto] = useState(false);
+  const [TxtDepto, setTxtDepto] = useState('');
+  const [ErrorMunicipio, setErrorMunicipio] = useState(false);
+  const [TxtMunicipio, setTxtMunicipio] = useState('');
   const [ErrorDireccion, setErrorDireccion] = useState(false);
   const [TxtDireccion, setTxtDireccion] = useState('');
   const [ErrorHorario, setErrorHorario] = useState(false);
@@ -118,30 +180,75 @@ function CrearSolicitud(props) {
   const [FileNotaTxt, setFileNotaTxt] = useState('Elegir Archivo');
   const [ColorSld, setColorSld] = useState(false);
   const [SnackOpen, setSnackOpen] = useState(false);
-  const [isSnackError, setIsSnackError] = useState(false);
+  const [IsSnackError, setIsSnackError] = useState(false);
   const [SnackTxt, setSnackTxt] = useState('');
   const [BtnTxt, setBtnTxt] = useState('Enviar Solicitud');
   const [BtnDisabled, setBtnDisabled] = useState(false);
+  const [MunicipiosDisabled, setMunicipiosDisabled] = useState(true);
+  const [Deptos, setDeptos] = useState([]);
+  const [Municipios, setMunicipios] = useState([]);
+  const [LSTMunicipios, setLSTMunicipios] = useState([]);
   const [Horarios, setHorarios] = useState([]);
   const [FileListado, setFileListado] = useState(null);
   const [FileNota, setFileNota] = useState(null);
+  const [ShowTemaEsp, setShowTemaEsp] = useState(false);
 
   const ColorError = '#DC143C';
   const ColorSuccess = '#008000';
-  const MaxFileSize = 5 //Máximo tamaño de archivos en MB.
+
+  /**
+   * Método para ordenar un arreglo en base a una clave.
+   * @param {string} key Clave a usar de base para el ordenamiento.
+   */
+  const sortArray = key => {
+    let sortOrder = 1;
+
+    if (key[0] === '-') {
+      sortOrder = -1;
+      key = key.substr(1);
+    }
+
+    return (a, b) => {
+      if (sortOrder === -1) {
+        return b[key].localeCompare(a[key]);
+      } else {
+        return a[key].localeCompare(b[key]);
+      }
+    };
+  };
 
   useEffect(() => {
     document.title = 'Reserva de Visita a Centros Culturales';
-    const reqHorarios = async () => {
+    const getDeptos = async () => {
       try {
-        const res = await axios.get(`http://${config.address}:${config.port}/api/horarios`);
+        const res = await axios.get(`http://${address}:${port}/api/deptos`);
+        setDeptos(res.data.sort(sortArray('_id')));
+      } catch {
+        showSnack('Error', 'Error obteniendo los departamentos.');
+      }
+    };
+
+    const getMunicipios = async () => {
+      try {
+        const res = await axios.get(`http://${address}:${port}/api/municipios`);
+        setLSTMunicipios(res.data.sort(sortArray('_id')));
+      } catch {
+        showSnack('Error', 'Error obteniendo los municipios.');
+      }
+    };
+
+    const getHorarios = async () => {
+      try {
+        const res = await axios.get(`http://${address}:${port}/api/horarios`);
         setHorarios(res.data);
       } catch {
         showSnack('Error', 'Error obteniendo los horarios.');
       }
-    }
+    };
 
-    reqHorarios();
+    getDeptos();
+    getMunicipios();
+    getHorarios();
   }, []);
 
   /**
@@ -156,9 +263,13 @@ function CrearSolicitud(props) {
       case 'ID':
         setCheckID(true);
         const RegExpID = /^\d{4}-\d{4}-\d{5}$/;
+        const IDYear = parseInt(value.split('-')[1], 10);
         if (value.search(RegExpID) !== 0 || value === '') {
           setErrorID(true);
           setTxtID('Por favor complete el campo requerido con el formato "0123-4567-89012".');
+        } else if (moment().year() < IDYear || IDYear < moment().year() - 80) {
+          setErrorID(true);
+          setTxtID('Por favor verifique el año del número de identidad ingresado.');
         } else {
           setErrorID(false);
           setTxtID('');
@@ -200,7 +311,9 @@ function CrearSolicitud(props) {
         const RegExpEmail = /^\w+([.-]?\w+)*@\w+([-]?\w+)*(\.\w{2,4})+$/;
         if (value.search(RegExpEmail) !== 0 || value === '') {
           setErrorEmail(true);
-          setTxtEmail('Por favor complete el campo requerido con el formato "ejem.plo@ejemplo.com".');
+          setTxtEmail(
+            'Por favor complete el campo requerido con el formato "ejem.plo@ejemplo.com".'
+          );
         } else {
           setErrorEmail(false);
           setTxtEmail('');
@@ -214,6 +327,18 @@ function CrearSolicitud(props) {
         } else {
           setErrorInstitucion(false);
           setTxtInstitucion('');
+        }
+        break;
+      case 'Depto':
+        if (value === '') {
+          setErrorDepto(true);
+          setTxtDepto(txt);
+        }
+        break;
+      case 'Municipio':
+        if (value === '') {
+          setErrorMunicipio(true);
+          setTxtMunicipio(txt);
         }
         break;
       case 'Direccion':
@@ -253,7 +378,7 @@ function CrearSolicitud(props) {
       default:
         break;
     }
-  }
+  };
 
   /**
    * Método que maneja las acciones cuando se realiza un cambio en un componente.
@@ -262,6 +387,19 @@ function CrearSolicitud(props) {
    */
   const handleSelect = (value, field) => {
     switch (field) {
+      case 'Depto':
+        setIDDepto(value);
+        setTxtDepto('');
+        setErrorDepto(false);
+
+        setMunicipios(LSTMunicipios.filter(item => item.IDDepartamento === value));
+        setMunicipiosDisabled(false);
+        break;
+      case 'Municipio':
+        setIDMunicipio(value);
+        setTxtMunicipio('');
+        setErrorMunicipio(false);
+        break;
       case 'Horario':
         setIDHorario(value);
         setTxtHorario('');
@@ -276,7 +414,63 @@ function CrearSolicitud(props) {
       default:
         break;
     }
+  };
+
+  /**
+   * Método para manejar el cambio en el campo de identidad.
+   * @param {string} value Valor de ID.
+   */
+  const handleIDChange = value => {
+    const IDLength = Identidad.length;
+    const ValLength = value.length;
+
+    if ((ValLength === 4 && IDLength !== 5) || (ValLength === 9 && IDLength !== 10)) {
+      setIdentidad(value.concat('-'));
+    } else if ((IDLength === 4 && ValLength === 5) || (IDLength === 9 && ValLength === 10)) {
+      setIdentidad(Identidad.concat('-', value.substr(ValLength - 1)));
+    } else {
+      setIdentidad(value);
+    }
+  };
+
+  /**
+   * Método para manejar el cambio en el campo de teléfono.
+   * @param {string} value Valor del campo de teléfono.
+   */
+  const handleTelChange = value => {
+    const TelLength = Telefono.length;
+    const ValLength = value.length;
+
+    if (ValLength === 4 && TelLength !== 5) {
+      setTelefono(value.concat('-'));
+    } else if (TelLength === 4 && ValLength === 5) {
+      setTelefono(Telefono.concat('-', value.substr(ValLength - 1)));
+    } else {
+      setTelefono(value);
+    }
   }
+
+  /**
+   * Método para manejar el presionado de teclas en ciertos inputs.
+   * @param {React.KeyboardEvent<HTMLInputElement>} e Evento al presionar una tecla.
+   */
+  const handleKeyDown = e => {
+    if (
+      (e.keyCode >= 48 && e.keyCode <= 57) ||
+      (e.keyCode >= 96 && e.keyCode <= 105) ||
+      e.keyCode === 46 ||
+      e.keyCode === 8 ||
+      e.keyCode === 9 ||
+      e.keyCode === 37 ||
+      e.keyCode === 39 ||
+      e.keyCode === 36 ||
+      e.keyCode === 35
+    ) {
+      return;
+    } else {
+      e.preventDefault();
+    }
+  };
 
   /**
    * Método para manejar los cambios respecto a la charla académica.
@@ -288,21 +482,19 @@ function CrearSolicitud(props) {
       setReqTema(true);
       if (Tema === 'Otro') {
         setReqTemaEsp(true);
-        if (TemaEsp === '') {
-          setErrorTemaEsp(true);
-          setTxtTemaEsp('Por favor complete el campo requerido.');
-        }
+        setShowTemaEsp(true);
       }
     } else {
       setCharla(false);
       setReqTema(false);
       setReqTemaEsp(false);
+      setShowTemaEsp(false);
       setTxtTema('');
       setTxtTemaEsp('');
       setErrorTema(false);
       setErrorTemaEsp(false);
     }
-  }
+  };
 
   /**
    * Método para manejar los cambios respecto al tema de la charla académica.
@@ -312,12 +504,14 @@ function CrearSolicitud(props) {
     handleSelect(value, 'Tema');
     if (value === 'Otro') {
       setReqTemaEsp(true);
+      setShowTemaEsp(true);
     } else {
       setTxtTemaEsp('');
       setReqTemaEsp(false);
+      setShowTemaEsp(false);
       setErrorTemaEsp(false);
     }
-  }
+  };
 
   /**
    * Método que deshabilita los fines de semana en el calendario.
@@ -329,13 +523,13 @@ function CrearSolicitud(props) {
     } else {
       return false;
     }
-  }
+  };
 
   /**
    * Método para asignar la hora de visita a la fecha elegida.
    * @param {string} _id ID que identifica la hora seleccionada.
    */
-  const handleFechaYHora = (_id) => {
+  const handleFechaYHora = _id => {
     const hora = Horarios.find(item => item._id === _id).Hora;
     const fecha = FechaVisita.toISOString();
     let horaISO;
@@ -352,7 +546,7 @@ function CrearSolicitud(props) {
 
     const fechaConHora = moment(`${fecha.split('T').shift()}T${horaISO}`).toDate();
     setFechaVisita(fechaConHora);
-  }
+  };
 
   /**
    * Método para manejar los archivos adjuntos del formulario.
@@ -361,15 +555,14 @@ function CrearSolicitud(props) {
   const handleFiles = event => {
     const files = event.target.files;
     let isListado;
-    event.target.id === 'listado' ? isListado = true : isListado = false;
+    event.target.id === 'listado' ? (isListado = true) : (isListado = false);
 
     if (files.length === 1) {
       const size = files[0].size;
       const ext = files[0].name.split('.').pop();
       const split = files[0].name.split('.').shift();
-      const name = split.length > 30 ?
-        split.substring(0, 30).concat(`...${ext}`)
-        : split.concat(`.${ext}`);
+      const name =
+        split.length > 30 ? split.substring(0, 30).concat(`...${ext}`) : split.concat(`.${ext}`);
 
       if (['pdf', 'doc', 'docx'].indexOf(ext) === -1) {
         if (isListado) {
@@ -382,7 +575,7 @@ function CrearSolicitud(props) {
         event.target.value = '';
         showSnack('Error', 'El archivo debe ser PDF o Word.');
       } else {
-        if (size <= (MaxFileSize * 1048576)) {
+        if (size <= maxFileSize * 1048576) {
           if (isListado) {
             setFileListadoTxt(name);
             setFileListado(files[0]);
@@ -399,11 +592,11 @@ function CrearSolicitud(props) {
             setFileNota(null);
           }
           event.target.value = '';
-          showSnack('Error', `El peso máximo del archivo es ${MaxFileSize} MB.`)
+          showSnack('Error', `El peso máximo del archivo es ${maxFileSize} MB.`);
         }
       }
     }
-  }
+  };
 
   /**
    * Método que maneja las acciones al cerrar un snackbar.
@@ -413,7 +606,7 @@ function CrearSolicitud(props) {
   const handleSnackClose = (e, reason) => {
     if (reason === 'clickaway') return;
     setSnackOpen(false);
-  }
+  };
 
   /**
    * Método para mostrar los snack con un mensaje personalizado.
@@ -431,7 +624,7 @@ function CrearSolicitud(props) {
     }
     setSnackTxt(txt);
     setSnackOpen(true);
-  }
+  };
 
   /**
    * Método para cambiar la apariencia del botón de enviar solicitud.
@@ -441,7 +634,7 @@ function CrearSolicitud(props) {
   const toggleBtn = (disable, txt) => {
     setBtnDisabled(disable);
     setBtnTxt(txt);
-  }
+  };
 
   /**
    * Método para verificar que todos los campos requeridos se encuentren llenados correctamente.
@@ -465,14 +658,24 @@ function CrearSolicitud(props) {
     validInstitucion = ErrorInstitucion || Institucion === '' ? false : true;
     validDireccion = ErrorDireccion || Direccion === '' ? false : true;
     validHorario = ErrorHorario || IDHorario === '' ? false : true;
-    validTema = ReqTema ? ErrorTema || Tema === '' ? false : true : true;
+    validTema = ReqTema ? (ErrorTema || Tema === '' ? false : true) : true;
 
-    if (validID && validTel && validNombres && validApellidos && validEmail && validInstitucion && validDireccion && validHorario && validTema) {
+    if (
+      validID &&
+      validTel &&
+      validNombres &&
+      validApellidos &&
+      validEmail &&
+      validInstitucion &&
+      validDireccion &&
+      validHorario &&
+      validTema
+    ) {
       return true;
     } else {
       return false;
     }
-  }
+  };
 
   /**
    * Método para manejar el envío de las solicitudes.
@@ -480,13 +683,13 @@ function CrearSolicitud(props) {
   const handleSubmit = () => {
     setSnackOpen(false);
     enviarSolicitud();
-  }
+  };
 
   const enviarSolicitud = async () => {
     toggleBtn(true, 'Enviando...');
     if (validateForm()) {
       try {
-        const estado = await axios.get(`http://${config.address}:${config.port}/api/estados/En proceso`);
+        const estado = await axios.get(`http://${address}:${port}/api/estados/En proceso`);
         const Solicitud = new FormData();
         Solicitud.append('Identidad', Identidad);
         Solicitud.append('Nombres', Nombres);
@@ -494,17 +697,19 @@ function CrearSolicitud(props) {
         Solicitud.append('Telefono', Telefono);
         Solicitud.append('Email', Email);
         Solicitud.append('Institucion', Institucion);
+        Solicitud.append('IDDepto', IDDepto);
+        Solicitud.append('IDMunicipio', IDMunicipio);
         Solicitud.append('Direccion', Direccion);
         Solicitud.append('CantPersonas', JSON.stringify(CantPersonas));
         Solicitud.append('FechaVisita', FechaVisita);
         Solicitud.append('IDHorario', IDHorario);
         Solicitud.append('Charla', JSON.stringify(Charla));
-        Solicitud.append('TemaCharla', Charla ? Tema === 'Otro' ? TemaEsp : Tema : '');
+        Solicitud.append('TemaCharla', Charla ? (Tema === 'Otro' ? TemaEsp : Tema) : '');
         Solicitud.append('IDEstado', estado.data._id);
         Solicitud.append('Adjuntos', FileListado);
         Solicitud.append('Adjuntos', FileNota);
 
-        await axios.post(`http://${config.address}:${config.port}/api/solicitudes`, Solicitud);
+        await axios.post(`http://${address}:${port}/api/solicitudes`, Solicitud);
 
         showSnack('Success', 'Solicitud enviada.');
         // Resetear el formulario al estado inicial.
@@ -519,7 +724,7 @@ function CrearSolicitud(props) {
       showSnack('Error', 'Hay campos requeridos sin completar.');
     }
     toggleBtn(false, 'Enviar Solicitud');
-  }
+  };
 
   return (
     <React.Fragment>
@@ -547,11 +752,12 @@ function CrearSolicitud(props) {
                 error={ErrorID}
                 value={Identidad}
                 helperText={TxtID}
+                onKeyDown={handleKeyDown}
                 label='Número de identidad'
                 placeholder='0801-1980-01234'
                 inputProps={{ maxLength: 15 }}
                 onBlur={e => handleBlur(e.target.value, 'ID')}
-                onChange={e => setIdentidad(e.target.value)}
+                onChange={e => handleIDChange(e.target.value)}
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position='start'>
@@ -560,8 +766,10 @@ function CrearSolicitud(props) {
                   ),
                   endAdornment: (
                     <Zoom in={CheckID}>
-                      <InputAdornment position='end'
-                        style={{ color: !ErrorID ? ColorSuccess : ColorError }}>
+                      <InputAdornment
+                        position='end'
+                        style={{ color: !ErrorID ? ColorSuccess : ColorError }}
+                      >
                         <FAI icon={!ErrorID ? faCheck : faTimes} />
                       </InputAdornment>
                     </Zoom>
@@ -579,9 +787,10 @@ function CrearSolicitud(props) {
                 value={Telefono}
                 helperText={TxtTel}
                 placeholder='9999-9999'
+                onKeyDown={handleKeyDown}
                 inputProps={{ maxLength: 9 }}
                 onBlur={e => handleBlur(e.target.value, 'Tel')}
-                onChange={e => setTelefono(e.target.value)}
+                onChange={e => handleTelChange(e.target.value)}
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position='start'>
@@ -590,8 +799,10 @@ function CrearSolicitud(props) {
                   ),
                   endAdornment: (
                     <Zoom in={CheckTel}>
-                      <InputAdornment position='end'
-                        style={{ color: !ErrorTel ? ColorSuccess : ColorError }}>
+                      <InputAdornment
+                        position='end'
+                        style={{ color: !ErrorTel ? ColorSuccess : ColorError }}
+                      >
                         <FAI icon={!ErrorTel ? faCheck : faTimes} />
                       </InputAdornment>
                     </Zoom>
@@ -614,8 +825,10 @@ function CrearSolicitud(props) {
                 InputProps={{
                   endAdornment: (
                     <Zoom in={CheckNombres}>
-                      <InputAdornment position='end'
-                        style={{ color: !ErrorNombres ? ColorSuccess : ColorError }}>
+                      <InputAdornment
+                        position='end'
+                        style={{ color: !ErrorNombres ? ColorSuccess : ColorError }}
+                      >
                         <FAI icon={!ErrorNombres ? faCheck : faTimes} />
                       </InputAdornment>
                     </Zoom>
@@ -638,8 +851,10 @@ function CrearSolicitud(props) {
                 InputProps={{
                   endAdornment: (
                     <Zoom in={CheckApellidos}>
-                      <InputAdornment position='end'
-                        style={{ color: !ErrorApellidos ? ColorSuccess : ColorError }}>
+                      <InputAdornment
+                        position='end'
+                        style={{ color: !ErrorApellidos ? ColorSuccess : ColorError }}
+                      >
                         <FAI icon={!ErrorApellidos ? faCheck : faTimes} />
                       </InputAdornment>
                     </Zoom>
@@ -668,8 +883,10 @@ function CrearSolicitud(props) {
                   ),
                   endAdornment: (
                     <Zoom in={CheckEmail}>
-                      <InputAdornment position='end'
-                        style={{ color: !ErrorEmail ? ColorSuccess : ColorError }}>
+                      <InputAdornment
+                        position='end'
+                        style={{ color: !ErrorEmail ? ColorSuccess : ColorError }}
+                      >
                         <FAI icon={!ErrorEmail ? faCheck : faTimes} />
                       </InputAdornment>
                     </Zoom>
@@ -696,14 +913,53 @@ function CrearSolicitud(props) {
                 InputProps={{
                   endAdornment: (
                     <Zoom in={CheckInstitucion}>
-                      <InputAdornment position='end'
-                        style={{ color: !ErrorInstitucion ? ColorSuccess : ColorError }}>
+                      <InputAdornment
+                        position='end'
+                        style={{ color: !ErrorInstitucion ? ColorSuccess : ColorError }}
+                      >
                         <FAI icon={!ErrorInstitucion ? faCheck : faTimes} />
                       </InputAdornment>
                     </Zoom>
                   )
                 }}
               />
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <FormControl required fullWidth error={ErrorDepto}>
+                <InputLabel id='Depto'>Departamento</InputLabel>
+                <Select
+                  value={IDDepto}
+                  labelId='Depto'
+                  onChange={e => handleSelect(e.target.value.toString(), 'Depto')}
+                  onBlur={e => handleBlur(e.target.value, 'Depto')}
+                >
+                  {Deptos.map((item, i) => (
+                    <MenuItem key={i} value={item._id}>
+                      {item.Nombre}
+                    </MenuItem>
+                  ))}
+                </Select>
+                <FormHelperText>{TxtDepto}</FormHelperText>
+              </FormControl>
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <FormControl required fullWidth error={ErrorMunicipio}>
+                <InputLabel id='Municipio'>Municipio</InputLabel>
+                <Select
+                  value={IDMunicipio}
+                  labelId='Municipio'
+                  disabled={MunicipiosDisabled}
+                  onChange={e => handleSelect(e.target.value.toString(), 'Municipio')}
+                  onBlur={e => handleBlur(e.target.value, 'Municipio')}
+                >
+                  {Municipios.map((item, i) => (
+                    <MenuItem key={i} value={item._id}>
+                      {item.Nombre}
+                    </MenuItem>
+                  ))}
+                </Select>
+                <FormHelperText>{TxtMunicipio}</FormHelperText>
+              </FormControl>
             </Grid>
             <Grid item xs={12}>
               <TextField
@@ -724,8 +980,10 @@ function CrearSolicitud(props) {
                   ),
                   endAdornment: (
                     <Zoom in={CheckDireccion}>
-                      <InputAdornment position='end'
-                        style={{ color: !ErrorDireccion ? ColorSuccess : ColorError }}>
+                      <InputAdornment
+                        position='end'
+                        style={{ color: !ErrorDireccion ? ColorSuccess : ColorError }}
+                      >
                         <FAI icon={!ErrorDireccion ? faCheck : faTimes} />
                       </InputAdornment>
                     </Zoom>
@@ -734,7 +992,11 @@ function CrearSolicitud(props) {
               />
             </Grid>
             <Grid item xs={12} md={4}>
-              <Typography id='cantPersonas' gutterBottom color={!ColorSld ? 'textSecondary' : 'primary'}>
+              <Typography
+                id='cantPersonas'
+                gutterBottom
+                color={!ColorSld ? 'textSecondary' : 'primary'}
+              >
                 Cantidad de personas que visitarán *
               </Typography>
               <Box pt={0.7}>
@@ -772,9 +1034,7 @@ function CrearSolicitud(props) {
             </Grid>
             <Grid item xs={12} md={4}>
               <FormControl required fullWidth error={ErrorHorario}>
-                <InputLabel id='Horario'>
-                  Horario
-                </InputLabel>
+                <InputLabel id='Horario'>Horario</InputLabel>
                 <Select
                   value={IDHorario}
                   labelId='Horario'
@@ -782,7 +1042,9 @@ function CrearSolicitud(props) {
                   onBlur={e => handleBlur(e.target.value, 'Horario')}
                 >
                   {Horarios.map((item, i) => (
-                    <MenuItem key={i} value={item._id}>{item.Hora}</MenuItem>
+                    <MenuItem key={i} value={item._id}>
+                      {item.Hora}
+                    </MenuItem>
                   ))}
                 </Select>
                 <FormHelperText>{TxtHorario}</FormHelperText>
@@ -792,64 +1054,52 @@ function CrearSolicitud(props) {
               <FormControl component='fieldset' required>
                 <FormLabel component='legend'>Charla académica</FormLabel>
                 <RadioGroup row value={Charla} onChange={e => handleCharla(e.target.value)}>
-                  <FormControlLabel
-                    label='Sí'
-                    value={true}
-                    control={<Radio color='primary' />}
-                  />
-                  <FormControlLabel
-                    label='No'
-                    value={false}
-                    control={<Radio color='primary' />}
-                  />
+                  <FormControlLabel label='Sí' value={true} control={<Radio color='primary' />} />
+                  <FormControlLabel label='No' value={false} control={<Radio color='primary' />} />
                 </RadioGroup>
               </FormControl>
             </Grid>
             <Grid item xs={12} md={4}>
-              <FormControl
-                fullWidth
-                error={ErrorTema}
-                required={ReqTema}
-                disabled={!ReqTema}
-              >
-                <InputLabel id='Tema'>
-                  Tema
-              </InputLabel>
-                <Select
-                  value={Tema}
-                  labelId='Tema'
-                  onChange={e => handleTema(e.target.value.toString())}
-                  onBlur={e => handleBlur(e.target.value, 'Tema')}
-                >
-                  <MenuItem value='Economía'>Economía</MenuItem>
-                  <MenuItem value='Sistema de Pagos'>Sistema de Pagos</MenuItem>
-                  <MenuItem value='Emisión y Tesorería'>Emisión y Tesorería</MenuItem>
-                  <MenuItem value='Otro'>Otro - Especificar</MenuItem>
-                </Select>
-                <FormHelperText>{TxtTema}</FormHelperText>
-              </FormControl>
+              <Grow in={Charla}>
+                <FormControl fullWidth error={ErrorTema} required={ReqTema} disabled={!ReqTema}>
+                  <InputLabel id='Tema'>Tema</InputLabel>
+                  <Select
+                    value={Tema}
+                    labelId='Tema'
+                    onChange={e => handleTema(e.target.value.toString())}
+                    onBlur={e => handleBlur(e.target.value, 'Tema')}
+                  >
+                    <MenuItem value='Economía'>Economía</MenuItem>
+                    <MenuItem value='Sistema de Pagos'>Sistema de Pagos</MenuItem>
+                    <MenuItem value='Emisión y Tesorería'>Emisión y Tesorería</MenuItem>
+                    <MenuItem value='Otro'>Otro - Especificar</MenuItem>
+                  </Select>
+                  <FormHelperText>{TxtTema}</FormHelperText>
+                </FormControl>
+              </Grow>
             </Grid>
             <Grid item xs={12} md={4}>
-              <TextField
-                fullWidth
-                value={TemaEsp}
-                error={ErrorTemaEsp}
-                required={ReqTemaEsp}
-                disabled={!ReqTemaEsp}
-                label='Tema específico'
-                helperText={TxtTemaEsp}
-                inputProps={{ maxLength: 20 }}
-                onChange={e => setTemaEsp(e.target.value)}
-                onBlur={e => handleBlur(e.target.value, 'TemaEsp')}
-              />
+              <Grow in={ShowTemaEsp}>
+                <TextField
+                  fullWidth
+                  value={TemaEsp}
+                  error={ErrorTemaEsp}
+                  required={ReqTemaEsp}
+                  disabled={!ReqTemaEsp}
+                  label='Tema específico'
+                  helperText={TxtTemaEsp}
+                  inputProps={{ maxLength: 20 }}
+                  onChange={e => setTemaEsp(e.target.value)}
+                  onBlur={e => handleBlur(e.target.value, 'TemaEsp')}
+                />
+              </Grow>
             </Grid>
             <Grid item xs={12} sm={6}>
-              <Typography gutterBottom>
-                Listado de personas
-            </Typography>
+              <Typography gutterBottom>Listado de personas</Typography>
               <Typography gutterBottom variant='body2'>
-                Adjunte un listado con los nombres de todas las personas del grupo que desean visitar los Centros Culturales. (Se deben incluir los nombres de los profesores).
-            </Typography>
+                Adjunte un listado con los nombres de todas las personas del grupo que desean
+                visitar los Centros Culturales. (Se deben incluir los nombres de los profesores).
+              </Typography>
               <input
                 hidden
                 type='file'
@@ -869,12 +1119,11 @@ function CrearSolicitud(props) {
               </label>
             </Grid>
             <Grid item xs={12} sm={6}>
-              <Typography gutterBottom>
-                Nota al Gerente
-            </Typography>
+              <Typography gutterBottom>Nota al Gerente</Typography>
               <Typography gutterBottom variant='body2'>
-                Adjunte la nota dirigida al gerente solicitando la aprobación de la visita a los Centros Culturales y de la charla académica en caso de que aplique.
-            </Typography>
+                Adjunte la nota dirigida al gerente solicitando la aprobación de la visita a los
+                Centros Culturales y de la charla académica en caso de que aplique.
+              </Typography>
               <input
                 hidden
                 id='nota'
@@ -920,11 +1169,14 @@ function CrearSolicitud(props) {
         onClose={handleSnackClose}
       >
         <SnackbarContent
-          className={isSnackError ? classes.errorSnack : classes.successSnack}
+          className={IsSnackError ? classes.errorSnack : classes.successSnack}
           aria-describedby='snackbar'
           message={
             <span className={classes.messageSnack} id='snackbar'>
-              <FAI icon={isSnackError ? faTimesCircle : faCheckCircle} className={classes.iconSnack} />
+              <FAI
+                icon={IsSnackError ? faTimesCircle : faCheckCircle}
+                className={classes.iconSnack}
+              />
               {SnackTxt}
             </span>
           }
