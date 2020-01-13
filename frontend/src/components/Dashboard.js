@@ -1,21 +1,24 @@
 // @ts-check
 import {
+  faBook,
   faCalendarAlt,
   faChartLine,
+  faChartPie,
   faClock,
   faFlag,
   faGlobe,
   faGlobeAmericas,
   faHome,
   faNewspaper,
+  faSave,
   faTags,
-  faUserCircle,
   faUsers,
   faUserTag
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon as FAI } from '@fortawesome/react-fontawesome';
 import {
   AppBar,
+  Button,
   CssBaseline,
   Divider,
   Drawer,
@@ -26,9 +29,8 @@ import {
   ListItemText,
   ListSubheader,
   makeStyles,
-  Menu,
-  MenuItem,
   Toolbar,
+  Tooltip,
   Typography
 } from '@material-ui/core';
 import { Menu as MenuIcon } from '@material-ui/icons';
@@ -38,6 +40,7 @@ import React, { useEffect, useState } from 'react';
 import { Redirect } from 'react-router-dom';
 import { address, port } from '../config';
 import useLocalStorage from '../customHooks/useLocalStorage';
+import Backups from './Backups';
 import Bitacora from './Bitacora';
 import Calendario from './Calendario';
 import Deptos from './Deptos';
@@ -46,6 +49,7 @@ import Etiquetas from './Etiquetas';
 import Horarios from './Horarios';
 import Inicio from './Inicio';
 import Municipios from './Municipios';
+import ReporteVisitas from './ReporteVisitas';
 import Roles from './Roles';
 import Usuarios from './Usuarios';
 
@@ -81,7 +85,7 @@ const useStyles = makeStyles(theme => ({
     }),
     overflowX: 'hidden',
     width: theme.spacing(
-      8
+      8.5
     ) /* ,
     '&:hover': {
       width: drawerWidth,
@@ -135,6 +139,9 @@ const useStyles = makeStyles(theme => ({
   },
   contentSpace: {
     height: '87%'
+  },
+  rightSpace: {
+    marginRight: theme.spacing(2)
   }
 }));
 
@@ -147,9 +154,7 @@ function Dashboard() {
 
   const [drawerOpen, setDrawerOpen] = useState(true);
   const [selectedIndex, setSelectedIndex] = useState('Inicio');
-  const [anchorEl, setAnchorEl] = useState(null);
   const [loggedOut, setLoggedOut] = useState(false);
-  const menuOpen = Boolean(anchorEl);
   const [Token] = useLocalStorage('Token', '');
   const [Usuario] = useLocalStorage('Usuario', '');
 
@@ -172,6 +177,8 @@ function Dashboard() {
     switch (selectedIndex) {
       case 'Calendario':
         return <Calendario />;
+      case 'Biblioteca':
+        return 'Biblioteca';
       case 'Estados':
         return <Estados />;
       case 'Etiquetas':
@@ -187,9 +194,13 @@ function Dashboard() {
       case 'Usuarios':
         return <Usuarios />;
       case 'Visitas':
-        return 'Visitas';
+        return <ReporteVisitas />;
+      case 'Prestamo':
+        return 'Prestamo';
       case 'Bitacora':
         return <Bitacora />;
+      case 'Backup':
+        return <Backups />;
       default:
         return <Inicio />;
     }
@@ -229,38 +240,14 @@ function Dashboard() {
               <MenuIcon />
             </IconButton>
             <Typography noWrap variant='h6' className={classes.title}>
-              Sistema de Gestión
+              Centros Culturales
             </Typography>
-            <div>
-              <IconButton
-                color='inherit'
-                aria-haspopup='true'
-                aria-controls='menu-appbar'
-                aria-label='cuenta de usuario'
-                onClick={e => setAnchorEl(e.currentTarget)}
-              >
-                <FAI icon={faUserCircle} className={classes.userIcon} />
-              </IconButton>
-              <Menu
-                id='menu-appbar'
-                anchorEl={anchorEl}
-                anchorOrigin={{
-                  vertical: 'top',
-                  horizontal: 'right'
-                }}
-                keepMounted
-                open={menuOpen}
-                transformOrigin={{
-                  vertical: 'top',
-                  horizontal: 'right'
-                }}
-                onClose={() => setAnchorEl(null)}
-              >
-                <MenuItem disabled>{Usuario}</MenuItem>
-                <Divider />
-                <MenuItem onClick={logout}>Cerrar Sesión</MenuItem>
-              </Menu>
-            </div>
+            <Typography variant='body1' className={classes.rightSpace}>
+              Bienvenido (a): {Usuario}
+            </Typography>
+            <Button color='inherit' onClick={logout}>
+              Cerrar Sesión
+            </Button>
           </Toolbar>
         </AppBar>
         <Drawer
@@ -279,26 +266,60 @@ function Dashboard() {
         >
           <div className={classes.toolbar} />
           <List className={classes.list} subheader={<li />}>
-            <ListItem
-              button
-              selected={selectedIndex === 'Inicio'}
-              onClick={() => handleListClick('Inicio')}
+            <Tooltip
+              title='Inicio'
+              placement='right'
+              disableHoverListener={drawerOpen}
+              disableFocusListener={drawerOpen}
+              disableTouchListener={drawerOpen}
             >
-              <ListItemIcon>
-                <FAI icon={faHome} className={classes.icon} />
-              </ListItemIcon>
-              <ListItemText primary='Inicio' />
-            </ListItem>
-            <ListItem
-              button
-              selected={selectedIndex === 'Calendario'}
-              onClick={() => handleListClick('Calendario')}
+              <ListItem
+                button
+                selected={selectedIndex === 'Inicio'}
+                onClick={() => handleListClick('Inicio')}
+              >
+                <ListItemIcon>
+                  <FAI icon={faHome} className={classes.icon} style={{ marginLeft: '-3px' }} />
+                </ListItemIcon>
+                <ListItemText primary='Inicio' />
+              </ListItem>
+            </Tooltip>
+            <Tooltip
+              title='Calendario'
+              placement='right'
+              disableHoverListener={drawerOpen}
+              disableFocusListener={drawerOpen}
+              disableTouchListener={drawerOpen}
             >
-              <ListItemIcon>
-                <FAI icon={faCalendarAlt} className={classes.icon} />
-              </ListItemIcon>
-              <ListItemText primary='Calendario' />
-            </ListItem>
+              <ListItem
+                button
+                selected={selectedIndex === 'Calendario'}
+                onClick={() => handleListClick('Calendario')}
+              >
+                <ListItemIcon>
+                  <FAI icon={faCalendarAlt} className={classes.icon} />
+                </ListItemIcon>
+                <ListItemText primary='Calendario' />
+              </ListItem>
+            </Tooltip>
+            <Tooltip
+              title='Biblioteca'
+              placement='right'
+              disableHoverListener={drawerOpen}
+              disableFocusListener={drawerOpen}
+              disableTouchListener={drawerOpen}
+            >
+              <ListItem
+                button
+                selected={selectedIndex === 'Biblioteca'}
+                onClick={() => handleListClick('Biblioteca')}
+              >
+                <ListItemIcon>
+                  <FAI icon={faBook} className={classes.icon} />
+                </ListItemIcon>
+                <ListItemText primary='Biblioteca' />
+              </ListItem>
+            </Tooltip>
             <Divider />
             <li className={classes.li}>
               <ul className={classes.ul}>
@@ -309,76 +330,132 @@ function Dashboard() {
                 >
                   Mantenimiento
                 </ListSubheader>
-                <ListItem
-                  button
-                  selected={selectedIndex === 'Estados'}
-                  onClick={() => handleListClick('Estados')}
+                <Tooltip
+                  title='Mantenimiento de Estados'
+                  placement='right'
+                  disableHoverListener={drawerOpen}
+                  disableFocusListener={drawerOpen}
+                  disableTouchListener={drawerOpen}
                 >
-                  <ListItemIcon>
-                    <FAI icon={faFlag} className={classes.icon} />
-                  </ListItemIcon>
-                  <ListItemText primary='Estados' />
-                </ListItem>
-                <ListItem
-                  button
-                  selected={selectedIndex === 'Etiquetas'}
-                  onClick={() => handleListClick('Etiquetas')}
+                  <ListItem
+                    button
+                    selected={selectedIndex === 'Estados'}
+                    onClick={() => handleListClick('Estados')}
+                  >
+                    <ListItemIcon>
+                      <FAI icon={faFlag} className={classes.icon} />
+                    </ListItemIcon>
+                    <ListItemText primary='Estados' />
+                  </ListItem>
+                </Tooltip>
+                <Tooltip
+                  title='Mantenimiento de Etiquetas'
+                  placement='right'
+                  disableHoverListener={drawerOpen}
+                  disableFocusListener={drawerOpen}
+                  disableTouchListener={drawerOpen}
                 >
-                  <ListItemIcon>
-                    <FAI icon={faTags} className={classes.icon} />
-                  </ListItemIcon>
-                  <ListItemText primary='Etiquetas' />
-                </ListItem>
-                <ListItem
-                  button
-                  selected={selectedIndex === 'Deptos'}
-                  onClick={() => handleListClick('Deptos')}
+                  <ListItem
+                    button
+                    selected={selectedIndex === 'Etiquetas'}
+                    onClick={() => handleListClick('Etiquetas')}
+                  >
+                    <ListItemIcon>
+                      <FAI icon={faTags} className={classes.icon} style={{ marginLeft: '-1px' }} />
+                    </ListItemIcon>
+                    <ListItemText primary='Etiquetas' />
+                  </ListItem>
+                </Tooltip>
+                <Tooltip
+                  title='Mantenimiento de Departamentos'
+                  placement='right'
+                  disableHoverListener={drawerOpen}
+                  disableFocusListener={drawerOpen}
+                  disableTouchListener={drawerOpen}
                 >
-                  <ListItemIcon>
-                    <FAI icon={faGlobeAmericas} className={classes.icon} />
-                  </ListItemIcon>
-                  <ListItemText primary='Departamentos' />
-                </ListItem>
-                <ListItem
-                  button
-                  selected={selectedIndex === 'Horarios'}
-                  onClick={() => handleListClick('Horarios')}
+                  <ListItem
+                    button
+                    selected={selectedIndex === 'Deptos'}
+                    onClick={() => handleListClick('Deptos')}
+                  >
+                    <ListItemIcon>
+                      <FAI icon={faGlobeAmericas} className={classes.icon} />
+                    </ListItemIcon>
+                    <ListItemText primary='Departamentos' />
+                  </ListItem>
+                </Tooltip>
+                <Tooltip
+                  title='Mantenimiento de Horarios'
+                  placement='right'
+                  disableHoverListener={drawerOpen}
+                  disableFocusListener={drawerOpen}
+                  disableTouchListener={drawerOpen}
                 >
-                  <ListItemIcon>
-                    <FAI icon={faClock} className={classes.icon} />
-                  </ListItemIcon>
-                  <ListItemText primary='Horarios' />
-                </ListItem>
-                <ListItem
-                  button
-                  selected={selectedIndex === 'Municipios'}
-                  onClick={() => handleListClick('Municipios')}
+                  <ListItem
+                    button
+                    selected={selectedIndex === 'Horarios'}
+                    onClick={() => handleListClick('Horarios')}
+                  >
+                    <ListItemIcon>
+                      <FAI icon={faClock} className={classes.icon} />
+                    </ListItemIcon>
+                    <ListItemText primary='Horarios' />
+                  </ListItem>
+                </Tooltip>
+                <Tooltip
+                  title='Mantenimiento de Municipios'
+                  placement='right'
+                  disableHoverListener={drawerOpen}
+                  disableFocusListener={drawerOpen}
+                  disableTouchListener={drawerOpen}
                 >
-                  <ListItemIcon>
-                    <FAI icon={faGlobe} className={classes.icon} />
-                  </ListItemIcon>
-                  <ListItemText primary='Municipios' />
-                </ListItem>
-                <ListItem
-                  button
-                  selected={selectedIndex === 'Roles'}
-                  onClick={() => handleListClick('Roles')}
+                  <ListItem
+                    button
+                    selected={selectedIndex === 'Municipios'}
+                    onClick={() => handleListClick('Municipios')}
+                  >
+                    <ListItemIcon>
+                      <FAI icon={faGlobe} className={classes.icon} />
+                    </ListItemIcon>
+                    <ListItemText primary='Municipios' />
+                  </ListItem>
+                </Tooltip>
+                <Tooltip
+                  title='Mantenimiento de Roles'
+                  placement='right'
+                  disableHoverListener={drawerOpen}
+                  disableFocusListener={drawerOpen}
+                  disableTouchListener={drawerOpen}
                 >
-                  <ListItemIcon>
-                    <FAI icon={faUserTag} className={classes.icon} />
-                  </ListItemIcon>
-                  <ListItemText primary='Roles' />
-                </ListItem>
-                <ListItem
-                  button
-                  selected={selectedIndex === 'Usuarios'}
-                  onClick={() => handleListClick('Usuarios')}
+                  <ListItem
+                    button
+                    selected={selectedIndex === 'Roles'}
+                    onClick={() => handleListClick('Roles')}
+                  >
+                    <ListItemIcon>
+                      <FAI icon={faUserTag} className={classes.icon} />
+                    </ListItemIcon>
+                    <ListItemText primary='Roles' />
+                  </ListItem>
+                </Tooltip>
+                <Tooltip
+                  title='Mantenimiento de Usuarios'
+                  placement='right'
+                  disableHoverListener={drawerOpen}
+                  disableFocusListener={drawerOpen}
+                  disableTouchListener={drawerOpen}
                 >
-                  <ListItemIcon>
-                    <FAI icon={faUsers} className={classes.icon} />
-                  </ListItemIcon>
-                  <ListItemText primary='Usuarios' />
-                </ListItem>
+                  <ListItem
+                    button
+                    selected={selectedIndex === 'Usuarios'}
+                    onClick={() => handleListClick('Usuarios')}
+                  >
+                    <ListItemIcon>
+                      <FAI icon={faUsers} className={classes.icon} style={{ marginLeft: '-2px' }} />
+                    </ListItemIcon>
+                    <ListItemText primary='Usuarios' />
+                  </ListItem>
+                </Tooltip>
               </ul>
             </li>
             <Divider />
@@ -391,16 +468,42 @@ function Dashboard() {
                 >
                   Reportería
                 </ListSubheader>
-                <ListItem
-                  button
-                  selected={selectedIndex === 'Visitas'}
-                  onClick={() => handleListClick('Visitas')}
+                <Tooltip
+                  title='Reporte de Visitas'
+                  placement='right'
+                  disableHoverListener={drawerOpen}
+                  disableFocusListener={drawerOpen}
+                  disableTouchListener={drawerOpen}
                 >
-                  <ListItemIcon>
-                    <FAI icon={faChartLine} className={classes.icon} />
-                  </ListItemIcon>
-                  <ListItemText primary='Visitas' />
-                </ListItem>
+                  <ListItem
+                    button
+                    selected={selectedIndex === 'Visitas'}
+                    onClick={() => handleListClick('Visitas')}
+                  >
+                    <ListItemIcon>
+                      <FAI icon={faChartLine} className={classes.icon} />
+                    </ListItemIcon>
+                    <ListItemText primary='Visitas' />
+                  </ListItem>
+                </Tooltip>
+                <Tooltip
+                  title='Reporte de Préstamo de Libros'
+                  placement='right'
+                  disableHoverListener={drawerOpen}
+                  disableFocusListener={drawerOpen}
+                  disableTouchListener={drawerOpen}
+                >
+                  <ListItem
+                    button
+                    selected={selectedIndex === 'Prestamo'}
+                    onClick={() => handleListClick('Prestamo')}
+                  >
+                    <ListItemIcon>
+                      <FAI icon={faChartPie} className={classes.icon} />
+                    </ListItemIcon>
+                    <ListItemText primary='Préstamo de Libros' />
+                  </ListItem>
+                </Tooltip>
               </ul>
             </li>
             <Divider />
@@ -413,16 +516,42 @@ function Dashboard() {
                 >
                   Administración
                 </ListSubheader>
-                <ListItem
-                  button
-                  selected={selectedIndex === 'Bitacora'}
-                  onClick={() => handleListClick('Bitacora')}
+                <Tooltip
+                  title='Administración de Copias de Seguridad'
+                  placement='right'
+                  disableHoverListener={drawerOpen}
+                  disableFocusListener={drawerOpen}
+                  disableTouchListener={drawerOpen}
                 >
-                  <ListItemIcon>
-                    <FAI icon={faNewspaper} className={classes.icon} />
-                  </ListItemIcon>
-                  <ListItemText primary='Bitácora de Eventos' />
-                </ListItem>
+                  <ListItem
+                    button
+                    selected={selectedIndex === 'Backup'}
+                    onClick={() => handleListClick('Backup')}
+                  >
+                    <ListItemIcon>
+                      <FAI icon={faSave} className={classes.icon} style={{ marginLeft: '2px' }} />
+                    </ListItemIcon>
+                    <ListItemText primary='Copias de Seguridad' />
+                  </ListItem>
+                </Tooltip>
+                <Tooltip
+                  title='Administración de Bitácora de Eventos'
+                  placement='right'
+                  disableHoverListener={drawerOpen}
+                  disableFocusListener={drawerOpen}
+                  disableTouchListener={drawerOpen}
+                >
+                  <ListItem
+                    button
+                    selected={selectedIndex === 'Bitacora'}
+                    onClick={() => handleListClick('Bitacora')}
+                  >
+                    <ListItemIcon>
+                      <FAI icon={faNewspaper} className={classes.icon} />
+                    </ListItemIcon>
+                    <ListItemText primary='Bitácora de Eventos' />
+                  </ListItem>
+                </Tooltip>
               </ul>
             </li>
           </List>
