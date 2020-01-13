@@ -13,6 +13,8 @@ frontend/.pnp.js
 
 ### Database ###
 db/*
+!db/backups
+db/backups/*
 
 # testing
 frontend/coverage

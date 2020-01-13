@@ -11,10 +11,10 @@ COPY package*.json ./
 RUN npm install
 
 # Copiar el directorio actual dentro del contenedor.
-COPY . .
+# COPY . .
 
 # Exponer el puerto 3000.
 EXPOSE 3000
 
 # Ejecutar la aplicación cuando el contenedor esté listo.
-CMD ["npm", "start"]
+CMD npm start

@@ -8,6 +8,8 @@ services:
       - '4000:4000'
     volumes:
       - ./backend:/usr/src/app
+      - /usr/src/app/node_modules
+      - ./db:/usr/src/db
     depends_on:
       - mongo
 
@@ -19,6 +21,7 @@ services:
       - '80:3000'
     volumes:
       - ./frontend:/usr/src/app
+      - /usr/src/app/node_modules
     depends_on:
       - backend
       - mongo
