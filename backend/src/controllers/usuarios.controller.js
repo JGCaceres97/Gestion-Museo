@@ -9,7 +9,7 @@ const { createRegistro } = require('./bitacora.controller');
 
 usuarioCtrl.getUsuarios = async (req, res) => {
   try {
-    const usuarios = await Usuario.find();
+    const usuarios = await Usuario.find().select(['-Password']);
 
     await createRegistro({
       IDUsuario: req.usuario.ID,
@@ -92,7 +92,7 @@ usuarioCtrl.signIn = async (req, res) => {
 
     await Usuario.findOneAndUpdate({ Email }, { UltimaConexion: Date.now() });
 
-    const token = jwt.sign(
+    const Token = jwt.sign(
       { _usuario: { ID: usuario._id, Email: usuario.Email }, _permisos: usuario.IDRol.Permisos },
       secretKey,
       {
@@ -108,9 +108,9 @@ usuarioCtrl.signIn = async (req, res) => {
     });
 
     res.status(200).json({
-      token,
-      usuario: usuario.Email,
-      permisos: usuario.IDRol.Permisos
+      Token,
+      Usuario: usuario.Nombres,
+      Permisos: usuario.IDRol.Permisos
     });
   } catch (e) {
     console.error(e);

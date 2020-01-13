@@ -66,7 +66,7 @@ horarioCtrl.updateHorario = async (req, res) => {
       IDUsuario: req.usuario.ID,
       Email: req.usuario.Email,
       IP: req.ip.split(':').pop(),
-      Accion: `Actualización de horario disponible: ${horario.Hora} a ${Hora}.`
+      Accion: `Actualización de horario disponible: ${horario.Hora} --> ${Hora}.`
     });
 
     res.status(200).json({ message: 'Horario actualizado.' });

@@ -1,13 +1,32 @@
 // @ts-check
-import { faCheckCircle, faExclamationCircle, faTimesCircle } from '@fortawesome/free-solid-svg-icons';
+import {
+  faCheckCircle,
+  faExclamationCircle,
+  faTimesCircle
+} from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon as FAI } from '@fortawesome/react-fontawesome';
 import esUsLocale from '@fullcalendar/core/locales/es-us';
 import DayGridPlugin from '@fullcalendar/daygrid';
 import InteractionPlugin from '@fullcalendar/interaction';
 import FullCalendar from '@fullcalendar/react';
-import { AppBar, Container, Dialog, DialogContent, Grid, IconButton, makeStyles, Paper, Slide, Snackbar, SnackbarContent, Toolbar, Typography } from '@material-ui/core';
+import {
+  AppBar,
+  Container,
+  Dialog,
+  DialogContent,
+  Grid,
+  IconButton,
+  makeStyles,
+  Paper,
+  Slide,
+  Snackbar,
+  SnackbarContent,
+  Toolbar,
+  Typography
+} from '@material-ui/core';
 import { Close } from '@material-ui/icons';
 import axios from 'axios';
+import clsx from 'clsx';
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
 import config from '../config';
@@ -75,8 +94,8 @@ function Calendario() {
 
   const [Reload, setReload] = useState(false);
   const [SnackOpen, setSnackOpen] = useState(false);
-  const [isSnackError, setIsSnackError] = useState(false);
-  const [isSnackInfo, setIsSnackInfo] = useState(false);
+  const [IsSnackError, setIsSnackError] = useState(false);
+  const [IsSnackInfo, setIsSnackInfo] = useState(false);
   const [SnackTxt, setSnackTxt] = useState('');
   const [ShowDialog, setShowDialog] = useState(false);
   const [DialogHeader, setDialogHeader] = useState('');
@@ -95,20 +114,22 @@ function Calendario() {
           }
         });
 
-        setEventos(res.data.map(ev => {
-          return {
-            id: ev._id,
-            title: ev.Institucion,
-            start: new Date(ev.FechaVisita),
-            color: 'crimson',
-            textColor: 'white'
-          }
-        }));
+        setEventos(
+          res.data.map(ev => {
+            return {
+              id: ev._id,
+              title: ev.Institucion,
+              start: new Date(ev.FechaVisita),
+              color: 'crimson',
+              textColor: 'white'
+            };
+          })
+        );
         showSnack('Info', 'Calendario actualizado.');
       } catch {
         showSnack('Error', 'Error obteniendo las solicitudes.');
       }
-    }
+    };
 
     getSolicitudes();
   }, [Token, Reload]);
@@ -121,7 +142,7 @@ function Calendario() {
   const handleSnackClose = (e, reason) => {
     if (reason === 'clickaway') return;
     setSnackOpen(false);
-  }
+  };
 
   /**
    * Método para mostrar los snack con un mensaje personalizado.
@@ -145,42 +166,42 @@ function Calendario() {
     }
     setSnackTxt(txt);
     setSnackOpen(true);
-  }
+  };
 
   /**
    * Método que maneja las acciones al dar clic en una día.
    * @param {{ date: Date }} info Información del día clicado.
    */
-  const dateClicked = (info) => {
+  const dateClicked = info => {
     const date = moment(info.date);
     if (date.isSameOrBefore(moment())) {
       showSnack('Info', 'Fecha de nueva solicitud inválida.');
     } else {
       setDateClicked(date);
-      nuevoEvento(`Ingresar Solicitud - ${date.format('D [de] MMMM')}`);
+      nuevoEvento(`Ingresar Solicitud - ${date.format('D [de] MMMM [del] YYYY')}`);
     }
-  }
+  };
 
   /**
    * Método que maneja las acciones al dar clic en un evento.
    * @param {{ event: { id: string } }} info Información del evento clicado.
    */
-  const eventClicked = (info) => {
+  const eventClicked = info => {
     setSnackOpen(false);
     setDialogHeader('Información de Solicitud');
     setIDClicked(info.event.id);
     setShowDialog(true);
-  }
+  };
 
   /**
    * Método para agregar eventos al calendario.
    * @param {string} txt Texto a mostrar en el encabezado.
    */
-  const nuevoEvento = (txt) => {
+  const nuevoEvento = txt => {
     setSnackOpen(false);
     setDialogHeader(txt);
     setShowDialog(true);
-  }
+  };
 
   return (
     <React.Fragment>
@@ -206,12 +227,10 @@ function Calendario() {
                   }
                 }}
                 height='parent'
-
                 plugins={[DayGridPlugin, InteractionPlugin]}
                 defaultView='dayGridMonth'
                 showNonCurrentDates={false}
                 fixedWeekCount={false}
-
                 weekends={false}
                 columnHeaderFormat={{
                   weekday: 'long'
@@ -219,7 +238,6 @@ function Calendario() {
                 minTime='08:00:00'
                 maxTime='16:00:00'
                 dateClick={dateClicked}
-
                 events={Eventos}
                 eventTimeFormat={{
                   hour: 'numeric',
@@ -230,15 +248,15 @@ function Calendario() {
                 }}
                 displayEventTime={true}
                 eventClick={eventClicked}
-                eventMouseEnter={(info) => { info.el.style.cursor = 'pointer' }}
-
+                eventMouseEnter={info => {
+                  info.el.style.cursor = 'pointer';
+                }}
                 editable={false}
                 eventStartEditable={false}
                 eventDurationEditable={false}
                 eventOverlap={false}
                 eventLimit={true}
                 eventLimitText='eventos'
-
                 locale={esUsLocale}
                 firstDay={1}
                 timeZone='local'
@@ -252,10 +270,16 @@ function Calendario() {
         open={ShowDialog}
         onClose={() => setShowDialog(false)}
         // @ts-ignore
-        TransitionComponent={Transition}>
+        TransitionComponent={Transition}
+      >
         <AppBar className={classes.appBar}>
           <Toolbar>
-            <IconButton edge='start' color='inherit' onClick={() => setShowDialog(false)} aria-label='close'>
+            <IconButton
+              edge='start'
+              color='inherit'
+              aria-label='close'
+              onClick={() => setShowDialog(false)}
+            >
               <Close />
             </IconButton>
             <Typography variant='h6' className={classes.title}>
@@ -264,14 +288,13 @@ function Calendario() {
           </Toolbar>
         </AppBar>
         <DialogContent>
-          {DialogHeader.includes('-') ?
+          {DialogHeader.includes('-') ? (
             <CrearSolicitud Fecha={DateClicked} />
-            :
-            DialogHeader.includes('Ingresar') ?
-              <CrearSolicitud />
-              :
-              <InfoSolicitud _id={IDClicked} />
-          }
+          ) : DialogHeader.includes('Ingresar') ? (
+            <CrearSolicitud />
+          ) : (
+            <InfoSolicitud _id={IDClicked} />
+          )}
         </DialogContent>
       </Dialog>
       <Snackbar
@@ -284,11 +307,20 @@ function Calendario() {
         onClose={handleSnackClose}
       >
         <SnackbarContent
-          className={isSnackError ? classes.errorSnack : isSnackInfo ? classes.infoSnack : classes.successSnack}
+          className={clsx({
+            [classes.errorSnack]: IsSnackError,
+            [classes.infoSnack]: IsSnackInfo,
+            [classes.successSnack]: !IsSnackError && !IsSnackInfo
+          })}
           aria-describedby='snackbar'
           message={
             <span className={classes.messageSnack} id='snackbar'>
-              <FAI icon={isSnackError ? faTimesCircle : isSnackInfo ? faExclamationCircle : faCheckCircle} className={classes.iconSnack} />
+              <FAI
+                icon={
+                  IsSnackError ? faTimesCircle : IsSnackInfo ? faExclamationCircle : faCheckCircle
+                }
+                className={classes.iconSnack}
+              />
               {SnackTxt}
             </span>
           }

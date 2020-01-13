@@ -11,6 +11,7 @@ app.use('/public', express.static('public'));
 
 // Routes
 app.use(require('./routes/auth'));
+app.use(require('./routes/backup'));
 app.use(require('./routes/bitacora'));
 app.use(require('./routes/departamentos'));
 app.use(require('./routes/estados'));

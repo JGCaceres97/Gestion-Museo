@@ -16,7 +16,14 @@ function Horarios() {
       Updated='Horario actualizado.'
       Titulo='Horarios de Atención'
       Columnas={[
-        { title: 'ID', field: '_id', editable: 'never', hidden: true, emptyValue: 'N/A' },
+        {
+          title: 'ID',
+          field: '_id',
+          editable: 'never',
+          hidden: true,
+          emptyValue: 'N/A',
+          defaultSort: 'asc'
+        },
         { title: 'Hora', field: 'Hora', emptyValue: 'N/A' }
       ]}
     />

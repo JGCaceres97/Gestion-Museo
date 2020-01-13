@@ -79,6 +79,7 @@ const tableIcons = {
 /**
  * Método para mostrar el mantenimiento de un componente.
  * @param {Object} props Props que recibe de otro componente.
+ * @param {boolean | false} [props.Grouping] Agrupación por columnas.
  * @param {string} props.Added Mensaje de notificación cuando se agregar un registro.
  * @param {string} props.ApiUrl Dirección correspondiente en la API.
  * @param {string} props.Component Nombre del componente.
@@ -93,6 +94,7 @@ const tableIcons = {
  * @param {import('material-table').Column[]} props.Columnas Columnas de la tabla.
  */
 function LayoutMantenimiento({
+  Grouping,
   Added,
   NotAdded,
   ApiUrl,
@@ -134,8 +136,9 @@ function LayoutMantenimiento({
 
       setData(res.data);
       setIsLoading(false);
-    } catch {
-      throw new Error();
+    } catch (e) {
+      setIsLoading(false);
+      throw e;
     }
   }, [ApiUrl, Token]);
 
@@ -147,7 +150,6 @@ function LayoutMantenimiento({
         await loadData();
         showSnack('Info', DataLoaded);
       } catch {
-        setIsLoading(false);
         showSnack('Error', DataNotLoaded);
       }
     };
@@ -264,7 +266,9 @@ function LayoutMantenimiento({
         options={{
           pageSize: 10,
           maxBodyHeight: 460,
+          grouping: Grouping,
           columnsButton: true,
+          addRowPosition: 'first',
           emptyRowsWhenPaging: false
         }}
         editable={{
@@ -277,9 +281,9 @@ function LayoutMantenimiento({
             icon: () => <Refresh />,
             tooltip: 'Recargar',
             isFreeAction: true,
-            onClick: () => {
-              loadData();
+            onClick: async () => {
               setIsLoading(true);
+              await loadData();
             }
           }
         ]}

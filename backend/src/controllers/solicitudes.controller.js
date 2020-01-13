@@ -6,6 +6,8 @@ const moment = require('moment');
 solicitudCtrl.getSolicitudes = async (req, res) => {
   try {
     const solicitudes = await Solicitud.find()
+      .populate('IDDepto')
+      .populate('IDMunicipio')
       .populate('IDHorario')
       .populate('IDEstado');
 
@@ -33,6 +35,8 @@ solicitudCtrl.createSolicitud = async (req, res) => {
       Telefono,
       Email,
       Institucion,
+      IDDepto,
+      IDMunicipio,
       Direccion,
       CantPersonas,
       FechaVisita,
@@ -49,6 +53,8 @@ solicitudCtrl.createSolicitud = async (req, res) => {
       Telefono,
       Email,
       Institucion,
+      IDDepto,
+      IDMunicipio,
       Direccion,
       CantPersonas,
       FechaVisita,
@@ -73,6 +79,8 @@ solicitudCtrl.createSolicitud = async (req, res) => {
 solicitudCtrl.getSolicitud = async (req, res) => {
   try {
     const solicitud = await Solicitud.findById(req.params.id)
+      .populate('IDDepto')
+      .populate('IDMunicipio')
       .populate('IDHorario')
       .populate('IDEstado');
 
@@ -101,6 +109,8 @@ solicitudCtrl.updateSolicitud = async (req, res) => {
       Telefono,
       Email,
       Institucion,
+      IDDepto,
+      IDMunicipio,
       Direccion,
       CantPersonas,
       FechaVisita,
@@ -118,6 +128,8 @@ solicitudCtrl.updateSolicitud = async (req, res) => {
         Telefono,
         Email,
         Institucion,
+        IDDepto,
+        IDMunicipio,
         Direccion,
         CantPersonas,
         FechaVisita,

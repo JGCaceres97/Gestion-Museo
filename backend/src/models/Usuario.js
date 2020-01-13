@@ -5,7 +5,8 @@ const usuarioSchema = new Schema(
   {
     IDRol: {
       type: Schema.Types.ObjectId,
-      ref: 'Rol'
+      ref: 'Rol',
+      required: true
     },
     Nombres: {
       type: String,

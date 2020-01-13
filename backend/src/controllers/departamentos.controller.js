@@ -61,7 +61,7 @@ departamentoCtrl.updateDepto = async (req, res) => {
       IDUsuario: req.usuario.ID,
       Email: req.usuario.Email,
       IP: req.ip.split(':').pop(),
-      Accion: `Actualización de departamento: ${departamento.Nombre} a ${Nombre}.`
+      Accion: `Actualización de departamento: ${departamento.Nombre} --> ${Nombre}.`
     });
 
     res.status(200).json({ message: 'Departamento actualizado.' });

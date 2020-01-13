@@ -9,23 +9,26 @@ function Municipios() {
   const [Deptos, setDeptos] = useState({});
   const [Token] = useLocalStorage('Token', '');
 
-  useEffect(() => {
-    const getDeptos = async () => {
-      try {
-        const res = await axios.get(`http://${address}:${port}/api/deptos`, {
-          headers: {
-            Authorization: Token
-          }
-        });
+  /**
+   * Método para ordenar un arreglo en base a una clave.
+   * @param {string} key Clave a usar de base para el ordenamiento.
+   */
+  const sortArray = key => {
+    let sortOrder = 1;
 
-        setDeptos(convertArrayToObject(res.data, '_id'));
-      } catch (e) {
-        console.error(e);
+    if (key[0] === '-') {
+      sortOrder = -1;
+      key = key.substr(1);
+    }
+
+    return (a, b) => {
+      if (sortOrder === -1) {
+        return b[key].localeCompare(a[key]);
+      } else {
+        return a[key].localeCompare(b[key]);
       }
     };
-
-    getDeptos();
-  }, [Token]);
+  };
 
   /**
    * Método para convertir un arreglo en un objeto de JavaScript.
@@ -43,8 +46,27 @@ function Municipios() {
     }, initial);
   };
 
+  useEffect(() => {
+    const getDeptos = async () => {
+      try {
+        const res = await axios.get(`http://${address}:${port}/api/deptos`, {
+          headers: {
+            Authorization: Token
+          }
+        });
+
+        setDeptos(convertArrayToObject(res.data.sort(sortArray('_id')), '_id'));
+      } catch (e) {
+        console.error(e);
+      }
+    };
+
+    getDeptos();
+  }, [Token]);
+
   return (
     <LayoutMantenimiento
+      Grouping
       Added='Municipio ingresado.'
       ApiUrl='api/municipios'
       Component='Municipios'
@@ -57,11 +79,19 @@ function Municipios() {
       Updated='Municipio actualizado.'
       Titulo='Municipios'
       Columnas={[
-        { title: 'ID', field: '_id', editable: 'never', hidden: true, emptyValue: 'N/A' },
+        {
+          title: 'ID',
+          field: '_id',
+          editable: 'never',
+          hidden: true,
+          emptyValue: 'N/A',
+          defaultSort: 'asc'
+        },
         {
           title: 'Departamento',
           field: 'IDDepartamento',
           emptyValue: 'N/A',
+          defaultSort: 'asc',
           lookup: Deptos
         },
         { title: 'Municipio', field: 'Nombre', emptyValue: 'N/A' }

@@ -109,8 +109,9 @@ function Bitacora() {
 
       setData(res.data);
       setIsLoading(false);
-    } catch {
-      throw new Error();
+    } catch (e) {
+      setIsLoading(false);
+      throw e;
     }
   }, [Token]);
 
@@ -122,7 +123,6 @@ function Bitacora() {
         await loadData();
         showSnack('Info', 'Bitácora cargada.');
       } catch {
-        setIsLoading(false);
         showSnack('Error', 'Error obteniendo la bitácora.');
       }
     };
@@ -202,9 +202,9 @@ function Bitacora() {
             icon: () => <Refresh />,
             tooltip: 'Recargar',
             isFreeAction: true,
-            onClick: () => {
-              loadData();
+            onClick: async () => {
               setIsLoading(true);
+              await loadData();
             }
           }
         ]}

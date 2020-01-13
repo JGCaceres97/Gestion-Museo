@@ -20,7 +20,14 @@ function Roles() {
       Updated='Rol actualizado.'
       Titulo='Roles'
       Columnas={[
-        { title: 'ID', field: '_id', editable: 'never', hidden: true, emptyValue: 'N/A' },
+        {
+          title: 'ID',
+          field: '_id',
+          editable: 'never',
+          hidden: true,
+          emptyValue: 'N/A',
+          defaultSort: 'desc'
+        },
         { title: 'Nombre', field: 'Nombre', emptyValue: 'N/A' },
         {
           type: 'boolean',

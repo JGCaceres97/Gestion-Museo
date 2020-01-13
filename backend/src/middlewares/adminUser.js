@@ -24,8 +24,8 @@ const createAdmin = async adminPassword => {
     });
 
     const adminExist = await Usuario.findOne({
-      Nombre: 'Sys',
-      Apellidos: 'Admin',
+      Nombre: 'Admin',
+      Apellidos: 'Sys',
       Email: 'admin@admin.sys'
     });
 

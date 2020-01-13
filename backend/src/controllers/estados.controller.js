@@ -49,13 +49,6 @@ estadoCtrl.getEstado = async (req, res) => {
       Nombre: req.params.id
     });
 
-    await createRegistro({
-      IDUsuario: req.usuario.ID,
-      Email: req.usuario.Email,
-      IP: req.ip.split(':').pop(),
-      Accion: `Lectura de estado para solicitudes: ${estado.Nombre}.`
-    });
-
     res.status(200).json(estado);
   } catch (e) {
     console.error(e);

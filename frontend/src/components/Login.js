@@ -339,9 +339,9 @@ function Login() {
         Password
       });
 
-      setToken(`Bearer ${res.data.token}`);
-      setUsuario(res.data.usuario);
-      setPermisos(res.data.permisos);
+      setToken(`Bearer ${res.data.Token}`);
+      setUsuario(res.data.Usuario);
+      setPermisos(res.data.Permisos);
       setSuccessLogin(true);
     } catch (e) {
       setIsLoading(false);

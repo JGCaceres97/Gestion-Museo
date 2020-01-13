@@ -17,7 +17,14 @@ function Deptos() {
       Updated='Departamento actualizado.'
       Titulo='Departamentos'
       Columnas={[
-        { title: 'ID', field: '_id', editable: 'never', hidden: true, emptyValue: 'N/A' },
+        {
+          title: 'ID',
+          field: '_id',
+          editable: 'never',
+          hidden: true,
+          emptyValue: 'N/A',
+          defaultSort: 'asc'
+        },
         { title: 'Nombre', field: 'Nombre', emptyValue: 'N/A' }
       ]}
     />

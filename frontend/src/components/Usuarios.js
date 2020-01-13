@@ -59,7 +59,14 @@ function Usuarios() {
       Updated='Usuario actualizado.'
       Titulo='Usuarios del sistema'
       Columnas={[
-        { title: 'ID', field: '_id', editable: 'never', hidden: true, emptyValue: 'N/A' },
+        {
+          title: 'ID',
+          field: '_id',
+          editable: 'never',
+          hidden: true,
+          emptyValue: 'N/A',
+          defaultSort: 'desc'
+        },
         {
           title: 'Rol',
           lookup: Roles,

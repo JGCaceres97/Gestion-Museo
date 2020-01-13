@@ -6,5 +6,6 @@ module.exports = {
   secretKey: process.env.SECRET_KEY,
   emailAddress: process.env.EMAIL_ADDRESS,
   emailPassword: process.env.EMAIL_PASSWORD,
-  adminPassword: process.env.ADMIN_PASSWORD
+  adminPassword: process.env.ADMIN_PASSWORD,
+  maxBackups: process.env.MAX_BACKUPS || 10
 };
