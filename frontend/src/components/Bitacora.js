@@ -108,10 +108,10 @@ function Bitacora() {
       });
 
       setData(res.data);
-      setIsLoading(false);
     } catch (e) {
-      setIsLoading(false);
       throw e;
+    } finally {
+      setIsLoading(false);
     }
   }, [Token]);
 

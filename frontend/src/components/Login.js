@@ -3,9 +3,9 @@ import {
   faAt,
   faExclamationCircle,
   faKey,
+  faQuestion,
   faSignInAlt,
-  faTimesCircle,
-  faQuestion
+  faTimesCircle
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon as FAI } from '@fortawesome/react-fontawesome';
 import {
@@ -225,8 +225,9 @@ function Login() {
       } catch (e) {
         console.error(e);
         showSnack('Error', 'Error al intentar restablecer contraseña.');
+      } finally {
+        toggleReset(false);
       }
-      toggleReset(false);
     } else {
       showSnack('Error', 'Complete el campo con el formato adecuado.');
     }

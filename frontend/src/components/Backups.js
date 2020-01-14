@@ -86,8 +86,8 @@ function Backups() {
   const [IsLoading, setIsLoading] = useState(true);
   const [SnackOpen, setSnackOpen] = useState(false);
   const [SnackTxt, setSnackTxt] = useState('');
-  const [isSnackError, setIsSnackError] = useState(false);
-  const [isSnackInfo, setIsSnackInfo] = useState(false);
+  const [IsSnackError, setIsSnackError] = useState(false);
+  const [IsSnackInfo, setIsSnackInfo] = useState(false);
   const [Token] = useLocalStorage('Token', '');
 
   const { body, grouping, header, pagination, toolbar } = tableLocalization;
@@ -116,10 +116,10 @@ function Backups() {
           };
         })
       );
-      setIsLoading(false);
     } catch (e) {
-      setIsLoading(false);
       throw e;
+    } finally {
+      setIsLoading(false);
     }
   }, [Token]);
 
@@ -183,6 +183,7 @@ function Backups() {
       await loadData();
       showSnack('Success', 'Copia de seguridad realizada con éxito.');
     } catch {
+      setIsLoading(false);
       showSnack('Error', 'Error realizando la copia de seguridad.');
     }
   };
@@ -207,6 +208,7 @@ function Backups() {
       await loadData();
       showSnack('Success', 'Restauración realizada con éxito.');
     } catch {
+      setIsLoading(false);
       showSnack('Error', 'Error restaurando la copia de seguridad.');
     }
   };
@@ -292,16 +294,16 @@ function Backups() {
       >
         <SnackbarContent
           className={clsx({
-            [classes.errorSnack]: isSnackError,
-            [classes.infoSnack]: isSnackInfo,
-            [classes.successSnack]: !isSnackError && !isSnackInfo
+            [classes.errorSnack]: IsSnackError,
+            [classes.infoSnack]: IsSnackInfo,
+            [classes.successSnack]: !IsSnackError && !IsSnackInfo
           })}
           aria-describedby='snackbar'
           message={
             <span className={classes.messageSnack} id='snackbar'>
               <FAI
                 icon={
-                  isSnackError ? faTimesCircle : isSnackInfo ? faExclamationCircle : faCheckCircle
+                  IsSnackError ? faTimesCircle : IsSnackInfo ? faExclamationCircle : faCheckCircle
                 }
                 className={classes.iconSnack}
               />

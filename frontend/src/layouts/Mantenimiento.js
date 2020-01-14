@@ -135,10 +135,10 @@ function LayoutMantenimiento({
       });
 
       setData(res.data);
-      setIsLoading(false);
     } catch (e) {
-      setIsLoading(false);
       throw e;
+    } finally {
+      setIsLoading(false);
     }
   }, [ApiUrl, Token]);
 

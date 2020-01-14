@@ -32,8 +32,8 @@ const createAdmin = async adminPassword => {
     if (!adminExist) {
       const adminUser = new Usuario({
         IDRol: adminRol._id,
-        Nombres: 'Sys',
-        Apellidos: 'Admin',
+        Nombres: 'Admin',
+        Apellidos: 'Sys',
         Email: 'admin@admin.sys',
         Password: adminPassword
       });
