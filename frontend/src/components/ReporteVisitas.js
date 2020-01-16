@@ -2,6 +2,7 @@
 import MomentUtils from '@date-io/moment';
 import {
   faCheckCircle,
+  faExclamationCircle,
   faFileExcel,
   faFilePdf,
   faSearch,
@@ -23,19 +24,23 @@ import {
   Snackbar,
   SnackbarContent,
   Table,
-  TableHead,
-  TableRow,
-  Typography,
-  TableCell,
   TableBody,
-  TablePagination
+  TableCell,
+  TableHead,
+  TablePagination,
+  TableRow,
+  Typography
 } from '@material-ui/core';
 import { Close } from '@material-ui/icons';
 import { DatePicker, MuiPickersUtilsProvider } from '@material-ui/pickers';
 import axios from 'axios';
 import clsx from 'clsx';
+import { saveAs } from 'file-saver';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
+import XLSX from 'xlsx';
 import { address, port } from '../config';
 import useLocalStorage from '../customHooks/useLocalStorage';
 
@@ -61,6 +66,9 @@ const useStyles = makeStyles(theme => ({
   },
   errorSnack: {
     backgroundColor: theme.palette.error.dark
+  },
+  infoSnack: {
+    backgroundColor: theme.palette.primary.main
   },
   alignCenter: {
     textAlign: 'center'
@@ -114,12 +122,13 @@ function ReporteVisitas() {
       .toDate()
   );
   const [FechaFinal, setFechaFinal] = useState(moment().toDate());
-  const [IDEstado, setIDEstado] = useState('0');
+  const [IDEstado, setIDEstado] = useState('Todas');
 
   const [BtnTxt, setBtnTxt] = useState('Consultar');
   const [BtnDisabled, setBtnDisabled] = useState(false);
   const [SnackOpen, setSnackOpen] = useState(false);
   const [IsSnackError, setIsSnackError] = useState(false);
+  const [IsSnackInfo, setIsSnackInfo] = useState(false);
   const [SnackTxt, setSnackTxt] = useState('');
   const [Consultado, setConsultado] = useState(false);
   const [Page, setPage] = useState(0);
@@ -195,15 +204,21 @@ function ReporteVisitas() {
 
   /**
    * Método para mostrar los snack con un mensaje personalizado.
-   * @param {'Error' | 'Success'} type Tipo de snack a mostrar.
+   * @param {'Info' | 'Error' | 'Success'} type Tipo de snack a mostrar.
    * @param {string} txt Texto a mostrar en el snack.
    */
   const showSnack = (type, txt) => {
     switch (type) {
+      case 'Info':
+        setIsSnackInfo(true);
+        setIsSnackError(false);
+        break;
       case 'Error':
+        setIsSnackInfo(false);
         setIsSnackError(true);
         break;
       default:
+        setIsSnackInfo(false);
         setIsSnackError(false);
         break;
     }
@@ -211,16 +226,115 @@ function ReporteVisitas() {
     setSnackOpen(true);
   };
 
-  const columnas = [
-    { id: 'FechaSolicitud', label: 'Fecha Solicitud', maxWidth: 110 },
-    { id: 'Nombre', label: 'Nombre', maxWidth: 170 },
-    { id: 'Institucion', label: 'Institución', maxWidth: 250 },
-    { id: 'Telefono', label: 'Teléfono', maxWidth: 110 },
-    { id: 'Email', label: 'Correo electrónico', maxWidth: 170 },
-    { id: 'CantPersonas', label: '# Personas', maxWidth: 90 },
-    { id: 'FechaVisita', label: 'Fecha Visita', maxWidth: 90 },
-    { id: 'Estado', label: 'Estado', maxWidth: 110 }
-  ];
+  /**
+   * Método para ordenar un arreglo en base a una clave.
+   * @param {string} key Clave a usar de base para el ordenamiento.
+   * @param {'asc' | 'desc'} [sorting=asc] Forma de ordenar el arreglo.
+   */
+  const sortArray = (key, sorting) => {
+    return (a, b) => {
+      if (sorting === 'desc') {
+        return b[key].localeCompare(a[key]);
+      } else {
+        return a[key].localeCompare(b[key]);
+      }
+    };
+  };
+
+  const exportExcel = () => {
+    if (Consulta.length > 0) {
+      const ext = '.xlsx';
+      const name = `Reporte ${moment().format('DD-MM-YYYY')}${ext}`;
+      const type =
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
+      const info = Consulta.map(item => {
+        return {
+          'Fecha Solicitud': item.FechaSolicitud,
+          Nombre: item.Nombre,
+          Institución: item.Institución,
+          Teléfono: item.Telefono,
+          'Correo electrónico': item.Email,
+          'Cant. de Personas': item.CantPersonas,
+          'Fecha Visita': item.FechaVisita,
+          Estado: item.Estado
+        };
+      });
+
+      const sheet = XLSX.utils.json_to_sheet(info);
+      const book = { Sheets: { Reporte: sheet }, SheetNames: ['Reporte'] };
+      const excelBuffer = XLSX.write(book, { bookType: 'xlsx', type: 'array' });
+      const data = new Blob([excelBuffer], { type: type });
+
+      saveAs(data, name);
+    } else {
+      showSnack('Info', 'No hay registros que exportar.');
+    }
+  };
+
+  const exportPDF = () => {
+    if (Consulta.length > 0) {
+      const ext = '.pdf';
+      const name = `Reporte ${moment().format('DD-MM-YYYY')}${ext}`;
+      const doc = new jsPDF({
+        orientation: 'landscape',
+        unit: 'pt',
+        size: 'letter'
+      });
+      doc.setFontSize(20);
+
+      /*const logo = new Image();
+      logo.src = '/img/bch.jpg';
+      logo.onload = () => {
+        doc.addImage(logo, 'JPEG', 40, 20, 83, 80);
+      };
+
+      const logoCC = new Image();
+      logoCC.src = '/img/logo.png';
+      logoCC.onload = () => {
+        doc.addImage(logoCC, 'PNG', 685, 15, 115, 90);
+      };*/
+
+      const title = `Reporte de Visitas - ${moment().format('DD/MM/YYYY')}`;
+      const header = [
+        { title: 'Fecha Solicitud', dataKey: 'FechaSolicitud' },
+        { title: 'Nombre', dataKey: 'Nombre' },
+        { title: 'Institución', dataKey: 'Institucion' },
+        { title: 'Teléfono', dataKey: 'Telefono' },
+        { title: 'Correo electrónico', dataKey: 'Email' },
+        { title: 'Cant. de Personas', dataKey: 'CantPersonas' },
+        { title: 'Fecha Visita', dataKey: 'FechaVisita' },
+        { title: 'Estado', dataKey: 'Estado' }
+      ];
+
+      doc.text(title, doc.internal.pageSize.getWidth() / 2, 70, 'center');
+      // @ts-ignore
+      doc.autoTable(header, Consulta, {
+        margin: { top: 50 },
+        theme: 'striped',
+        startY: 115,
+        showHead: 'everyPage',
+        styles: {
+          halign: 'center',
+          valign: 'middle',
+          overflow: 'linebreak'
+        },
+        columnStyles: {
+          'Fecha Solicitud': { cellWidth: 70 },
+          Nombre: { cellWidth: 100 },
+          Institución: { cellWidth: 150 },
+          Teléfono: { cellWidth: 70 },
+          'Correo electrónico': { cellWidth: 150 },
+          'Cant. de Personas': { cellWidth: 70 },
+          'Fecha Visita': { cellWidth: 70 },
+          Estado: { cellWidth: 80 }
+        }
+      });
+
+      doc.save(name);
+    } else {
+      showSnack('Info', 'No hay registros que exportar.');
+    }
+  };
 
   const handleConsulta = async () => {
     try {
@@ -233,27 +347,53 @@ function ReporteVisitas() {
       });
 
       setConsulta(
-        res.data.map(item => {
-          return {
-            ID: item._id,
-            FechaSolicitud: moment(item.FechaSolicitud).format('DD/MM/YYYY'),
-            Nombre: item.Nombres + ' ' + item.Apellidos,
-            Institucion: item.Institucion,
-            Telefono: item.Telefono,
-            Email: item.Email,
-            CantPersonas: item.CantPersonas,
-            FechaVisita: moment(item.FechaVisita).format('DD/MM/YYYY'),
-            Estado: item.IDEstado.Nombre
-          };
-        })
+        res.data
+          .filter(item => {
+            const estado = item.IDEstado._id;
+            const visita = moment(item.FechaVisita);
+            const inicial = moment(FechaInicial);
+            const final = moment(FechaFinal);
+
+            return visita.isSameOrAfter(inicial) &&
+              visita.isSameOrBefore(final) &&
+              IDEstado === 'Todas'
+              ? true
+              : IDEstado.localeCompare(estado) === 0;
+          })
+          .sort(sortArray('FechaVisita'))
+          .map(item => {
+            return {
+              ID: item._id,
+              FechaSolicitud: moment(item.FechaSolicitud).format('DD/MM/YYYY'),
+              Nombre: item.Nombres + ' ' + item.Apellidos,
+              Institucion: item.Institucion,
+              Telefono: item.Telefono,
+              Email: item.Email,
+              CantPersonas: item.CantPersonas,
+              FechaVisita: moment(item.FechaVisita).format('DD/MM/YYYY'),
+              Estado: item.IDEstado.Nombre
+            };
+          })
       );
+
       setConsultado(true);
     } catch {
       showSnack('Error', 'Error realizando la consulta.');
+    } finally {
+      toggleBtn('Consultar', false);
     }
-
-    toggleBtn('Consultar', false);
   };
+
+  const columnas = [
+    { id: 'FechaSolicitud', label: 'Fecha Solicitud', maxWidth: 110 },
+    { id: 'Nombre', label: 'Nombre', maxWidth: 170 },
+    { id: 'Institucion', label: 'Institución', maxWidth: 250 },
+    { id: 'Telefono', label: 'Teléfono', maxWidth: 110 },
+    { id: 'Email', label: 'Correo electrónico', maxWidth: 170 },
+    { id: 'CantPersonas', label: '# Personas', maxWidth: 90 },
+    { id: 'FechaVisita', label: 'Fecha Visita', maxWidth: 90 },
+    { id: 'Estado', label: 'Estado', maxWidth: 110 }
+  ];
 
   return (
     <React.Fragment>
@@ -290,7 +430,7 @@ function ReporteVisitas() {
                   disableToolbar
                   variant='inline'
                   format='D/MM/YYYY'
-                  maxDate={moment()}
+                  maxDate={moment().add(1, 'month')}
                   value={FechaFinal}
                   label='Fecha de cierre'
                   shouldDisableDate={disableWeekends}
@@ -307,7 +447,7 @@ function ReporteVisitas() {
                   labelId='Estado'
                   onChange={e => setIDEstado(e.target.value.toString())}
                 >
-                  <MenuItem value='0'>Todas</MenuItem>
+                  <MenuItem value='Todas'>Todas</MenuItem>
                   {Estados.map((item, i) => (
                     <MenuItem key={i + 1} value={item.key}>
                       {item.text}
@@ -339,7 +479,7 @@ function ReporteVisitas() {
                     color='inherit'
                     variant='contained'
                     className={classes.pdfBtn}
-                    onClick={() => alert('PDF')}
+                    onClick={() => exportPDF()}
                     startIcon={<FAI icon={faFilePdf} />}
                   >
                     Exportar PDF
@@ -352,7 +492,7 @@ function ReporteVisitas() {
                     color='inherit'
                     variant='contained'
                     className={classes.excelBtn}
-                    onClick={() => alert('Excel')}
+                    onClick={() => exportExcel()}
                     startIcon={<FAI icon={faFileExcel} />}
                   >
                     Exportar Excel
@@ -428,13 +568,16 @@ function ReporteVisitas() {
         <SnackbarContent
           className={clsx({
             [classes.errorSnack]: IsSnackError,
-            [classes.successSnack]: !IsSnackError
+            [classes.infoSnack]: IsSnackInfo,
+            [classes.successSnack]: !IsSnackError && !IsSnackInfo
           })}
           aria-describedby='snackbar'
           message={
             <span className={classes.messageSnack} id='snackbar'>
               <FAI
-                icon={IsSnackError ? faTimesCircle : faCheckCircle}
+                icon={
+                  IsSnackError ? faTimesCircle : IsSnackInfo ? faExclamationCircle : faCheckCircle
+                }
                 className={classes.iconSnack}
               />
               {SnackTxt}
