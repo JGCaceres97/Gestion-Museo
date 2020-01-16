@@ -88,8 +88,8 @@ function Bitacora() {
   const [IsLoading, setIsLoading] = useState(true);
   const [SnackOpen, setSnackOpen] = useState(false);
   const [SnackTxt, setSnackTxt] = useState('');
-  const [isSnackError, setIsSnackError] = useState(false);
-  const [isSnackInfo, setIsSnackInfo] = useState(false);
+  const [IsSnackError, setIsSnackError] = useState(false);
+  const [IsSnackInfo, setIsSnackInfo] = useState(false);
   const [Token] = useLocalStorage('Token', '');
 
   useEffect(() => {
@@ -220,16 +220,16 @@ function Bitacora() {
       >
         <SnackbarContent
           className={clsx({
-            [classes.errorSnack]: isSnackError,
-            [classes.infoSnack]: isSnackInfo,
-            [classes.successSnack]: !isSnackError && !isSnackInfo
+            [classes.errorSnack]: IsSnackError,
+            [classes.infoSnack]: IsSnackInfo,
+            [classes.successSnack]: !IsSnackError && !IsSnackInfo
           })}
           aria-describedby='snackbar'
           message={
             <span className={classes.messageSnack} id='snackbar'>
               <FAI
                 icon={
-                  isSnackError ? faTimesCircle : isSnackInfo ? faExclamationCircle : faCheckCircle
+                  IsSnackError ? faTimesCircle : IsSnackInfo ? faExclamationCircle : faCheckCircle
                 }
                 className={classes.iconSnack}
               />

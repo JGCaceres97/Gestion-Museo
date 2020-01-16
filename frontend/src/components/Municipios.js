@@ -12,17 +12,11 @@ function Municipios() {
   /**
    * Método para ordenar un arreglo en base a una clave.
    * @param {string} key Clave a usar de base para el ordenamiento.
+   * @param {'asc' | 'desc'} [sorting=asc] Forma de ordenar el arreglo.
    */
-  const sortArray = key => {
-    let sortOrder = 1;
-
-    if (key[0] === '-') {
-      sortOrder = -1;
-      key = key.substr(1);
-    }
-
+  const sortArray = (key, sorting) => {
     return (a, b) => {
-      if (sortOrder === -1) {
+      if (sorting === 'desc') {
         return b[key].localeCompare(a[key]);
       } else {
         return a[key].localeCompare(b[key]);
