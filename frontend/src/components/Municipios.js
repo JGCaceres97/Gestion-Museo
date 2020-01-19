@@ -61,6 +61,7 @@ function Municipios() {
   return (
     <LayoutMantenimiento
       Grouping
+      MaxBodyHeight={409}
       Added='Municipio ingresado.'
       ApiUrl='api/municipios'
       Component='Municipios'

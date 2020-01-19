@@ -80,6 +80,7 @@ const tableIcons = {
  * Método para mostrar el mantenimiento de un componente.
  * @param {Object} props Props que recibe de otro componente.
  * @param {boolean | false} [props.Grouping] Agrupación por columnas.
+ * @param {number | 460} [props.MaxBodyHeight] Altura máxima del cuerpo de la tabla.
  * @param {string} props.Added Mensaje de notificación cuando se agregar un registro.
  * @param {string} props.ApiUrl Dirección correspondiente en la API.
  * @param {string} props.Component Nombre del componente.
@@ -106,7 +107,8 @@ function LayoutMantenimiento({
   Deleted,
   NotDeleted,
   Titulo,
-  Columnas
+  Columnas,
+  MaxBodyHeight
 }) {
   // @ts-ignore
   const classes = useStyles();
@@ -265,7 +267,7 @@ function LayoutMantenimiento({
         }}
         options={{
           pageSize: 10,
-          maxBodyHeight: 460,
+          maxBodyHeight: MaxBodyHeight,
           grouping: Grouping,
           columnsButton: true,
           addRowPosition: 'first',
