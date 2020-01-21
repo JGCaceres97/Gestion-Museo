@@ -1,10 +1,12 @@
 const Libro = require('../models/Libro');
 const libroCtrl = {};
-const {} = require('./bitacora.controller');
+const { createRegistro } = require('./bitacora.controller');
 
 libroCtrl.getLibros = async (req, res) => {
   try {
-    const libros = await Libro.find().populate('Etiquetas');
+    const libros = await Libro.find()
+      .populate('IDAutor')
+      .populate('IDEtiquetas');
 
     await createRegistro({
       IDUsuario: req.usuario.ID,
@@ -22,15 +24,15 @@ libroCtrl.getLibros = async (req, res) => {
 
 libroCtrl.createLibro = async (req, res) => {
   try {
-    const { Autor, Titulo, Descripcion, Año, ISBN, Editorial, Etiquetas } = req.body;
+    const { IDAutor, Titulo, Sinopsis, Año, ISBN, Editorial, IDEtiquetas } = req.body;
     const nuevoLibro = new Libro({
-      Autor,
+      IDAutor,
       Titulo,
-      Descripcion,
+      Sinopsis,
       Año,
       ISBN,
       Editorial,
-      Etiquetas
+      IDEtiquetas
     });
     await nuevoLibro.save();
 
@@ -38,7 +40,7 @@ libroCtrl.createLibro = async (req, res) => {
       IDUsuario: req.usuario.ID,
       Email: req.usuario.Email,
       IP: req.ip.split(':').pop(),
-      Accion: `Adición de libro: ${Titulo}, ${Autor}.`
+      Accion: `Adición de libro: ${Titulo}, ${ISBN}.`
     });
 
     res.status(201).json({ message: 'Libro ingresado.' });
@@ -50,13 +52,15 @@ libroCtrl.createLibro = async (req, res) => {
 
 libroCtrl.getLibro = async (req, res) => {
   try {
-    const libro = await Libro.findById(req.params.id).populate('Etiquetas');
+    const libro = await Libro.findById(req.params.id)
+      .populate('IDAutor')
+      .populate('IDEtiquetas');
 
     await createRegistro({
       IDUsuario: req.usuario.ID,
       Email: req.usuario.Email,
       IP: req.ip.split(':').pop(),
-      Accion: `Lectura de libro: ${libro.Titulo}, ${libro.Autor}.`
+      Accion: `Lectura de libro: ${libro.Titulo}, ${libro.IDAutor.Nombre}.`
     });
 
     res.status(200).json(libro);
@@ -68,17 +72,17 @@ libroCtrl.getLibro = async (req, res) => {
 
 libroCtrl.updateLibro = async (req, res) => {
   try {
-    const { Autor, Titulo, Descripcion, Año, ISBN, Editorial, Etiquetas } = req.body;
+    const { IDAutor, Titulo, Sinopsis, Año, ISBN, Editorial, IDEtiquetas } = req.body;
     const libro = await Libro.findOneAndUpdate(
       { _id: req.params.id },
       {
-        Autor,
+        IDAutor,
         Titulo,
-        Descripcion,
+        Sinopsis,
         Año,
         ISBN,
         Editorial,
-        Etiquetas
+        IDEtiquetas
       }
     );
 
@@ -86,7 +90,7 @@ libroCtrl.updateLibro = async (req, res) => {
       IDUsuario: req.usuario.ID,
       Email: req.usuario.Email,
       IP: req.ip.split(':').pop(),
-      Accion: `Actualización de libro: ${libro.Titulo}, ${libro.Autor}.`
+      Accion: `Actualización de libro: ${libro.Titulo}, ${libro.IDAutor.Nombre}.`
     });
 
     res.status(200).json({ message: 'Libro actualizado.' });
@@ -104,7 +108,7 @@ libroCtrl.deleteLibro = async (req, res) => {
       IDUsuario: req.usuario.ID,
       Email: req.usuario.Email,
       IP: req.ip.split(':').pop(),
-      Accion: `Eliminación de libro: ${libro.Titulo}, ${libro.Autor}.`
+      Accion: `Eliminación de libro: ${libro.Titulo}, ${libro.IDAutor.Nombre}.`
     });
 
     res.status(200).json({ message: 'Libro eliminado.' });

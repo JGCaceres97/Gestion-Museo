@@ -56,11 +56,11 @@ usuarioCtrl.signUp = async (req, res) => {
       to: `${usuario.Email}`,
       subject: 'Creación de cuenta',
       text:
-        `Buen día ${usuario.Nombres} ${usuario.Apellidos}:\n\n` +
+        `Buen día ${usuario.Nombres},\n\n` +
         'Está recibiendo este corro debido a que se ha creado una nueva cuenta en el Sistema de Gestión de Centros Culturales con su dirección de correo electrónico.\n\n' +
         'Haga clic en el siguiente enlace, o copie y pegue el mismo en su navegador web para completar el proceso de creación y asignación de una nueva contraseña a la cuenta en un plazo de 24 horas desde que se recibio este correo.\n\n' +
         `http://${address}/reset/${token}\n\n` +
-        'Si usted no hizo solicitud de cuenta, por favor comuníquelo al personal administrativo de los Centros Culturales para proceder a dar de baja la cuenta.\n'
+        'Si usted no hizo solicitud de cuenta, por favor comuníquelo al personal administrativo de los Centros Culturales para proceder a dar de baja la misma.\n'
     };
 
     transporter.sendMail(mailOptions, (err, info) => {
@@ -222,7 +222,7 @@ usuarioCtrl.forgotPassword = async (req, res) => {
       to: `${usuario.Email}`,
       subject: 'Restablecimiento de contraseña',
       text:
-        `Buen día ${usuario.Nombres}:\n\n` +
+        `Buen día ${usuario.Nombres},\n\n` +
         'Está recibiendo esto debido a que usted (o alguien más) ha solicitado el restablecimiento de la contraseña para su cuenta en el Sistema de Gestión de los Centros Culturales.\n\n' +
         'Haga clic en el siguiente enlace, o copie y pegue el mismo en su navegador web para completar el proceso en el plazo de una hora desde que se recibio este correo.\n\n' +
         `http://${address}/reset/${token}\n\n` +
@@ -300,7 +300,7 @@ usuarioCtrl.updatePassword = async (req, res) => {
       to: `${usuario.Email}`,
       subject: 'Actualización de contraseña',
       text:
-        `Buen día ${usuario.Nombres}:\n\n` +
+        `Buen día ${usuario.Nombres},\n\n` +
         'Está recibiendo este correo de notificación debido a que usted (o alguien más) ha realizado una actualización de contraseña para su cuenta en el Sistema de Gestión de los Centros Culturales.\n\n' +
         'Si usted no realizó esta actualización, por favor comuníquelo al personal administrativo de los Centros Culturales para que se le pueda ayudar con la recuperación de la cuenta, en caso contrario ignore este mensaje.\n'
     };

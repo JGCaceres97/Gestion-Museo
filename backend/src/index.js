@@ -1,12 +1,12 @@
 require('dotenv').config();
 const app = require('./app');
-const config = require('../config');
+const { port } = require('../config');
 require('./database');
 
-async function main() {
+function main() {
   try {
-    await app.listen(config.port);
-    console.log('Server on port', config.port);
+    app.listen(port);
+    console.log('Server on port', port);
   } catch (e) {
     console.error(e);
   }

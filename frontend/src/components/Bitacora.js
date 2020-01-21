@@ -180,7 +180,7 @@ function Bitacora() {
         options={{
           pageSize: 10,
           grouping: true,
-          maxBodyHeight: 408,
+          maxBodyHeight: 405,
           columnsButton: true,
           emptyRowsWhenPaging: false
         }}
