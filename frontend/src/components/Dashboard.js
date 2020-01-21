@@ -5,6 +5,7 @@ import {
   faChartLine,
   faChartPie,
   faClock,
+  faFeatherAlt,
   faFlag,
   faGlobe,
   faGlobeAmericas,
@@ -40,7 +41,9 @@ import React, { useEffect, useState } from 'react';
 import { Redirect } from 'react-router-dom';
 import { address, port } from '../config';
 import useLocalStorage from '../customHooks/useLocalStorage';
+import Autores from './Autores';
 import Backups from './Backups';
+import Biblioteca from './Biblioteca';
 import Bitacora from './Bitacora';
 import Calendario from './Calendario';
 import Deptos from './Deptos';
@@ -178,7 +181,9 @@ function Dashboard() {
       case 'Calendario':
         return <Calendario />;
       case 'Biblioteca':
-        return 'Biblioteca';
+        return <Biblioteca />;
+      case 'Autores':
+        return <Autores />;
       case 'Estados':
         return <Estados />;
       case 'Etiquetas':
@@ -216,10 +221,12 @@ function Dashboard() {
           Authorization: Token
         }
       });
-
+    } catch (e) {
+      console.error(e);
+    } finally {
       localStorage.clear();
       setLoggedOut(true);
-    } catch (e) {}
+    }
   };
 
   if (loggedOut) return <Redirect push to='/login' />;
@@ -330,6 +337,24 @@ function Dashboard() {
                 >
                   Mantenimiento
                 </ListSubheader>
+                <Tooltip
+                  title='Mantenimiento de Autores'
+                  placement='right'
+                  disableHoverListener={drawerOpen}
+                  disableFocusListener={drawerOpen}
+                  disableTouchListener={drawerOpen}
+                >
+                  <ListItem
+                    button
+                    selected={selectedIndex === 'Autores'}
+                    onClick={() => handleListClick('Autores')}
+                  >
+                    <ListItemIcon>
+                      <FAI icon={faFeatherAlt} className={classes.icon} />
+                    </ListItemIcon>
+                    <ListItemText primary='Autores' />
+                  </ListItem>
+                </Tooltip>
                 <Tooltip
                   title='Mantenimiento de Estados'
                   placement='right'
