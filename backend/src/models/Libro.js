@@ -2,12 +2,10 @@ const { Schema, model } = require('mongoose');
 
 const libroSchema = new Schema(
   {
-    Autor: {
-      type: String,
-      maxlength: 50,
-      minlength: 1,
-      required: true,
-      trim: true
+    IDAutor: {
+      type: Schema.Types.ObjectId,
+      ref: 'Autor',
+      required: true
     },
     Titulo: {
       type: String,
@@ -16,10 +14,10 @@ const libroSchema = new Schema(
       minlength: 1,
       trim: true
     },
-    Descripcion: {
+    Sinopsis: {
       type: String,
       required: true,
-      maxlength: 100,
+      maxlength: 150,
       minlength: 1,
       trim: true
     },
@@ -40,7 +38,7 @@ const libroSchema = new Schema(
       maxlength: 50,
       trim: true
     },
-    Etiquetas: [
+    IDEtiquetas: [
       {
         type: Schema.Types.ObjectId,
         ref: 'Etiqueta'
