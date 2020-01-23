@@ -12,7 +12,7 @@ import {
   faHome,
   faNewspaper,
   faSave,
-  faTags,
+  // faTags,
   faUsers,
   faUserTag
 } from '@fortawesome/free-solid-svg-icons';
@@ -373,7 +373,7 @@ function Dashboard() {
                     <ListItemText primary='Estados' />
                   </ListItem>
                 </Tooltip>
-                <Tooltip
+                {/* <Tooltip
                   title='Mantenimiento de Etiquetas'
                   placement='right'
                   disableHoverListener={drawerOpen}
@@ -390,7 +390,7 @@ function Dashboard() {
                     </ListItemIcon>
                     <ListItemText primary='Etiquetas' />
                   </ListItem>
-                </Tooltip>
+                </Tooltip> */}
                 <Tooltip
                   title='Mantenimiento de Departamentos'
                   placement='right'

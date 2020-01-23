@@ -5,7 +5,7 @@ import {
   faTimesCircle
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon as FAI } from '@fortawesome/react-fontawesome';
-import { IconButton, makeStyles, Snackbar, SnackbarContent } from '@material-ui/core';
+import { IconButton, makeStyles, Snackbar, SnackbarContent, TextField } from '@material-ui/core';
 import {
   AddBox,
   ArrowDownward,
@@ -28,7 +28,7 @@ import {
 import axios from 'axios';
 import clsx from 'clsx';
 import MaterialTable from 'material-table';
-import React, { forwardRef, useCallback, useState, useEffect } from 'react';
+import React, { forwardRef, useCallback, useEffect, useState } from 'react';
 import { address, port, tableLocalization } from '../config';
 import useLocalStorage from '../customHooks/useLocalStorage';
 
@@ -134,8 +134,8 @@ function Biblioteca() {
           authorization: Token
         }
       });
-      console.log(res.data);
-      //setData(res.data);
+
+      setData(res.data);
     } catch (e) {
       throw e;
     } finally {
@@ -293,20 +293,6 @@ function Biblioteca() {
           onRowUpdate,
           onRowDelete
         }}
-        columns={[
-          { title: 'ID', field: '_id', editable: 'never', hidden: true, emptyValue: 'N/A' },
-          {
-            title: 'Autor',
-            field: 'IDAutor',
-            lookup: Autores,
-            emptyValue: 'N/A'
-          },
-          { title: 'Título', field: 'Titulo', emptyValue: 'N/A' },
-          { title: 'Sinopsis', field: 'Sinopsis', emptyValue: 'N/A' },
-          { title: 'Año', field: 'Año', emptyValue: 'N/A' },
-          { title: 'ISBN', field: 'ISBN', emptyValue: 'N/A' },
-          { title: 'Editorial', field: 'Editorial', emptyValue: 'N/A' }
-        ]}
         actions={[
           {
             icon: () => <Refresh />,
@@ -316,6 +302,86 @@ function Biblioteca() {
               setIsLoading(true);
               await loadData();
             }
+          }
+        ]}
+        columns={[
+          { title: 'ID', field: '_id', editable: 'never', hidden: true, emptyValue: 'N/A' },
+          {
+            title: 'Autor',
+            field: 'IDAutor',
+            lookup: Autores,
+            emptyValue: 'N/A'
+          },
+          {
+            title: 'Título',
+            field: 'Titulo',
+            emptyValue: 'N/A',
+            editComponent: props => (
+              <TextField
+                placeholder='Título'
+                value={props.value || ''}
+                onChange={e => props.onChange(e.target.value)}
+                inputProps={{ maxLength: 100, minLength: 1, style: { fontSize: 13 } }}
+              />
+            )
+          },
+          {
+            title: 'Sinopsis',
+            field: 'Sinopsis',
+            emptyValue: 'N/A',
+            editComponent: props => (
+              <TextField
+                placeholder='Sinopsis'
+                value={props.value || ''}
+                onChange={e => props.onChange(e.target.value)}
+                inputProps={{ maxLength: 150, minLength: 1, style: { fontSize: 13 } }}
+              />
+            )
+          },
+          {
+            title: 'Año',
+            field: 'Año',
+            emptyValue: 'N/A',
+            editComponent: props => (
+              <TextField
+                type='number'
+                placeholder='Año'
+                value={props.value || ''}
+                onChange={e => props.onChange(e.target.value)}
+                inputProps={{
+                  max: 2020,
+                  min: 1500,
+                  pattern: /\d{4}/,
+                  style: { fontSize: 13 }
+                }}
+              />
+            )
+          },
+          {
+            title: 'ISBN',
+            field: 'ISBN',
+            emptyValue: 'N/A',
+            editComponent: props => (
+              <TextField
+                placeholder='ISBN'
+                value={props.value || ''}
+                onChange={e => props.onChange(e.target.value)}
+                inputProps={{ maxLength: 13, minLength: 10, style: { fontSize: 13 } }}
+              />
+            )
+          },
+          {
+            title: 'Editorial',
+            field: 'Editorial',
+            emptyValue: 'N/A',
+            editComponent: props => (
+              <TextField
+                placeholder='Editorial'
+                value={props.value || ''}
+                onChange={e => props.onChange(e.target.value)}
+                inputProps={{ maxLength: 100, minLength: 1, style: { fontSize: 13 } }}
+              />
+            )
           }
         ]}
       />

@@ -10,15 +10,13 @@ const libroSchema = new Schema(
     Titulo: {
       type: String,
       required: true,
-      maxlength: 50,
-      minlength: 1,
+      maxlength: 100,
       trim: true
     },
     Sinopsis: {
       type: String,
       required: true,
       maxlength: 150,
-      minlength: 1,
       trim: true
     },
     Año: {
@@ -35,7 +33,7 @@ const libroSchema = new Schema(
     Editorial: {
       type: String,
       required: true,
-      maxlength: 50,
+      maxlength: 100,
       trim: true
     },
     IDEtiquetas: [
