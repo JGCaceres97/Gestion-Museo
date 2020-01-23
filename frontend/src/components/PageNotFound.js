@@ -1,11 +1,8 @@
 import React from 'react';
+import { Redirect, Route } from 'react-router-dom';
 
-function PageError() {
-  return (
-    <React.Fragment>
-      Error
-    </React.Fragment>
-  );
+function PageNotFound({ ...rest }) {
+  return <Route {...rest} render={() => <Redirect to='/login' />} />;
 }
 
-export default PageError;
+export default PageNotFound;
