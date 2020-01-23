@@ -1,12 +1,12 @@
 const jwt = require('jsonwebtoken');
-const config = require('../../config');
+const { secretKey } = require('../../config');
 
 const verifyToken = (req, res, next) => {
   try {
     const bearerHeader = req.headers.authorization;
     if (!bearerHeader) return res.sendStatus(401);
     const bearerToken = bearerHeader.split(' ').pop();
-    const payload = jwt.verify(bearerToken, config.secretKey);
+    const payload = jwt.verify(bearerToken, secretKey);
     req.usuario = payload._usuario;
     req.permisos = payload._permisos;
 

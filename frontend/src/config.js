@@ -5,7 +5,6 @@ module.exports = {
   routes: {
     home: '/',
     login: '/login',
-    solicitud: '/crearSolicitud',
     resetPassword: '/reset/:token'
   },
   tableLocalization: {

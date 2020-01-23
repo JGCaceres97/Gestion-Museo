@@ -145,6 +145,9 @@ const useStyles = makeStyles(theme => ({
   },
   rightSpace: {
     marginRight: theme.spacing(2)
+  },
+  listIcon: {
+    minWidth: theme.spacing(5.5)
   }
 }));
 
@@ -285,7 +288,7 @@ function Dashboard() {
                 selected={selectedIndex === 'Inicio'}
                 onClick={() => handleListClick('Inicio')}
               >
-                <ListItemIcon>
+                <ListItemIcon classes={{ root: classes.listIcon }}>
                   <FAI icon={faHome} className={classes.icon} style={{ marginLeft: '-3px' }} />
                 </ListItemIcon>
                 <ListItemText primary='Inicio' />
@@ -303,7 +306,7 @@ function Dashboard() {
                 selected={selectedIndex === 'Calendario'}
                 onClick={() => handleListClick('Calendario')}
               >
-                <ListItemIcon>
+                <ListItemIcon classes={{ root: classes.listIcon }}>
                   <FAI icon={faCalendarAlt} className={classes.icon} />
                 </ListItemIcon>
                 <ListItemText primary='Calendario' />
@@ -321,7 +324,7 @@ function Dashboard() {
                 selected={selectedIndex === 'Biblioteca'}
                 onClick={() => handleListClick('Biblioteca')}
               >
-                <ListItemIcon>
+                <ListItemIcon classes={{ root: classes.listIcon }}>
                   <FAI icon={faBook} className={classes.icon} />
                 </ListItemIcon>
                 <ListItemText primary='Biblioteca' />
@@ -349,7 +352,7 @@ function Dashboard() {
                     selected={selectedIndex === 'Autores'}
                     onClick={() => handleListClick('Autores')}
                   >
-                    <ListItemIcon>
+                    <ListItemIcon classes={{ root: classes.listIcon }}>
                       <FAI icon={faFeatherAlt} className={classes.icon} />
                     </ListItemIcon>
                     <ListItemText primary='Autores' />
@@ -367,7 +370,7 @@ function Dashboard() {
                     selected={selectedIndex === 'Estados'}
                     onClick={() => handleListClick('Estados')}
                   >
-                    <ListItemIcon>
+                    <ListItemIcon classes={{ root: classes.listIcon }}>
                       <FAI icon={faFlag} className={classes.icon} />
                     </ListItemIcon>
                     <ListItemText primary='Estados' />
@@ -385,7 +388,7 @@ function Dashboard() {
                     selected={selectedIndex === 'Etiquetas'}
                     onClick={() => handleListClick('Etiquetas')}
                   >
-                    <ListItemIcon>
+                    <ListItemIcon classes={{ root: classes.listIcon }}>
                       <FAI icon={faTags} className={classes.icon} style={{ marginLeft: '-1px' }} />
                     </ListItemIcon>
                     <ListItemText primary='Etiquetas' />
@@ -403,7 +406,7 @@ function Dashboard() {
                     selected={selectedIndex === 'Deptos'}
                     onClick={() => handleListClick('Deptos')}
                   >
-                    <ListItemIcon>
+                    <ListItemIcon classes={{ root: classes.listIcon }}>
                       <FAI icon={faGlobeAmericas} className={classes.icon} />
                     </ListItemIcon>
                     <ListItemText primary='Departamentos' />
@@ -421,7 +424,7 @@ function Dashboard() {
                     selected={selectedIndex === 'Horarios'}
                     onClick={() => handleListClick('Horarios')}
                   >
-                    <ListItemIcon>
+                    <ListItemIcon classes={{ root: classes.listIcon }}>
                       <FAI icon={faClock} className={classes.icon} />
                     </ListItemIcon>
                     <ListItemText primary='Horarios' />
@@ -439,7 +442,7 @@ function Dashboard() {
                     selected={selectedIndex === 'Municipios'}
                     onClick={() => handleListClick('Municipios')}
                   >
-                    <ListItemIcon>
+                    <ListItemIcon classes={{ root: classes.listIcon }}>
                       <FAI icon={faGlobe} className={classes.icon} />
                     </ListItemIcon>
                     <ListItemText primary='Municipios' />
@@ -457,7 +460,7 @@ function Dashboard() {
                     selected={selectedIndex === 'Roles'}
                     onClick={() => handleListClick('Roles')}
                   >
-                    <ListItemIcon>
+                    <ListItemIcon classes={{ root: classes.listIcon }}>
                       <FAI icon={faUserTag} className={classes.icon} />
                     </ListItemIcon>
                     <ListItemText primary='Roles' />
@@ -475,7 +478,7 @@ function Dashboard() {
                     selected={selectedIndex === 'Usuarios'}
                     onClick={() => handleListClick('Usuarios')}
                   >
-                    <ListItemIcon>
+                    <ListItemIcon classes={{ root: classes.listIcon }}>
                       <FAI icon={faUsers} className={classes.icon} style={{ marginLeft: '-2px' }} />
                     </ListItemIcon>
                     <ListItemText primary='Usuarios' />
@@ -505,7 +508,7 @@ function Dashboard() {
                     selected={selectedIndex === 'Visitas'}
                     onClick={() => handleListClick('Visitas')}
                   >
-                    <ListItemIcon>
+                    <ListItemIcon classes={{ root: classes.listIcon }}>
                       <FAI icon={faChartLine} className={classes.icon} />
                     </ListItemIcon>
                     <ListItemText primary='Visitas' />
@@ -523,7 +526,7 @@ function Dashboard() {
                     selected={selectedIndex === 'Prestamo'}
                     onClick={() => handleListClick('Prestamo')}
                   >
-                    <ListItemIcon>
+                    <ListItemIcon classes={{ root: classes.listIcon }}>
                       <FAI icon={faChartPie} className={classes.icon} />
                     </ListItemIcon>
                     <ListItemText primary='Préstamo de Libros' />
@@ -553,7 +556,7 @@ function Dashboard() {
                     selected={selectedIndex === 'Backup'}
                     onClick={() => handleListClick('Backup')}
                   >
-                    <ListItemIcon>
+                    <ListItemIcon classes={{ root: classes.listIcon }}>
                       <FAI icon={faSave} className={classes.icon} style={{ marginLeft: '2px' }} />
                     </ListItemIcon>
                     <ListItemText primary='Copias de Seguridad' />
@@ -571,7 +574,7 @@ function Dashboard() {
                     selected={selectedIndex === 'Bitacora'}
                     onClick={() => handleListClick('Bitacora')}
                   >
-                    <ListItemIcon>
+                    <ListItemIcon classes={{ root: classes.listIcon }}>
                       <FAI icon={faNewspaper} className={classes.icon} />
                     </ListItemIcon>
                     <ListItemText primary='Bitácora de Eventos' />
