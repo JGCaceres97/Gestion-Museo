@@ -116,12 +116,17 @@ function Calendario() {
 
         setEventos(
           res.data.map(ev => {
+            const estado = ev.IDEstado.Nombre;
+            const color =
+              estado === 'Aprobada' ? '#008000' : estado === 'En proceso' ? 'khaki' : 'crimson';
+            const textColor = estado === 'En proceso' ? 'black' : 'white';
+
             return {
               id: ev._id,
               title: ev.Institucion,
               start: new Date(ev.FechaVisita),
-              color: 'crimson',
-              textColor: 'white'
+              color,
+              textColor
             };
           })
         );
