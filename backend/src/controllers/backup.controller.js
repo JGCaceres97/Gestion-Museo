@@ -7,12 +7,13 @@ const fs = require('fs').promises;
 const rimraf = require('rimraf');
 const moment = require('moment');
 
+const Autor = require('../models/Autor');
 const Bitacora = require('../models/Bitacora');
 const Departamento = require('../models/Departamento');
 const Estado = require('../models/Estado');
 const Etiqueta = require('../models/Etiqueta');
-const Libro = require('../models/Libro');
 const Horario = require('../models/Horario');
+const Libro = require('../models/Libro');
 const Municipio = require('../models/Municipio');
 const Rol = require('../models/Rol');
 const Solicitud = require('../models/Solicitud');
@@ -110,6 +111,7 @@ backupCtrl.backupDB = async (req, res) => {
     const folder = path.join(backupsPath, `Backup--${time}`);
     await fs.mkdir(folder);
 
+    const autores = await Autor.find();
     const bitacora = await Bitacora.find();
     const deptos = await Departamento.find();
     const estados = await Estado.find();
@@ -121,6 +123,7 @@ backupCtrl.backupDB = async (req, res) => {
     const solicitudes = await Solicitud.find();
     const usuarios = await Usuario.find();
 
+    await fs.writeFile(folder + '/Autores', encrypt(autores), 'utf8');
     await fs.writeFile(folder + '/Bitacora', encrypt(bitacora), 'utf8');
     await fs.writeFile(folder + '/Deptos', encrypt(deptos), 'utf8');
     await fs.writeFile(folder + '/Estados', encrypt(estados), 'utf8');
