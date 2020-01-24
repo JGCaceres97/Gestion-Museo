@@ -1,3 +1,5 @@
+// @ts-check
+import TextField from '@material-ui/core/TextField';
 import React from 'react';
 import LayoutMantenimiento from '../layouts/Mantenimiento';
 
@@ -24,7 +26,19 @@ function Horarios() {
           emptyValue: 'N/A',
           defaultSort: 'asc'
         },
-        { title: 'Hora', field: 'Hora', emptyValue: 'N/A' }
+        {
+          title: 'Hora',
+          field: 'Hora',
+          emptyValue: 'N/A',
+          editComponent: props => (
+            <TextField
+              placeholder='Hora'
+              value={props.value || ''}
+              onChange={e => props.onChange(e.target.value)}
+              inputProps={{ maxLength: 10, minLength: 1, style: { fontSize: 13 } }}
+            />
+          )
+        }
       ]}
     />
   );

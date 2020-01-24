@@ -1,9 +1,10 @@
 // @ts-check
-import React, { useEffect, useState } from 'react';
+import TextField from '@material-ui/core/TextField';
 import axios from 'axios';
-import LayoutMantenimiento from '../layouts/Mantenimiento';
+import React, { useEffect, useState } from 'react';
 import { address, port } from '../config';
 import useLocalStorage from '../customHooks/useLocalStorage';
+import LayoutMantenimiento from '../layouts/Mantenimiento';
 
 function Municipios() {
   const [Deptos, setDeptos] = useState({});
@@ -89,7 +90,19 @@ function Municipios() {
           defaultSort: 'asc',
           lookup: Deptos
         },
-        { title: 'Municipio', field: 'Nombre', emptyValue: 'N/A' }
+        {
+          title: 'Municipio',
+          field: 'Nombre',
+          emptyValue: 'N/A',
+          editComponent: props => (
+            <TextField
+              placeholder='Nombre'
+              value={props.value || ''}
+              onChange={e => props.onChange(e.target.value)}
+              inputProps={{ maxLength: 30, minLength: 1, style: { fontSize: 13 } }}
+            />
+          )
+        }
       ]}
     />
   );

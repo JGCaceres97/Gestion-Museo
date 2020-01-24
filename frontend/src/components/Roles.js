@@ -1,7 +1,8 @@
 // @ts-check
+import TextField from '@material-ui/core/TextField';
 import React from 'react';
-import LayoutMantenimiento from '../layouts/Mantenimiento';
 import useLocalStorage from '../customHooks/useLocalStorage';
+import LayoutMantenimiento from '../layouts/Mantenimiento';
 
 function Roles() {
   const [{ Usuarios }] = useLocalStorage('Permisos', '');
@@ -28,7 +29,19 @@ function Roles() {
           emptyValue: 'N/A',
           defaultSort: 'desc'
         },
-        { title: 'Nombre', field: 'Nombre', emptyValue: 'N/A' },
+        {
+          title: 'Nombre',
+          field: 'Nombre',
+          emptyValue: 'N/A',
+          editComponent: props => (
+            <TextField
+              placeholder='Nombre'
+              value={props.value || ''}
+              onChange={e => props.onChange(e.target.value)}
+              inputProps={{ maxLength: 20, minLength: 1, style: { fontSize: 13 } }}
+            />
+          )
+        },
         {
           type: 'boolean',
           title: 'Permiso Bitácora',
@@ -53,7 +66,19 @@ function Roles() {
           field: 'Permisos.Backup',
           editable: Usuarios ? 'always' : 'never'
         },
-        { title: 'Descripción', field: 'Descripcion', emptyValue: 'N/A' }
+        {
+          title: 'Descripción',
+          field: 'Descripcion',
+          emptyValue: 'N/A',
+          editComponent: props => (
+            <TextField
+              placeholder='Descripción'
+              value={props.value || ''}
+              onChange={e => props.onChange(e.target.value)}
+              inputProps={{ maxLength: 50, style: { fontSize: 13 } }}
+            />
+          )
+        }
       ]}
     />
   );

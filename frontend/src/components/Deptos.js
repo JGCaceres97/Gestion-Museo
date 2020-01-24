@@ -1,4 +1,5 @@
 // @ts-check
+import TextField from '@material-ui/core/TextField';
 import React from 'react';
 import LayoutMantenimiento from '../layouts/Mantenimiento';
 
@@ -25,7 +26,19 @@ function Deptos() {
           emptyValue: 'N/A',
           defaultSort: 'asc'
         },
-        { title: 'Nombre', field: 'Nombre', emptyValue: 'N/A' }
+        {
+          title: 'Nombre',
+          field: 'Nombre',
+          emptyValue: 'N/A',
+          editComponent: props => (
+            <TextField
+              placeholder='Nombre'
+              value={props.value || ''}
+              onChange={e => props.onChange(e.target.value)}
+              inputProps={{ maxLength: 20, minLength: 1, style: { fontSize: 13 } }}
+            />
+          )
+        }
       ]}
     />
   );

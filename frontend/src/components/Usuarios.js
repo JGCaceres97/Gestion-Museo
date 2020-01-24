@@ -5,6 +5,7 @@ import useLocalStorage from '../customHooks/useLocalStorage';
 import LayoutMantenimiento from '../layouts/Mantenimiento';
 import moment from 'moment';
 import { address, port } from '../config';
+import TextField from '@material-ui/core/TextField';
 
 function Usuarios() {
   const [Roles, setRoles] = useState({});
@@ -77,15 +78,49 @@ function Usuarios() {
           title: 'Nombres',
           field: 'Nombres',
           emptyValue: 'N/A',
-          editable: Usuarios ? 'always' : 'never'
+          editable: Usuarios ? 'always' : 'never',
+          editComponent: props => (
+            <TextField
+              placeholder='Nombres'
+              value={props.value || ''}
+              onChange={e => props.onChange(e.target.value)}
+              inputProps={{ maxLength: 50, minLength: 1, style: { fontSize: 13 } }}
+            />
+          )
         },
         {
           title: 'Apellidos',
           field: 'Apellidos',
           emptyValue: 'N/A',
-          editable: Usuarios ? 'always' : 'never'
+          editable: Usuarios ? 'always' : 'never',
+          editComponent: props => (
+            <TextField
+              placeholder='Apellidos'
+              value={props.value || ''}
+              onChange={e => props.onChange(e.target.value)}
+              inputProps={{ maxLength: 50, minLength: 1, style: { fontSize: 13 } }}
+            />
+          )
         },
-        { title: 'Email', field: 'Email', editable: 'onAdd', emptyValue: 'N/A' },
+        {
+          title: 'Email',
+          field: 'Email',
+          editable: 'onAdd',
+          emptyValue: 'N/A',
+          editComponent: props => (
+            <TextField
+              placeholder='Email'
+              value={props.value || ''}
+              onChange={e => props.onChange(e.target.value)}
+              inputProps={{
+                maxLength: 50,
+                minLength: 1,
+                pattern: /\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,4}/,
+                style: { fontSize: 13 }
+              }}
+            />
+          )
+        },
         {
           editable: 'never',
           emptyValue: 'N/A',
