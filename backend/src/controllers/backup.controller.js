@@ -164,6 +164,9 @@ backupCtrl.restoreDB = async (req, res) => {
     await Promise.all(
       decrypted.map(async (item, ind) => {
         switch (backupFiles[ind]) {
+          case 'Autores':
+            await doRestore(Autor, item);
+            break;
           case 'Bitacora':
             await doRestore(Bitacora, item);
             break;
