@@ -110,12 +110,13 @@ function InfoSolicitud({ _id }) {
   });
 
   const [Estados, setEstados] = useState([]);
+  const [EstadosDisable, setEstadosDisable] = useState(true);
   const [BtnTxt, setBtnTxt] = useState('Actualizar');
   const [BtnDisabled, setBtnDisabled] = useState(false);
   const [SnackOpen, setSnackOpen] = useState(false);
   const [SnackTxt, setSnackTxt] = useState('');
-  const [isSnackError, setIsSnackError] = useState(false);
-  const [isSnackInfo, setIsSnackInfo] = useState(false);
+  const [IsSnackError, setIsSnackError] = useState(false);
+  const [IsSnackInfo, setIsSnackInfo] = useState(false);
   const [Token] = useLocalStorage('Token', '');
   const {
     Adjuntos,
@@ -162,6 +163,7 @@ function InfoSolicitud({ _id }) {
 
         setEstados(getEstados.data);
         setSolicitud(getSolicitud.data);
+        setEstadosDisable(getSolicitud.data.IDEstado.Nombre === 'En proceso' ? false : true);
         showSnack('Info', 'Información cargada.');
       } catch {
         showSnack('Error', 'Error obteniendo la información.');
@@ -429,8 +431,9 @@ function InfoSolicitud({ _id }) {
               <FormControl fullWidth>
                 <InputLabel id='Estado'>Estado</InputLabel>
                 <Select
-                  value={IDEstado._id}
                   labelId='Estado'
+                  value={IDEstado._id}
+                  disabled={EstadosDisable}
                   onChange={e => handleEstado(e.target.value.toString())}
                 >
                   {Estados.map((item, i) => (
@@ -439,7 +442,9 @@ function InfoSolicitud({ _id }) {
                     </MenuItem>
                   ))}
                 </Select>
-                <FormHelperText>El solicitante será notificado en caso de cambio.</FormHelperText>
+                <FormHelperText hidden={EstadosDisable}>
+                  El solicitante será notificado en caso de cambio.
+                </FormHelperText>
               </FormControl>
             </Grid>
             <Grid item xs={12}>
@@ -498,8 +503,8 @@ function InfoSolicitud({ _id }) {
                   size='large'
                   color='primary'
                   variant='contained'
-                  disabled={BtnDisabled}
                   onClick={handleSubmit}
+                  disabled={BtnDisabled || EstadosDisable}
                 >
                   {BtnTxt}
                 </Button>
@@ -519,9 +524,9 @@ function InfoSolicitud({ _id }) {
       >
         <SnackbarContent
           className={
-            isSnackError
+            IsSnackError
               ? classes.errorSnack
-              : isSnackInfo
+              : IsSnackInfo
               ? classes.infoSnack
               : classes.successSnack
           }
@@ -530,7 +535,7 @@ function InfoSolicitud({ _id }) {
             <span className={classes.messageSnack} id='snackbar'>
               <FAI
                 icon={
-                  isSnackError ? faTimesCircle : isSnackInfo ? faExclamationCircle : faCheckCircle
+                  IsSnackError ? faTimesCircle : IsSnackInfo ? faExclamationCircle : faCheckCircle
                 }
                 className={classes.iconSnack}
               />

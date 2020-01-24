@@ -448,7 +448,7 @@ function CrearSolicitud(props) {
     } else {
       setTelefono(value);
     }
-  }
+  };
 
   /**
    * Método para manejar el presionado de teclas en ciertos inputs.
@@ -1118,7 +1118,7 @@ function CrearSolicitud(props) {
                 </Button>
               </label>
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={12} sm={6} hidden>
               <Typography gutterBottom>Nota al Gerente</Typography>
               <Typography gutterBottom variant='body2'>
                 Adjunte la nota dirigida al gerente solicitando la aprobación de la visita a los

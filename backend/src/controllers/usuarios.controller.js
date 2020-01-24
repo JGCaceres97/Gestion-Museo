@@ -160,8 +160,11 @@ usuarioCtrl.profile = async (req, res) => {
 
 usuarioCtrl.updateUsuario = async (req, res) => {
   try {
-    const { Nombres, Apellidos } = req.body;
-    const usuario = await Usuario.findOneAndUpdate({ _id: req.params.id }, { Nombres, Apellidos });
+    const { IDRol, Nombres, Apellidos } = req.body;
+    const usuario = await Usuario.findOneAndUpdate(
+      { _id: req.params.id },
+      { IDRol, Nombres, Apellidos }
+    );
 
     await createRegistro({
       IDUsuario: req.usuario.ID,
