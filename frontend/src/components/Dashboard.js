@@ -2,6 +2,8 @@
 import {
   faBook,
   faCalendarAlt,
+  faChartArea,
+  faChartBar,
   faChartLine,
   faChartPie,
   faClock,
@@ -55,6 +57,7 @@ import Municipios from './Municipios';
 import ReporteVisitas from './ReporteVisitas';
 import Roles from './Roles';
 import Usuarios from './Usuarios';
+import { ReporteCharlas, ReporteHorarios, ReporteTemas } from './Charts';
 
 const drawerWidth = 240;
 
@@ -163,6 +166,7 @@ function Dashboard() {
   const [loggedOut, setLoggedOut] = useState(false);
   const [Token] = useLocalStorage('Token', '');
   const [Usuario] = useLocalStorage('Usuario', '');
+  const [Permisos] = useLocalStorage('Permisos', '');
 
   useEffect(() => {
     document.title = 'Sistema de Gestión';
@@ -203,8 +207,12 @@ function Dashboard() {
         return <Usuarios />;
       case 'Visitas':
         return <ReporteVisitas />;
-      case 'Prestamo':
-        return 'Prestamo';
+      case 'RepCharlas':
+        return <ReporteCharlas />;
+      case 'RepHorarios':
+        return <ReporteHorarios />;
+      case 'RepTemas':
+        return <ReporteTemas />;
       case 'Bitacora':
         return <Bitacora />;
       case 'Backup':
@@ -457,6 +465,7 @@ function Dashboard() {
                 >
                   <ListItem
                     button
+                    disabled={!Permisos.Usuarios}
                     selected={selectedIndex === 'Roles'}
                     onClick={() => handleListClick('Roles')}
                   >
@@ -475,6 +484,7 @@ function Dashboard() {
                 >
                   <ListItem
                     button
+                    disabled={!Permisos.Usuarios}
                     selected={selectedIndex === 'Usuarios'}
                     onClick={() => handleListClick('Usuarios')}
                   >
@@ -505,6 +515,7 @@ function Dashboard() {
                 >
                   <ListItem
                     button
+                    disabled={!Permisos.Reporteria}
                     selected={selectedIndex === 'Visitas'}
                     onClick={() => handleListClick('Visitas')}
                   >
@@ -515,7 +526,7 @@ function Dashboard() {
                   </ListItem>
                 </Tooltip>
                 <Tooltip
-                  title='Reporte de Préstamo de Libros'
+                  title='Reporte de Charlas Académicas'
                   placement='right'
                   disableHoverListener={drawerOpen}
                   disableFocusListener={drawerOpen}
@@ -523,13 +534,52 @@ function Dashboard() {
                 >
                   <ListItem
                     button
-                    selected={selectedIndex === 'Prestamo'}
-                    onClick={() => handleListClick('Prestamo')}
+                    disabled={!Permisos.Reporteria}
+                    selected={selectedIndex === 'RepCharlas'}
+                    onClick={() => handleListClick('RepCharlas')}
                   >
                     <ListItemIcon classes={{ root: classes.listIcon }}>
                       <FAI icon={faChartPie} className={classes.icon} />
                     </ListItemIcon>
-                    <ListItemText primary='Préstamo de Libros' />
+                    <ListItemText primary='Charla Académica' />
+                  </ListItem>
+                </Tooltip>
+                <Tooltip
+                  title='Reporte de Horarios Frecuentes'
+                  placement='right'
+                  disableHoverListener={drawerOpen}
+                  disableFocusListener={drawerOpen}
+                  disableTouchListener={drawerOpen}
+                >
+                  <ListItem
+                    button
+                    disabled={!Permisos.Reporteria}
+                    selected={selectedIndex === 'RepHorarios'}
+                    onClick={() => handleListClick('RepHorarios')}
+                  >
+                    <ListItemIcon classes={{ root: classes.listIcon }}>
+                      <FAI icon={faChartBar} className={classes.icon} />
+                    </ListItemIcon>
+                    <ListItemText primary='Horarios Frecuentes' />
+                  </ListItem>
+                </Tooltip>
+                <Tooltip
+                  title='Reporte de Temás Más Solicitados'
+                  placement='right'
+                  disableHoverListener={drawerOpen}
+                  disableFocusListener={drawerOpen}
+                  disableTouchListener={drawerOpen}
+                >
+                  <ListItem
+                    button
+                    disabled={!Permisos.Reporteria}
+                    selected={selectedIndex === 'RepTemas'}
+                    onClick={() => handleListClick('RepTemas')}
+                  >
+                    <ListItemIcon classes={{ root: classes.listIcon }}>
+                      <FAI icon={faChartArea} className={classes.icon} />
+                    </ListItemIcon>
+                    <ListItemText primary='Temas Solicitados' />
                   </ListItem>
                 </Tooltip>
               </ul>
@@ -553,6 +603,7 @@ function Dashboard() {
                 >
                   <ListItem
                     button
+                    disabled={!Permisos.Backup}
                     selected={selectedIndex === 'Backup'}
                     onClick={() => handleListClick('Backup')}
                   >
@@ -571,6 +622,7 @@ function Dashboard() {
                 >
                   <ListItem
                     button
+                    disabled={!Permisos.Bitacora}
                     selected={selectedIndex === 'Bitacora'}
                     onClick={() => handleListClick('Bitacora')}
                   >
