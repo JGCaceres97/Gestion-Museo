@@ -446,9 +446,6 @@ function ReporteTemas() {
           }
         });
 
-        let yes = 0;
-        let no = 0;
-
         let econo = 0;
         let sdp = 0;
         let emyte = 0;

@@ -72,15 +72,7 @@ function Autores() {
           emptyValue: 'N/A',
           editable: 'always',
           type: 'date',
-          render: rowData => (rowData ? moment(rowData.FechaNacimiento).format('DD/MM/YYYY') : ''),
-          editComponent: props => (
-            <TextField
-              placeholder='Fecha de nacimiento'
-              value={props.value || ''}
-              onChange={e => props.onChange(e.target.value)}
-              inputProps={{ maxLength: 4, minLength: 1, style: { fontSize: 13 } }}
-            />
-          )
+          render: rowData => (rowData ? moment(rowData.FechaNacimiento).format('DD/MM/YYYY') : '')
         }
       ]}
     />

@@ -168,7 +168,7 @@ function Biblioteca() {
           }
         });
 
-        setAutores(convertArrayToObject(res.data.sort(sortArray('_id')), '_id'));
+        setAutores(convertArrayToObject(res.data.sort(sortArray('Nombre')), '_id'));
       } catch (e) {
         console.error(e);
       }
@@ -236,7 +236,7 @@ function Biblioteca() {
    */
   const onRowUpdate = async data => {
     try {
-      await axios.put(`http://${address}:${port}/api/libros`, data, {
+      await axios.put(`http://${address}:${port}/api/libros/${data._id}`, data, {
         headers: {
           authorization: Token
         }
@@ -308,7 +308,7 @@ function Biblioteca() {
           { title: 'ID', field: '_id', editable: 'never', hidden: true, emptyValue: 'N/A' },
           {
             title: 'Autor',
-            field: 'IDAutor',
+            field: 'IDAutor._id',
             lookup: Autores,
             emptyValue: 'N/A'
           },
@@ -316,6 +316,7 @@ function Biblioteca() {
             title: 'Título',
             field: 'Titulo',
             emptyValue: 'N/A',
+            defaultSort: 'asc',
             editComponent: props => (
               <TextField
                 placeholder='Título'
@@ -350,7 +351,9 @@ function Biblioteca() {
                 onChange={e => props.onChange(e.target.value)}
                 inputProps={{
                   max: 2020,
-                  min: 1500,
+                  min: 1000,
+                  maxLength: 4,
+                  minLength: 4,
                   pattern: /\d{4}/,
                   style: { fontSize: 13 }
                 }}

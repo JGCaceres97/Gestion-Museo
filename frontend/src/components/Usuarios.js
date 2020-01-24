@@ -48,6 +48,8 @@ function Usuarios() {
 
   return (
     <LayoutMantenimiento
+      Grouping
+      MaxBodyHeight={409}
       Added='Usuario ingresado.'
       ApiUrl='api/usuarios'
       Component='Usuarios'
@@ -58,7 +60,7 @@ function Usuarios() {
       NotDeleted='Error dando de baja el usuario.'
       NotUpdated='Error actualizando el usuario.'
       Updated='Usuario actualizado.'
-      Titulo='Usuarios del sistema'
+      Titulo='Usuarios del Sistema'
       Columnas={[
         {
           title: 'ID',
