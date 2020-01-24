@@ -133,11 +133,18 @@ function ResetPassword(props) {
    * @param {string} field Campo al que hace referencia.
    */
   const handleBlur = (value, field) => {
+    const RegExpPass = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})/;
+
     switch (field) {
       case 'Password':
         if (value === '') {
           setErrorPassword(true);
           setTxtPassword('Complete el campo requerido.');
+        } else if (value.search(RegExpPass) !== 0) {
+          setErrorPassword(true);
+          setTxtPassword(
+            'Las contraseñas deben contener al menos 1 letra mayúscula, 1 letra minúscula, 1 dígito, 1 caracter especial y ser de mínimo 8 caracteres de longitud.'
+          );
         } else {
           setErrorPassword(false);
           setTxtPassword('');
@@ -147,14 +154,12 @@ function ResetPassword(props) {
         if (value === '') {
           setErrorConfirmPassword(true);
           setTxtConfirmPassword('Complete el campo requerido.');
+        } else if (value !== Password) {
+          setErrorConfirmPassword(true);
+          setTxtConfirmPassword('Las contraseñas no coinciden.');
         } else {
-          if (value !== Password) {
-            setErrorConfirmPassword(true);
-            setTxtConfirmPassword('Las contraseñas no coinciden.');
-          } else {
-            setErrorConfirmPassword(false);
-            setTxtConfirmPassword('');
-          }
+          setErrorConfirmPassword(false);
+          setTxtConfirmPassword('');
         }
         break;
       default:
