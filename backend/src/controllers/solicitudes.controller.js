@@ -1,7 +1,10 @@
 const Solicitud = require('../models/Solicitud');
 const solicitudCtrl = {};
+const Estado = require('../models/Estado');
 const { createRegistro } = require('./bitacora.controller');
+const nodemailer = require('nodemailer');
 const moment = require('moment');
+const { emailAddress, emailPassword } = require('../../config');
 
 solicitudCtrl.getSolicitudes = async (req, res) => {
   try {
@@ -67,8 +70,29 @@ solicitudCtrl.createSolicitud = async (req, res) => {
         Path: URL + file.path
       }))
     });
-
     await nuevaSolicitud.save();
+
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: emailAddress,
+        pass: emailPassword
+      }
+    });
+
+    const mailOptions = {
+      from: 'No-reply BCH <no-reply@bch.hn>',
+      to: Email,
+      subject: 'Solicitud de visita',
+      text:
+        `Buen día ${Nombres},\n\n` +
+        'Su solicitud de visita a los Centros Culturales del BCH fue recibida y está siendo procesada por el personal asignado, se le estará notificando en caso de que cambie el estado de la misma.\n'
+    };
+
+    transporter.sendMail(mailOptions, (err, info) => {
+      if (err) return console.error('Ha ocurrido un error: ', err);
+    });
+
     res.status(201).json({ message: 'Solicitud enviada.' });
   } catch (e) {
     console.error(e);
@@ -147,6 +171,34 @@ solicitudCtrl.updateSolicitud = async (req, res) => {
       Accion: `Actualización de solicitud: ${solicitud.Institucion}, ${moment(solicitud.FechaVisita)
         .utcOffset(-6)
         .format('DD/MM/YYYY h:mm A')}.`
+    });
+
+    const estado = await Estado.findById(IDEstado);
+
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: emailAddress,
+        pass: emailPassword
+      }
+    });
+
+    const mailOptions = {
+      from: 'No-reply BCH <no-reply@bch.hn>',
+      to: Email,
+      subject: 'Cambio de estado en solicitud de visita',
+      text:
+        `Buen día ${Nombres},\n\n` +
+        `Su solicitud de visita a los Centros Culturales del BCH por parte de el/la ${Institucion} para el ${moment(
+          FechaVisita
+        )
+          .utcOffset(-6)
+          .format('DD/MM/YYYY h:mm A')}, cambio de estado a: ${estado.Nombre}.\n\n` +
+        'Para más información puede comunicarse al correo electrónico centrosculturales@bch.hn o llamando al teléfono 2262-3702 ext 10112.\n'
+    };
+
+    transporter.sendMail(mailOptions, (err, info) => {
+      if (err) return console.error('Ha ocurrido un error: ', err);
     });
 
     res.status(200).json({ message: 'Solicitud actualizada.' });
