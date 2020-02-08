@@ -453,7 +453,7 @@ function ReporteTemas() {
 
         res.data.forEach(item => {
           if (item.Charla) {
-            switch (item.Tema) {
+            switch (item.TemaCharla) {
               case 'Economía':
                 econo++;
                 break;

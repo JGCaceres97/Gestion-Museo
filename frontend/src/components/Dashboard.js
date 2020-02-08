@@ -13,6 +13,7 @@ import {
   faGlobeAmericas,
   faHome,
   faNewspaper,
+  faQuestionCircle,
   faSave,
   // faTags,
   faUsers,
@@ -50,9 +51,10 @@ import Bitacora from './Bitacora';
 import Calendario from './Calendario';
 import Deptos from './Deptos';
 import Estados from './Estados';
-import Etiquetas from './Etiquetas';
+// import Etiquetas from './Etiquetas';
 import Horarios from './Horarios';
 import Inicio from './Inicio';
+import Manual from './Manual';
 import Municipios from './Municipios';
 import ReporteVisitas from './ReporteVisitas';
 import Roles from './Roles';
@@ -193,8 +195,8 @@ function Dashboard() {
         return <Autores />;
       case 'Estados':
         return <Estados />;
-      case 'Etiquetas':
-        return <Etiquetas />;
+      /* case 'Etiquetas':
+        return <Etiquetas />; */
       case 'Deptos':
         return <Deptos />;
       case 'Horarios':
@@ -217,6 +219,8 @@ function Dashboard() {
         return <Bitacora />;
       case 'Backup':
         return <Backups />;
+      case 'Ayuda':
+        return <Manual />;
       default:
         return <Inicio />;
     }
@@ -249,9 +253,9 @@ function Dashboard() {
         <AppBar position='fixed' className={classes.appBar}>
           <Toolbar className={classes.appToolbar}>
             <IconButton
+              edge='start'
               color='inherit'
               aria-label='open drawer'
-              edge='start'
               className={classes.menuButton}
               onClick={() => setDrawerOpen(!drawerOpen)}
             >
@@ -630,6 +634,40 @@ function Dashboard() {
                       <FAI icon={faNewspaper} className={classes.icon} />
                     </ListItemIcon>
                     <ListItemText primary='Bitácora de Eventos' />
+                  </ListItem>
+                </Tooltip>
+              </ul>
+            </li>
+            <Divider />
+            <li className={classes.li}>
+              <ul className={classes.ul}>
+                <ListSubheader
+                  className={clsx({
+                    [classes.hide]: !drawerOpen
+                  })}
+                >
+                  Ayuda
+                </ListSubheader>
+                <Tooltip
+                  title='Manual de Usuario'
+                  placement='right'
+                  disableHoverListener={drawerOpen}
+                  disableFocusListener={drawerOpen}
+                  disableTouchListener={drawerOpen}
+                >
+                  <ListItem
+                    button
+                    selected={selectedIndex === 'Ayuda'}
+                    onClick={() => handleListClick('Ayuda')}
+                  >
+                    <ListItemIcon classes={{ root: classes.listIcon }}>
+                      <FAI
+                        icon={faQuestionCircle}
+                        className={classes.icon}
+                        style={{ marginLeft: '2px' }}
+                      />
+                    </ListItemIcon>
+                    <ListItemText primary='Manual de Usuario' />
                   </ListItem>
                 </Tooltip>
               </ul>

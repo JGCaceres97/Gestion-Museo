@@ -108,7 +108,7 @@ function LayoutMantenimiento({
   NotDeleted,
   Titulo,
   Columnas,
-  MaxBodyHeight = 460
+  MaxBodyHeight = 455
 }) {
   // @ts-ignore
   const classes = useStyles();

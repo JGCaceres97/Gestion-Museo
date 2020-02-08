@@ -1,5 +1,7 @@
 // @ts-check
+import MomentUtils from '@date-io/moment';
 import TextField from '@material-ui/core/TextField';
+import { DatePicker, MuiPickersUtilsProvider } from '@material-ui/pickers';
 import moment from 'moment';
 import React from 'react';
 import LayoutMantenimiento from '../layouts/Mantenimiento';
@@ -72,7 +74,25 @@ function Autores() {
           emptyValue: 'N/A',
           editable: 'always',
           type: 'date',
-          render: rowData => (rowData ? moment(rowData.FechaNacimiento).format('DD/MM/YYYY') : '')
+          render: rowData => (rowData ? moment(rowData.FechaNacimiento).format('DD/MM/YYYY') : ''),
+          editComponent: props => (
+            <MuiPickersUtilsProvider utils={MomentUtils}>
+              <DatePicker
+                autoOk
+                required
+                fullWidth
+                disableFuture
+                disableToolbar
+                variant='inline'
+                format='DD/MM/YYYY'
+                maxDate={moment().subtract(18, 'year')}
+                inputProps={{ style: { fontSize: 13 } }}
+                onChange={date => props.onChange(date.toDate())}
+                value={props.value || moment().subtract(18, 'years')}
+                maxDateMessage='La fecha no puede ser de alguien menor a 18 años.'
+              />
+            </MuiPickersUtilsProvider>
+          )
         }
       ]}
     />

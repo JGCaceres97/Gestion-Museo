@@ -9,7 +9,7 @@
       text-transform: capitalize;
     }
   }
-  
+
   .fc-head {
     text-transform: capitalize;
   }
@@ -26,21 +26,23 @@
   }
 
   .fc-button-primary {
-    background-color: #E0E0E0;
-    border-color: #E0E0E0;
+    background-color: #e0e0e0;
+    border-color: #e0e0e0;
     color: rgba(0, 0, 0, 0.87);
     text-transform: uppercase;
     font-weight: 500;
     letter-spacing: 0.02857em;
     font-size: 0.9rem;
-    box-shadow: 0px 3px 1px -2px rgba(0,0,0,0.2), 0px 2px 2px 0px rgba(0,0,0,0.14), 0px 1px 5px 0px rgba(0,0,0,0.12);
+    box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14),
+      0px 1px 5px 0px rgba(0, 0, 0, 0.12);
   }
 
   .fc-button-primary:hover {
-    background-color: #D5D5D5;
-    border-color: #D5D5D5;
+    background-color: #d5d5d5;
+    border-color: #d5d5d5;
     color: rgba(0, 0, 0, 0.87);
-    box-shadow: 0px 3px 1px -2px rgba(0,0,0,0.2), 0px 2px 2px 0px rgba(0,0,0,0.14), 0px 1px 5px 0px rgba(0,0,0,0.12);
+    box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14),
+      0px 1px 5px 0px rgba(0, 0, 0, 0.12);
   }
 
   .fc-content {
