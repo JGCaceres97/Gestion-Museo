@@ -1,7 +1,6 @@
 // @ts-check
 import { Container, Grid, makeStyles, Paper, Typography } from '@material-ui/core';
 import React from 'react';
-import { address, port } from '../config';
 
 const useStyles = makeStyles(theme => ({
   paper: {
@@ -23,7 +22,7 @@ const useStyles = makeStyles(theme => ({
 function Manual() {
   // @ts-ignore
   const classes = useStyles();
-  const pdfDir = `http://${address}:${port}/public/files/Manual.pdf`;
+  const pdfDir = `/Manual.pdf`;
 
   return (
     <React.Fragment>
