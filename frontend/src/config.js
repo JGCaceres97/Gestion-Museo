@@ -1,6 +1,6 @@
 module.exports = {
   maxFileSize: 5, //Máximo tamaño de archivos en MB.
-  address: '35.185.124.104',
+  address: 'localhost',
   port: 4000,
   routes: {
     home: '/',
