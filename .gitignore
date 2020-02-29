@@ -16,6 +16,8 @@ db/*
 !db/backups
 db/backups/*
 
+!.gitignore
+
 # testing
 frontend/coverage
 
