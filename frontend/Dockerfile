@@ -16,5 +16,7 @@ RUN npm install
 # Exponer el puerto 3000.
 EXPOSE 3000
 
+ENV CI=true
+
 # Ejecutar la aplicación cuando el contenedor esté listo.
 CMD npm start
