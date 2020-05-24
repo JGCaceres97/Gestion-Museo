@@ -1,19 +1,11 @@
 // @ts-check
 import {
-  faCheckCircle,
-  faExclamationCircle,
-  faTimesCircle
-} from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon as FAI } from '@fortawesome/react-fontawesome';
-import { IconButton, makeStyles, Snackbar, SnackbarContent } from '@material-ui/core';
-import {
   AddBox,
   ArrowDownward,
   Check,
   ChevronLeft,
   ChevronRight,
   Clear,
-  Close,
   DeleteOutline,
   Edit,
   FilterList,
@@ -26,35 +18,11 @@ import {
   ViewColumn
 } from '@material-ui/icons';
 import axios from 'axios';
-import clsx from 'clsx';
 import MaterialTable from 'material-table';
 import React, { forwardRef, useCallback, useEffect, useState } from 'react';
 import { address, port, tableLocalization } from '../config';
 import useLocalStorage from '../customHooks/useLocalStorage';
-
-const useStyles = makeStyles(theme => ({
-  messageSnack: {
-    display: 'flex',
-    alignItems: 'center'
-  },
-  iconSnack: {
-    fontSize: 20,
-    opacity: 0.9,
-    marginRight: theme.spacing(1)
-  },
-  iconClose: {
-    fontSize: 20
-  },
-  successSnack: {
-    backgroundColor: '#008000'
-  },
-  errorSnack: {
-    backgroundColor: theme.palette.error.dark
-  },
-  infoSnack: {
-    backgroundColor: theme.palette.primary.main
-  }
-}));
+import Snack from '../utils/Snack';
 
 const tableIcons = {
   Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
@@ -79,40 +47,39 @@ const tableIcons = {
 /**
  * Método para mostrar el mantenimiento de un componente.
  * @param {Object} props Props que recibe de otro componente.
- * @param {boolean} [props.Grouping] Agrupación por columnas.
- * @param {number} [props.MaxBodyHeight] Altura máxima del cuerpo de la tabla.
- * @param {string} props.Added Mensaje de notificación cuando se agregar un registro.
- * @param {string} props.ApiUrl Dirección correspondiente en la API.
- * @param {string} props.Component Nombre del componente.
- * @param {string} props.DataLoaded Mensaje de notificación cuando se carga la información.
- * @param {string} props.DataNotLoaded Mensaje de notificación cuando no se carga la información.
- * @param {string} props.Deleted Mensaje de notificación cuando se eliminar un registro.
- * @param {string} props.NotAdded Mensaje de notificación cuando ocurre un error al agregar un registro.
- * @param {string} props.NotDeleted Mensaje de notificación cuando ocurre un error al eliminar un registro.
- * @param {string} props.NotUpdated Mensaje de notificación cuando ocurre un error al actualizar un registro.
- * @param {string} props.Updated Mensaje de notificación cuando se actualiza un registro.
- * @param {string} props.Titulo Título de la tabla.
- * @param {import('material-table').Column[]} props.Columnas Columnas de la tabla.
+ * @param {boolean} [props.grouping] Agrupación por columnas.
+ * @param {string} props.added Mensaje de notificación cuando se agregar un registro.
+ * @param {string} props.apiUrl Dirección correspondiente en la API.
+ * @param {string} props.component Nombre del componente.
+ * @param {string} props.dataLoaded Mensaje de notificación cuando se carga la información.
+ * @param {string} props.dataNotLoaded Mensaje de notificación cuando no se carga la información.
+ * @param {string} props.deleted Mensaje de notificación cuando se eliminar un registro.
+ * @param {string} props.notAdded Mensaje de notificación cuando ocurre un error al agregar un registro.
+ * @param {string} props.notDeleted Mensaje de notificación cuando ocurre un error al eliminar un registro.
+ * @param {string} props.notUpdated Mensaje de notificación cuando ocurre un error al actualizar un registro.
+ * @param {string} props.updated Mensaje de notificación cuando se actualiza un registro.
+ * @param {string} props.titulo Título de la tabla.
+ * @param {import('material-table').Column[]} props.columnas Columnas de la tabla.
+ * @param {(rowData: any) => boolean} [props.isEditable] Determina si se puede editar una fila dependiendo una condición.
+ * @param {(rowData: any) => boolean} [props.isDeletable] Determina si se puede eliminar una fila dependiendo una condición.
  */
 function LayoutMantenimiento({
-  Grouping = false,
-  Added,
-  NotAdded,
-  ApiUrl,
-  Component,
-  DataLoaded,
-  DataNotLoaded,
-  Updated,
-  NotUpdated,
-  Deleted,
-  NotDeleted,
-  Titulo,
-  Columnas,
-  MaxBodyHeight = 455
+  grouping = false,
+  added,
+  notAdded,
+  apiUrl,
+  component,
+  dataLoaded,
+  dataNotLoaded,
+  updated,
+  notUpdated,
+  deleted,
+  notDeleted,
+  titulo,
+  columnas,
+  isEditable = rowData => true,
+  isDeletable = rowData => true
 }) {
-  // @ts-ignore
-  const classes = useStyles();
-
   const [data, setData] = useState([]);
   const [IsLoading, setIsLoading] = useState(true);
   const [SnackOpen, setSnackOpen] = useState(false);
@@ -122,7 +89,7 @@ function LayoutMantenimiento({
   const [Token] = useLocalStorage('Token', '');
 
   useEffect(() => {
-    document.title = `Mantenimiento de ${Component}`;
+    document.title = `Mantenimiento de ${component}`;
   });
 
   /**
@@ -130,7 +97,7 @@ function LayoutMantenimiento({
    */
   const loadData = useCallback(async () => {
     try {
-      const res = await axios.get(`http://${address}:${port}/${ApiUrl}`, {
+      const res = await axios.get(`http://${address}:${port}/${apiUrl}`, {
         headers: {
           authorization: Token
         }
@@ -142,7 +109,7 @@ function LayoutMantenimiento({
     } finally {
       setIsLoading(false);
     }
-  }, [ApiUrl, Token]);
+  }, [apiUrl, Token]);
 
   useEffect(() => {
     setSnackOpen(false);
@@ -150,14 +117,14 @@ function LayoutMantenimiento({
     const getData = async () => {
       try {
         await loadData();
-        showSnack('Info', DataLoaded);
+        showSnack('Info', dataLoaded);
       } catch {
-        showSnack('Error', DataNotLoaded);
+        showSnack('Error', dataNotLoaded);
       }
     };
 
     getData();
-  }, [DataLoaded, DataNotLoaded, loadData]);
+  }, [dataLoaded, dataNotLoaded, loadData]);
 
   /**
    * Método para mostrar los snack con un mensaje personalizado.
@@ -184,31 +151,21 @@ function LayoutMantenimiento({
   };
 
   /**
-   *
-   * @param {React.MouseEvent<HTMLButtonElement> | React.SyntheticEvent<Event>} e Evento del cierre en cuestión.
-   * @param {string} [reason] Razón de cierre del snackbar.
-   */
-  const handleSnackClose = (e, reason) => {
-    if (reason === 'clickaway') return;
-    setSnackOpen(false);
-  };
-
-  /**
    * Método para guardar nuevos registros.
    * @param {any} data Información a guardar.
    */
   const onRowAdd = async data => {
     try {
-      await axios.post(`http://${address}:${port}/${ApiUrl}`, data, {
+      await axios.post(`http://${address}:${port}/${apiUrl}`, data, {
         headers: {
           authorization: Token
         }
       });
 
       await loadData();
-      showSnack('Success', Added);
+      showSnack('Success', added);
     } catch {
-      showSnack('Error', NotAdded);
+      showSnack('Error', notAdded);
     }
   };
 
@@ -218,16 +175,16 @@ function LayoutMantenimiento({
    */
   const onRowUpdate = async data => {
     try {
-      await axios.put(`http://${address}:${port}/${ApiUrl}/${data._id}`, data, {
+      await axios.put(`http://${address}:${port}/${apiUrl}/${data._id}`, data, {
         headers: {
           authorization: Token
         }
       });
 
       await loadData();
-      showSnack('Success', Updated);
+      showSnack('Success', updated);
     } catch {
-      showSnack('Error', NotUpdated);
+      showSnack('Error', notUpdated);
     }
   };
 
@@ -238,16 +195,16 @@ function LayoutMantenimiento({
    */
   const onRowDelete = async ({ _id }) => {
     try {
-      await axios.delete(`http://${address}:${port}/${ApiUrl}/${_id}`, {
+      await axios.delete(`http://${address}:${port}/${apiUrl}/${_id}`, {
         headers: {
           authorization: Token
         }
       });
 
       await loadData();
-      showSnack('Success', Deleted);
+      showSnack('Success', deleted);
     } catch {
-      showSnack('Error', NotDeleted);
+      showSnack('Error', notDeleted);
     }
   };
 
@@ -255,25 +212,29 @@ function LayoutMantenimiento({
     <React.Fragment>
       <MaterialTable
         data={data}
-        title={Titulo}
-        columns={Columnas}
+        title={titulo}
+        columns={columnas}
         icons={tableIcons}
         isLoading={IsLoading}
         localization={tableLocalization}
         style={{
-          maxHeight: '100.8%',
+          maxHeight: '100%',
           margin: '8px',
-          overflowY: 'auto'
+          overflowY: 'auto',
+          display: 'flex',
+          flexDirection: 'column'
         }}
         options={{
           pageSize: 10,
-          maxBodyHeight: MaxBodyHeight,
-          grouping: Grouping,
+          grouping,
           columnsButton: true,
+          maxBodyHeight: '100%',
           addRowPosition: 'first',
           emptyRowsWhenPaging: false
         }}
         editable={{
+          isEditable,
+          isDeletable,
           onRowAdd,
           onRowUpdate,
           onRowDelete
@@ -290,40 +251,13 @@ function LayoutMantenimiento({
           }
         ]}
       />
-      <Snackbar
-        anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'right'
-        }}
-        open={SnackOpen}
-        autoHideDuration={5000}
-        onClose={handleSnackClose}
-      >
-        <SnackbarContent
-          className={clsx({
-            [classes.errorSnack]: IsSnackError,
-            [classes.infoSnack]: IsSnackInfo,
-            [classes.successSnack]: !IsSnackError && !IsSnackInfo
-          })}
-          aria-describedby='snackbar'
-          message={
-            <span className={classes.messageSnack} id='snackbar'>
-              <FAI
-                icon={
-                  IsSnackError ? faTimesCircle : IsSnackInfo ? faExclamationCircle : faCheckCircle
-                }
-                className={classes.iconSnack}
-              />
-              {SnackTxt}
-            </span>
-          }
-          action={[
-            <IconButton key='close' aria-label='close' color='inherit' onClick={handleSnackClose}>
-              <Close className={classes.iconClose} />
-            </IconButton>
-          ]}
-        />
-      </Snackbar>
+      <Snack
+        show={SnackOpen}
+        texto={SnackTxt}
+        isInfo={IsSnackInfo}
+        setShow={setSnackOpen}
+        isError={IsSnackError}
+      />
     </React.Fragment>
   );
 }

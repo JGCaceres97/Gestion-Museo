@@ -7,6 +7,17 @@ const { address, defaultUserPass, secretKey } = require('../../config');
 const usuarioCtrl = {};
 const { createRegistro } = require('./bitacora.controller');
 
+usuarioCtrl.getCantidadUsuarios = async (req, res) => {
+  try {
+    const cantidadUsuarios = (await Usuario.find().select(['_id'])).length;
+
+    res.status(200).json({ cantidadUsuarios });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json('Ha ocurrido un error al realizar la consulta.');
+  }
+};
+
 usuarioCtrl.getUsuarios = async (req, res) => {
   try {
     const usuarios = await Usuario.find().select(['-Password']);

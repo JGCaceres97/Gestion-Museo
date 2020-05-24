@@ -2,15 +2,13 @@
 import MomentUtils from '@date-io/moment';
 import {
   faCheck,
-  faCheckCircle,
   faEnvelope,
   faFileUpload,
   faIdCard,
   faMapMarkerAlt,
   faPaperPlane,
   faPhoneAlt,
-  faTimes,
-  faTimesCircle
+  faTimes
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon as FAI } from '@fortawesome/react-fontawesome';
 import {
@@ -24,7 +22,6 @@ import {
   FormLabel,
   Grid,
   Grow,
-  IconButton,
   InputAdornment,
   InputLabel,
   makeStyles,
@@ -34,18 +31,16 @@ import {
   RadioGroup,
   Select,
   Slider,
-  Snackbar,
-  SnackbarContent,
   TextField,
   Typography,
   Zoom
 } from '@material-ui/core';
-import { Close } from '@material-ui/icons';
 import { DatePicker, MuiPickersUtilsProvider } from '@material-ui/pickers';
 import axios from 'axios';
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
-import { address, port, maxFileSize } from '../config';
+import { address, maxFileSize, port } from '../config';
+import Snack from '../utils/Snack';
 
 moment.locale('es-us');
 moment.updateLocale('es-us', {
@@ -78,23 +73,8 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(3, 2),
     margin: theme.spacing(1)
   },
-  messageSnack: {
-    display: 'flex',
-    alignItems: 'center'
-  },
-  iconSnack: {
-    fontSize: 20,
-    opacity: 0.9,
-    marginRight: theme.spacing(1)
-  },
-  iconClose: {
-    fontSize: 20
-  },
-  successSnack: {
-    backgroundColor: '#008000'
-  },
-  errorSnack: {
-    backgroundColor: theme.palette.error.dark
+  sizeMessage: {
+    marginLeft: theme.spacing(2)
   }
 }));
 
@@ -112,17 +92,11 @@ function CrearSolicitud(props) {
   const initialDate = () => {
     switch (moment().day()) {
       case 5:
-        return moment()
-          .add(3, 'days')
-          .toDate();
+        return moment().add(3, 'days').toDate();
       case 6:
-        return moment()
-          .add(2, 'days')
-          .toDate();
+        return moment().add(2, 'days').toDate();
       default:
-        return moment()
-          .add(1, 'day')
-          .toDate();
+        return moment().add(1, 'day').toDate();
     }
   };
 
@@ -592,20 +566,10 @@ function CrearSolicitud(props) {
             setFileNota(null);
           }
           event.target.value = '';
-          showSnack('Error', `El peso máximo del archivo es ${maxFileSize} MB.`);
+          showSnack('Error', 'El tamaño del archivo es mayor al permitido.');
         }
       }
     }
-  };
-
-  /**
-   * Método que maneja las acciones al cerrar un snackbar.
-   * @param {React.MouseEvent<HTMLButtonElement> | React.SyntheticEvent<Event>} e Evento del cierre en cuestión.
-   * @param {string} [reason] Razón de cierre del snackbar.
-   */
-  const handleSnackClose = (e, reason) => {
-    if (reason === 'clickaway') return;
-    setSnackOpen(false);
   };
 
   /**
@@ -1117,6 +1081,14 @@ function CrearSolicitud(props) {
                   {FileListadoTxt}
                 </Button>
               </label>
+              <Typography
+                gutterBottom
+                variant='caption'
+                color='textSecondary'
+                className={classes.sizeMessage}
+              >
+                {`El tamaño máximo es de ${maxFileSize} MB.`}
+              </Typography>
             </Grid>
             <Grid item xs={12} sm={6} hidden>
               <Typography gutterBottom>Nota al Gerente</Typography>
@@ -1159,34 +1131,7 @@ function CrearSolicitud(props) {
           </Grid>
         </Container>
       </Paper>
-      <Snackbar
-        anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'right'
-        }}
-        open={SnackOpen}
-        autoHideDuration={5000}
-        onClose={handleSnackClose}
-      >
-        <SnackbarContent
-          className={IsSnackError ? classes.errorSnack : classes.successSnack}
-          aria-describedby='snackbar'
-          message={
-            <span className={classes.messageSnack} id='snackbar'>
-              <FAI
-                icon={IsSnackError ? faTimesCircle : faCheckCircle}
-                className={classes.iconSnack}
-              />
-              {SnackTxt}
-            </span>
-          }
-          action={[
-            <IconButton key='close' aria-label='close' color='inherit' onClick={handleSnackClose}>
-              <Close className={classes.iconClose} />
-            </IconButton>
-          ]}
-        />
-      </Snackbar>
+      <Snack show={SnackOpen} texto={SnackTxt} setShow={setSnackOpen} isError={IsSnackError} />
     </React.Fragment>
   );
 }

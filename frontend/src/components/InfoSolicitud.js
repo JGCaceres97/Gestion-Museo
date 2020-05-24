@@ -1,13 +1,10 @@
 // @ts-check
 import {
-  faCheckCircle,
   faEnvelope,
-  faExclamationCircle,
   faFilePdf,
   faFileWord,
   faIdCard,
-  faPhoneAlt,
-  faTimesCircle
+  faPhoneAlt
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon as FAI } from '@fortawesome/react-fontawesome';
 import {
@@ -20,7 +17,6 @@ import {
   FormHelperText,
   FormLabel,
   Grid,
-  IconButton,
   InputAdornment,
   InputLabel,
   makeStyles,
@@ -29,44 +25,21 @@ import {
   Radio,
   RadioGroup,
   Select,
-  Snackbar,
-  SnackbarContent,
   TextField,
   Typography
 } from '@material-ui/core';
-import { Close } from '@material-ui/icons';
 import axios from 'axios';
 import clsx from 'clsx';
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
-import config from '../config';
+import { address, port } from '../config';
 import useLocalStorage from '../customHooks/useLocalStorage';
+import Snack from '../utils/Snack';
 
 const useStyles = makeStyles(theme => ({
   paper: {
     padding: theme.spacing(3, 2),
     margin: theme.spacing(1)
-  },
-  messageSnack: {
-    display: 'flex',
-    alignItems: 'center'
-  },
-  iconSnack: {
-    fontSize: 20,
-    opacity: 0.9,
-    marginRight: theme.spacing(1)
-  },
-  iconClose: {
-    fontSize: 20
-  },
-  successSnack: {
-    backgroundColor: '#008000'
-  },
-  errorSnack: {
-    backgroundColor: theme.palette.error.dark
-  },
-  infoSnack: {
-    backgroundColor: theme.palette.primary.main
   },
   pdfFile: {
     color: 'crimson'
@@ -147,15 +120,12 @@ function InfoSolicitud({ _id }) {
 
     const reqInfo = async () => {
       try {
-        const getSolicitud = await axios.get(
-          `http://${config.address}:${config.port}/api/solicitudes/${_id}`,
-          {
-            headers: {
-              authorization: Token
-            }
+        const getSolicitud = await axios.get(`http://${address}:${port}/api/solicitudes/${_id}`, {
+          headers: {
+            authorization: Token
           }
-        );
-        const getEstados = await axios.get(`http://${config.address}:${config.port}/api/estados`, {
+        });
+        const getEstados = await axios.get(`http://${address}:${port}/api/estados`, {
           headers: {
             authorization: Token
           }
@@ -172,16 +142,6 @@ function InfoSolicitud({ _id }) {
 
     reqInfo();
   }, [Token, _id]);
-
-  /**
-   * Método que maneja las acciones al cerrar un snackbar.
-   * @param {React.MouseEvent<HTMLButtonElement> | React.SyntheticEvent<Event>} e Evento del cierre en cuestión.
-   * @param {string} [reason] Razón de cierre del snackbar.
-   */
-  const handleSnackClose = (e, reason) => {
-    if (reason === 'clickaway') return;
-    setSnackOpen(false);
-  };
 
   /**
    * Método para mostrar los snack con un mensaje personalizado.
@@ -235,7 +195,7 @@ function InfoSolicitud({ _id }) {
     setSnackOpen(false);
     toggleBtn(true, 'Actualizando...');
     try {
-      await axios.put(`http://${config.address}:${config.port}/api/solicitudes/${_id}`, Solicitud, {
+      await axios.put(`http://${address}:${port}/api/solicitudes/${_id}`, Solicitud, {
         headers: {
           authorization: Token
         }
@@ -462,30 +422,21 @@ function InfoSolicitud({ _id }) {
                         startIcon={
                           <FAI
                             icon={
-                              item.Nombre.split('.')
-                                .pop()
-                                .toUpperCase() === 'PDF'
+                              item.Nombre.split('.').pop().toUpperCase() === 'PDF'
                                 ? faFilePdf
                                 : faFileWord
                             }
                             className={clsx({
                               [classes.pdfFile]:
-                                item.Nombre.split('.')
-                                  .pop()
-                                  .toUpperCase() === 'PDF',
+                                item.Nombre.split('.').pop().toUpperCase() === 'PDF',
                               [classes.wordFile]:
-                                item.Nombre.split('.')
-                                  .pop()
-                                  .toUpperCase() !== 'PDF'
+                                item.Nombre.split('.').pop().toUpperCase() !== 'PDF'
                             })}
                           />
                         }
                       >
                         {item.Nombre.split('.').shift().length > 30
-                          ? item.Nombre.split('.')
-                              .shift()
-                              .substring(0, 30)
-                              .concat('...')
+                          ? item.Nombre.split('.').shift().substring(0, 30).concat('...')
                           : item.Nombre.split('.').shift()}
                       </Button>
                     </Grid>
@@ -513,42 +464,13 @@ function InfoSolicitud({ _id }) {
           </Grid>
         </Container>
       </Paper>
-      <Snackbar
-        anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'right'
-        }}
-        open={SnackOpen}
-        autoHideDuration={5000}
-        onClose={handleSnackClose}
-      >
-        <SnackbarContent
-          className={
-            IsSnackError
-              ? classes.errorSnack
-              : IsSnackInfo
-              ? classes.infoSnack
-              : classes.successSnack
-          }
-          aria-describedby='snackbar'
-          message={
-            <span className={classes.messageSnack} id='snackbar'>
-              <FAI
-                icon={
-                  IsSnackError ? faTimesCircle : IsSnackInfo ? faExclamationCircle : faCheckCircle
-                }
-                className={classes.iconSnack}
-              />
-              {SnackTxt}
-            </span>
-          }
-          action={[
-            <IconButton key='close' aria-label='close' color='inherit' onClick={handleSnackClose}>
-              <Close className={classes.iconClose} />
-            </IconButton>
-          ]}
-        />
-      </Snackbar>
+      <Snack
+        show={SnackOpen}
+        texto={SnackTxt}
+        isInfo={IsSnackInfo}
+        setShow={setSnackOpen}
+        isError={IsSnackError}
+      />
     </React.Fragment>
   );
 }

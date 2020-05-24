@@ -1,19 +1,11 @@
 // @ts-check
 import {
-  faCheckCircle,
-  faExclamationCircle,
-  faTimesCircle
-} from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon as FAI } from '@fortawesome/react-fontawesome';
-import { IconButton, makeStyles, Snackbar, SnackbarContent } from '@material-ui/core';
-import {
   ArrowDownward,
   Backup,
   Check,
   ChevronLeft,
   ChevronRight,
   Clear,
-  Close,
   FilterList,
   FirstPage,
   LastPage,
@@ -25,36 +17,12 @@ import {
   ViewColumn
 } from '@material-ui/icons';
 import axios from 'axios';
-import clsx from 'clsx';
 import MaterialTable from 'material-table';
 import moment from 'moment';
 import React, { forwardRef, useCallback, useEffect, useState } from 'react';
 import { address, port, tableLocalization } from '../config';
 import useLocalStorage from '../customHooks/useLocalStorage';
-
-const useStyles = makeStyles(theme => ({
-  messageSnack: {
-    display: 'flex',
-    alignItems: 'center'
-  },
-  iconSnack: {
-    fontSize: 20,
-    opacity: 0.9,
-    marginRight: theme.spacing(1)
-  },
-  iconClose: {
-    fontSize: 20
-  },
-  successSnack: {
-    backgroundColor: '#008000'
-  },
-  errorSnack: {
-    backgroundColor: theme.palette.error.dark
-  },
-  infoSnack: {
-    backgroundColor: theme.palette.primary.main
-  }
-}));
+import Snack from '../utils/Snack';
 
 const tableIcons = {
   Add: forwardRef((props, ref) => <Backup {...props} ref={ref} />),
@@ -79,9 +47,6 @@ const tableIcons = {
  * Método para manejar las copias de seguridad y restauración.
  */
 function Backups() {
-  // @ts-ignore
-  const classes = useStyles();
-
   const [data, setData] = useState([]);
   const [IsLoading, setIsLoading] = useState(true);
   const [SnackOpen, setSnackOpen] = useState(false);
@@ -162,16 +127,6 @@ function Backups() {
     setSnackOpen(true);
   };
 
-  /**
-   *
-   * @param {React.MouseEvent<HTMLButtonElement> | React.SyntheticEvent<Event>} e Evento del cierre en cuestión.
-   * @param {string} [reason] Razón de cierre del snackbar.
-   */
-  const handleSnackClose = (e, reason) => {
-    if (reason === 'clickaway') return;
-    setSnackOpen(false);
-  };
-
   const onBackup = async () => {
     try {
       await axios.get(`http://${address}:${port}/api/backup`, {
@@ -221,15 +176,16 @@ function Backups() {
         isLoading={IsLoading}
         title='Copias de Seguridad y Restauración'
         style={{
-          maxHeight: '100.8%',
+          maxHeight: '100%',
           margin: '8px',
           overflowY: 'auto',
           paddingLeft: '10px',
-          paddingRight: '10px'
+          display: 'flex',
+          flexDirection: 'column'
         }}
         options={{
           pageSize: 10,
-          maxBodyHeight: 460,
+          maxBodyHeight: '100%',
           pageSizeOptions: [5, 10],
           emptyRowsWhenPaging: false
         }}
@@ -283,40 +239,13 @@ function Backups() {
           toolbar: toolbar
         }}
       />
-      <Snackbar
-        anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'right'
-        }}
-        open={SnackOpen}
-        autoHideDuration={5000}
-        onClose={handleSnackClose}
-      >
-        <SnackbarContent
-          className={clsx({
-            [classes.errorSnack]: IsSnackError,
-            [classes.infoSnack]: IsSnackInfo,
-            [classes.successSnack]: !IsSnackError && !IsSnackInfo
-          })}
-          aria-describedby='snackbar'
-          message={
-            <span className={classes.messageSnack} id='snackbar'>
-              <FAI
-                icon={
-                  IsSnackError ? faTimesCircle : IsSnackInfo ? faExclamationCircle : faCheckCircle
-                }
-                className={classes.iconSnack}
-              />
-              {SnackTxt}
-            </span>
-          }
-          action={[
-            <IconButton key='close' aria-label='close' color='inherit' onClick={handleSnackClose}>
-              <Close className={classes.iconClose} />
-            </IconButton>
-          ]}
-        />
-      </Snackbar>
+      <Snack
+        show={SnackOpen}
+        texto={SnackTxt}
+        isInfo={IsSnackInfo}
+        setShow={setSnackOpen}
+        isError={IsSnackError}
+      />
     </React.Fragment>
   );
 }

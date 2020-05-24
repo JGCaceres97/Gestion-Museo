@@ -1,12 +1,5 @@
 // @ts-check
-import {
-  faAt,
-  faExclamationCircle,
-  faKey,
-  faQuestion,
-  faSignInAlt,
-  faTimesCircle
-} from '@fortawesome/free-solid-svg-icons';
+import { faAt, faKey, faQuestion, faSignInAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon as FAI } from '@fortawesome/react-fontawesome';
 import {
   Box,
@@ -24,18 +17,16 @@ import {
   LinearProgress,
   makeStyles,
   Paper,
-  Snackbar,
-  SnackbarContent,
   TextField,
   Typography
 } from '@material-ui/core';
-import { Close, Visibility, VisibilityOff } from '@material-ui/icons';
+import { Visibility, VisibilityOff } from '@material-ui/icons';
 import axios from 'axios';
-import clsx from 'clsx';
 import React, { useEffect, useState } from 'react';
 import { Redirect } from 'react-router-dom';
 import { address, port } from '../config';
 import useLocalStorage from '../customHooks/useLocalStorage';
+import Snack from '../utils/Snack';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -53,24 +44,6 @@ const useStyles = makeStyles(theme => ({
   alignCenter: {
     textAlign: 'center'
   },
-  messageSnack: {
-    display: 'flex',
-    alignItems: 'center'
-  },
-  iconSnack: {
-    fontSize: 20,
-    opacity: 0.9,
-    marginRight: theme.spacing(1)
-  },
-  iconClose: {
-    fontSize: 20
-  },
-  errorSnack: {
-    backgroundColor: theme.palette.error.dark
-  },
-  infoSnack: {
-    backgroundColor: theme.palette.primary.main
-  },
   rotateIcon: {
     transform: 'rotate(180deg)'
   }
@@ -85,6 +58,22 @@ function Login() {
 
   useEffect(() => {
     document.title = 'Inicio de Sesión';
+
+    const getCantidadUsuarios = async () => {
+      try {
+        const res = await axios.get(`http://${address}:${port}/api/cantidadUsuarios`);
+
+        if (res.data.cantidadUsuarios === 1) {
+          showSnack('Info', 'admin@admin.sys | admin');
+        }
+      } catch (e) {
+        if (e.response) {
+          console.error(e.response.data);
+        }
+      }
+    };
+
+    getCantidadUsuarios();
   }, []);
 
   const [Email, setEmail] = useState('');
@@ -104,6 +93,7 @@ function Login() {
   const [SnackOpen, setSnackOpen] = useState(false);
   const [SnackTxt, setSnackTxt] = useState('');
   const [IsSnackError, setIsSnackError] = useState(false);
+  const [IsSnackInfo, setIsSnackInfo] = useState(false);
   const [BtnTxt, setBtnTxt] = useState('Iniciar Sesión');
   const [BtnDisabled, setBtnDisabled] = useState(false);
   const [BtnResetDisabled, setBtnResetDisabled] = useState(false);
@@ -129,28 +119,18 @@ function Login() {
               'Complete el campo requerido con el formato "ejem.plo@ejemplo.com".',
               true
             );
-            // setErrorEmail(true);
-            // setTxtEmail('Complete el campo requerido con el formato "ejem.plo@ejemplo.com".');
           } else {
             toggleErrorEmail('', false);
-            // setErrorEmail(false);
-            // setTxtEmail('');
           }
         } else {
           toggleErrorEmail('', false);
-          // setErrorEmail(false);
-          // setTxtEmail('');
         }
         break;
       case 'Password':
         if (value === '') {
           toggleErrorPassword('Complete el campo requerido.', true);
-          // setErrorPassword(true);
-          // setTxtPassword('Complete el campo requerido.');
         } else {
           toggleErrorPassword('', false);
-          // setErrorPassword(false);
-          // setTxtPassword('');
         }
         break;
       case 'EmailToReset':
@@ -170,16 +150,6 @@ function Login() {
       default:
         break;
     }
-  };
-
-  /**
-   * Método que maneja las acciones al cerrar un snackbar.
-   * @param {React.MouseEvent<HTMLButtonElement> | React.SyntheticEvent<Event>} e Evento de cierre en cuestión.
-   * @param {string} [reason] Razón de cierre del snackbar.
-   */
-  const handleSnackClose = (e, reason) => {
-    if (reason === 'clickaway') return;
-    setSnackOpen(false);
   };
 
   /**
@@ -275,14 +245,23 @@ function Login() {
 
   /**
    * Método para mostrar los snack con un mensaje personalizado.
-   * @param {'Error' | 'Info'} type Tipo de snack a mostrar.
+   * @param {'Info' | 'Error' | 'Success'} type Tipo de snack a mostrar.
    * @param {string} txt Texto a mostrar en el snack.
    */
   const showSnack = (type, txt) => {
-    if (type === 'Error') {
-      setIsSnackError(true);
-    } else {
-      setIsSnackError(false);
+    switch (type) {
+      case 'Info':
+        setIsSnackInfo(true);
+        setIsSnackError(false);
+        break;
+      case 'Error':
+        setIsSnackInfo(false);
+        setIsSnackError(true);
+        break;
+      default:
+        setIsSnackInfo(false);
+        setIsSnackError(false);
+        break;
     }
     setSnackTxt(txt);
     setSnackOpen(true);
@@ -348,7 +327,7 @@ function Login() {
       setIsLoading(false);
       toggleBtn(false, 'Iniciar Sesión');
 
-      if (e.response.data) {
+      if (e.response) {
         showSnack('Error', e.response.data);
       } else {
         showSnack('Error', 'Error al iniciar sesión. Intente de nuevo.');
@@ -512,37 +491,13 @@ function Login() {
             </Button>
           </DialogActions>
         </Dialog>
-        <Snackbar
-          anchorOrigin={{
-            vertical: 'bottom',
-            horizontal: 'right'
-          }}
-          open={SnackOpen}
-          autoHideDuration={5000}
-          onClose={handleSnackClose}
-        >
-          <SnackbarContent
-            className={clsx({
-              [classes.errorSnack]: IsSnackError,
-              [classes.infoSnack]: !IsSnackError
-            })}
-            aria-describedby='snackbar'
-            message={
-              <span className={classes.messageSnack} id='snackbar'>
-                <FAI
-                  icon={IsSnackError ? faTimesCircle : faExclamationCircle}
-                  className={classes.iconSnack}
-                />
-                {SnackTxt}
-              </span>
-            }
-            action={[
-              <IconButton key='close' aria-label='close' color='inherit' onClick={handleSnackClose}>
-                <Close className={classes.iconClose} />
-              </IconButton>
-            ]}
-          />
-        </Snackbar>
+        <Snack
+          show={SnackOpen}
+          texto={SnackTxt}
+          isInfo={IsSnackInfo}
+          setShow={setSnackOpen}
+          isError={IsSnackError}
+        />
       </Container>
     </React.Fragment>
   );

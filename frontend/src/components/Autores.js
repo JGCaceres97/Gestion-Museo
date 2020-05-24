@@ -9,18 +9,18 @@ import LayoutMantenimiento from '../layouts/Mantenimiento';
 function Autores() {
   return (
     <LayoutMantenimiento
-      Added='Autor ingresado.'
-      ApiUrl='api/autores'
-      Component='Autores'
-      DataLoaded='Autores cargados.'
-      DataNotLoaded='Error obteniendo los autores.'
-      Deleted='Autor dado de baja.'
-      NotAdded='Error ingresando el autor.'
-      NotDeleted='Error dando de baja el autor.'
-      NotUpdated='Error actualizando el autor.'
-      Updated='Autor actualizado.'
-      Titulo='Autores'
-      Columnas={[
+      added='Autor ingresado.'
+      apiUrl='api/autores'
+      component='Autores'
+      dataLoaded='Autores cargados.'
+      dataNotLoaded='Error obteniendo los autores.'
+      deleted='Autor dado de baja.'
+      notAdded='Error ingresando el autor.'
+      notDeleted='Error dando de baja el autor.'
+      notUpdated='Error actualizando el autor.'
+      updated='Autor actualizado.'
+      titulo='Autores'
+      columnas={[
         {
           title: 'ID',
           field: '_id',

@@ -9,18 +9,20 @@ function Roles() {
 
   return (
     <LayoutMantenimiento
-      Added='Rol ingresado.'
-      ApiUrl='api/roles'
-      Component='Roles'
-      DataLoaded='Roles cargados.'
-      DataNotLoaded='Error obteniendo los roles.'
-      Deleted='Rol eliminado.'
-      NotAdded='Error ingresando el rol.'
-      NotDeleted='Error eliminando el rol.'
-      NotUpdated='Error actualizando el rol.'
-      Updated='Rol actualizado.'
-      Titulo='Roles'
-      Columnas={[
+      added='Rol ingresado.'
+      apiUrl='api/roles'
+      component='Roles'
+      dataLoaded='Roles cargados.'
+      dataNotLoaded='Error obteniendo los roles.'
+      deleted='Rol eliminado.'
+      notAdded='Error ingresando el rol.'
+      notDeleted='Error eliminando el rol.'
+      notUpdated='Error actualizando el rol.'
+      updated='Rol actualizado.'
+      titulo='Roles'
+      isEditable={rowData => rowData.Nombre !== 'Admin'}
+      isDeletable={rowData => rowData.Nombre !== 'Admin'}
+      columnas={[
         {
           title: 'ID',
           field: '_id',
@@ -75,7 +77,7 @@ function Roles() {
               placeholder='Descripción'
               value={props.value || ''}
               onChange={e => props.onChange(e.target.value)}
-              inputProps={{ maxLength: 50, style: { fontSize: 13 } }}
+              inputProps={{ maxLength: 100, style: { fontSize: 13 } }}
             />
           )
         }

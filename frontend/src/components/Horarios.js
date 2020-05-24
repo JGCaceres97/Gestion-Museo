@@ -6,18 +6,18 @@ import LayoutMantenimiento from '../layouts/Mantenimiento';
 function Horarios() {
   return (
     <LayoutMantenimiento
-      Added='Horario ingresado.'
-      ApiUrl='api/horarios'
-      Component='Horarios'
-      DataLoaded='Horarios cargados.'
-      DataNotLoaded='Error obteniendo los horarios.'
-      Deleted='Horario eliminado.'
-      NotAdded='Error ingresando el horario.'
-      NotDeleted='Error eliminando el horario.'
-      NotUpdated='Error actualizando el horario.'
-      Updated='Horario actualizado.'
-      Titulo='Horarios de Atención'
-      Columnas={[
+      added='Horario ingresado.'
+      apiUrl='api/horarios'
+      component='Horarios'
+      dataLoaded='Horarios cargados.'
+      dataNotLoaded='Error obteniendo los horarios.'
+      deleted='Horario eliminado.'
+      notAdded='Error ingresando el horario.'
+      notDeleted='Error eliminando el horario.'
+      notUpdated='Error actualizando el horario.'
+      updated='Horario actualizado.'
+      titulo='Horarios de Atención'
+      columnas={[
         {
           title: 'ID',
           field: '_id',

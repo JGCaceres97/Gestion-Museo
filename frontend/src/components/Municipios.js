@@ -61,20 +61,19 @@ function Municipios() {
 
   return (
     <LayoutMantenimiento
-      Grouping
-      MaxBodyHeight={405}
-      Added='Municipio ingresado.'
-      ApiUrl='api/municipios'
-      Component='Municipios'
-      DataLoaded='Municipios cargados.'
-      DataNotLoaded='Error obteniendo los municipios.'
-      Deleted='Municipio eliminado.'
-      NotAdded='Error ingresando el municipio.'
-      NotDeleted='Error eliminando el municipio.'
-      NotUpdated='Error actualizando el municipio.'
-      Updated='Municipio actualizado.'
-      Titulo='Municipios'
-      Columnas={[
+      grouping
+      added='Municipio ingresado.'
+      apiUrl='api/municipios'
+      component='Municipios'
+      dataLoaded='Municipios cargados.'
+      dataNotLoaded='Error obteniendo los municipios.'
+      deleted='Municipio eliminado.'
+      notAdded='Error ingresando el municipio.'
+      notDeleted='Error eliminando el municipio.'
+      notUpdated='Error actualizando el municipio.'
+      updated='Municipio actualizado.'
+      titulo='Municipios'
+      columnas={[
         {
           title: 'ID',
           field: '_id',

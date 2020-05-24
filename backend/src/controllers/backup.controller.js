@@ -19,11 +19,7 @@ const Rol = require('../models/Rol');
 const Solicitud = require('../models/Solicitud');
 const Usuario = require('../models/Usuario');
 
-const key = crypto
-  .createHash('sha256')
-  .update(String(secretKey))
-  .digest('base64')
-  .substr(0, 32);
+const key = crypto.createHash('sha256').update(String(secretKey)).digest('base64').substr(0, 32);
 
 const readFiles = async fileDir => {
   try {
@@ -86,7 +82,7 @@ backupCtrl.getBackups = async (req, res) => {
       Accion: 'Lectura de copias de seguridad disponibles.'
     });
 
-    res.status(200).json(Backups);
+    res.status(200).json(Backups.filter(item => item.search(/Backup*/) === 0));
   } catch (e) {
     console.error(e);
     res.status(500).json({

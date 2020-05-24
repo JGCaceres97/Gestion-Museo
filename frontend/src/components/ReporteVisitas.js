@@ -1,13 +1,6 @@
 // @ts-check
 import MomentUtils from '@date-io/moment';
-import {
-  faCheckCircle,
-  faExclamationCircle,
-  faFileExcel,
-  faFilePdf,
-  faSearch,
-  faTimesCircle
-} from '@fortawesome/free-solid-svg-icons';
+import { faFileExcel, faFilePdf, faSearch } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon as FAI } from '@fortawesome/react-fontawesome';
 import {
   Box,
@@ -15,14 +8,11 @@ import {
   Container,
   FormControl,
   Grid,
-  IconButton,
   InputLabel,
   makeStyles,
   MenuItem,
   Paper,
   Select,
-  Snackbar,
-  SnackbarContent,
   Table,
   TableBody,
   TableCell,
@@ -31,10 +21,8 @@ import {
   TableRow,
   Typography
 } from '@material-ui/core';
-import { Close } from '@material-ui/icons';
 import { DatePicker, MuiPickersUtilsProvider } from '@material-ui/pickers';
 import axios from 'axios';
-import clsx from 'clsx';
 import { saveAs } from 'file-saver';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
@@ -43,38 +31,13 @@ import React, { useEffect, useState } from 'react';
 import XLSX from 'xlsx';
 import { address, port } from '../config';
 import useLocalStorage from '../customHooks/useLocalStorage';
+import Snack from '../utils/Snack';
 
 const useStyles = makeStyles(theme => ({
   paper: {
-    padding: theme.spacing(3, 2),
+    overflowY: 'auto',
+    padding: theme.spacing(2),
     margin: theme.spacing(1)
-  },
-  messageSnack: {
-    display: 'flex',
-    alignItems: 'center'
-  },
-  iconSnack: {
-    fontSize: 20,
-    opacity: 0.9,
-    marginRight: theme.spacing(1)
-  },
-  iconClose: {
-    fontSize: 20
-  },
-  successSnack: {
-    backgroundColor: '#008000'
-  },
-  errorSnack: {
-    backgroundColor: theme.palette.error.dark
-  },
-  infoSnack: {
-    backgroundColor: theme.palette.primary.main
-  },
-  alignCenter: {
-    textAlign: 'center'
-  },
-  table: {
-    overflow: 'auto'
   },
   tableCell: {
     paddingLeft: theme.spacing(1),
@@ -116,11 +79,7 @@ function ReporteVisitas() {
       Estado: ''
     }
   ]);
-  const [FechaInicial, setFechaInicial] = useState(
-    moment()
-      .subtract(1, 'month')
-      .toDate()
-  );
+  const [FechaInicial, setFechaInicial] = useState(moment().subtract(1, 'month').toDate());
   const [FechaFinal, setFechaFinal] = useState(moment().toDate());
   const [IDEstado, setIDEstado] = useState('Todas');
 
@@ -178,15 +137,9 @@ function ReporteVisitas() {
   };
 
   /**
-   * Método que maneja las acciones al cerrar un snackbar.
-   * @param {React.MouseEvent<HTMLButtonElement> | React.SyntheticEvent<Event>} e Evento del cierre en cuestión.
-   * @param {string} [reason] Razón de cierre del snackbar.
+   * Método para manejar el cambio de filas entre páginas.
+   * @param {React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>} ev Evento de cambio en el input.
    */
-  const handleSnackClose = (e, reason) => {
-    if (reason === 'clickaway') return;
-    setSnackOpen(false);
-  };
-
   const handleChangeRowsPerPage = ev => {
     setRowsPerPage(+ev.target.value);
     setPage(0);
@@ -473,8 +426,8 @@ function ReporteVisitas() {
           </Grid>
           {Consultado && (
             <Grid container spacing={2}>
-              <Grid item md={3} xs={6}>
-                <Box pt={4} pb={1}>
+              <Grid container item xs={12} justify='space-between'>
+                <Box py={1}>
                   <Button
                     color='inherit'
                     variant='contained'
@@ -485,9 +438,7 @@ function ReporteVisitas() {
                     Exportar PDF
                   </Button>
                 </Box>
-              </Grid>
-              <Grid item md={3} xs={6}>
-                <Box pt={4} pb={1}>
+                <Box py={1}>
                   <Button
                     color='inherit'
                     variant='contained'
@@ -556,40 +507,13 @@ function ReporteVisitas() {
           )}
         </Container>
       </Paper>
-      <Snackbar
-        anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'right'
-        }}
-        open={SnackOpen}
-        autoHideDuration={5000}
-        onClose={handleSnackClose}
-      >
-        <SnackbarContent
-          className={clsx({
-            [classes.errorSnack]: IsSnackError,
-            [classes.infoSnack]: IsSnackInfo,
-            [classes.successSnack]: !IsSnackError && !IsSnackInfo
-          })}
-          aria-describedby='snackbar'
-          message={
-            <span className={classes.messageSnack} id='snackbar'>
-              <FAI
-                icon={
-                  IsSnackError ? faTimesCircle : IsSnackInfo ? faExclamationCircle : faCheckCircle
-                }
-                className={classes.iconSnack}
-              />
-              {SnackTxt}
-            </span>
-          }
-          action={[
-            <IconButton key='close' aria-label='close' color='inherit' onClick={handleSnackClose}>
-              <Close className={classes.iconClose} />
-            </IconButton>
-          ]}
-        />
-      </Snackbar>
+      <Snack
+        show={SnackOpen}
+        texto={SnackTxt}
+        isInfo={IsSnackInfo}
+        setShow={setSnackOpen}
+        isError={IsSnackError}
+      />
     </React.Fragment>
   );
 }

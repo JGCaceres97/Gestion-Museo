@@ -34,7 +34,7 @@ const rolSchema = new Schema(
       type: String,
       required: false,
       trim: true,
-      maxlength: 50
+      maxlength: 100
     }
   },
   {

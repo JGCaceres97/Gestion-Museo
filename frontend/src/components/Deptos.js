@@ -6,18 +6,18 @@ import LayoutMantenimiento from '../layouts/Mantenimiento';
 function Deptos() {
   return (
     <LayoutMantenimiento
-      Added='Departamento ingresado.'
-      ApiUrl='api/deptos'
-      Component='Departamentos'
-      DataLoaded='Departamentos cargados.'
-      DataNotLoaded='Error obteniendo los departamentos.'
-      Deleted='Departamento eliminado.'
-      NotAdded='Error ingresando el departamento.'
-      NotDeleted='Error eliminando el departamento.'
-      NotUpdated='Error actualizando el departamento.'
-      Updated='Departamento actualizado.'
-      Titulo='Departamentos'
-      Columnas={[
+      added='Departamento ingresado.'
+      apiUrl='api/deptos'
+      component='Departamentos'
+      dataLoaded='Departamentos cargados.'
+      dataNotLoaded='Error obteniendo los departamentos.'
+      deleted='Departamento eliminado.'
+      notAdded='Error ingresando el departamento.'
+      notDeleted='Error eliminando el departamento.'
+      notUpdated='Error actualizando el departamento.'
+      updated='Departamento actualizado.'
+      titulo='Departamentos'
+      columnas={[
         {
           title: 'ID',
           field: '_id',

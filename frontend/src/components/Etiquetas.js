@@ -1,22 +1,22 @@
+import TextField from '@material-ui/core/TextField';
 import React from 'react';
 import LayoutMantenimiento from '../layouts/Mantenimiento';
-import { TextField } from '@material-ui/core';
 
 function Etiquetas() {
   return (
     <LayoutMantenimiento
-      Added='Etiqueta ingresada.'
-      ApiUrl='api/etiquetas'
-      Component='Etiquetas'
-      DataLoaded='Etiquetas cargadas.'
-      DataNotLoaded='Error obteniendo las etiquetas.'
-      Deleted='Etiqueta eliminada.'
-      NotAdded='Error ingresando la etiqueta.'
-      NotDeleted='Error eliminando la etiqueta.'
-      NotUpdated='Error actualizando la etiqueta.'
-      Updated='Etiqueta actualizada.'
-      Titulo='Etiquetas de Libros'
-      Columnas={[
+      added='Etiqueta ingresada.'
+      apiUrl='api/etiquetas'
+      component='Etiquetas'
+      dataLoaded='Etiquetas cargadas.'
+      dataNotLoaded='Error obteniendo las etiquetas.'
+      deleted='Etiqueta eliminada.'
+      notAdded='Error ingresando la etiqueta.'
+      notDeleted='Error eliminando la etiqueta.'
+      notUpdated='Error actualizando la etiqueta.'
+      updated='Etiqueta actualizada.'
+      titulo='Etiquetas de Libros'
+      columnas={[
         {
           title: 'ID',
           field: '_id',

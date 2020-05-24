@@ -10,7 +10,8 @@ const {
   deleteUsuario,
   reset,
   signUp,
-  updatePassword
+  updatePassword,
+  getCantidadUsuarios
 } = require('../controllers/usuarios.controller');
 
 router
@@ -27,5 +28,6 @@ router
 router.post('/api/forgotPassword', forgotPassword);
 router.post('/api/reset', reset);
 router.put('/api/updatePassword', updatePassword);
+router.get('/api/cantidadUsuarios', getCantidadUsuarios);
 
 module.exports = router;

@@ -6,18 +6,18 @@ import LayoutMantenimiento from '../layouts/Mantenimiento';
 function Estados() {
   return (
     <LayoutMantenimiento
-      Added='Estado ingresado.'
-      ApiUrl='api/estados'
-      Component='Estados'
-      DataLoaded='Estados cargados.'
-      DataNotLoaded='Error obteniendo los estados.'
-      Deleted='Estado eliminado.'
-      NotAdded='Error ingresando el estado.'
-      NotDeleted='Error eliminando el estado.'
-      NotUpdated='Error actualizando el estado.'
-      Updated='Estado actualizado.'
-      Titulo='Estados de Solicitudes'
-      Columnas={[
+      added='Estado ingresado.'
+      apiUrl='api/estados'
+      component='Estados'
+      dataLoaded='Estados cargados.'
+      dataNotLoaded='Error obteniendo los estados.'
+      deleted='Estado eliminado.'
+      notAdded='Error ingresando el estado.'
+      notDeleted='Error eliminando el estado.'
+      notUpdated='Error actualizando el estado.'
+      updated='Estado actualizado.'
+      titulo='Estados de Solicitudes'
+      columnas={[
         {
           title: 'ID',
           field: '_id',

@@ -1,10 +1,5 @@
 // @ts-check
-import {
-  faCheckCircle,
-  faExternalLinkAlt,
-  faKey,
-  faTimesCircle
-} from '@fortawesome/free-solid-svg-icons';
+import { faExternalLinkAlt, faKey } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon as FAI } from '@fortawesome/react-fontawesome';
 import {
   Box,
@@ -17,17 +12,15 @@ import {
   LinearProgress,
   makeStyles,
   Paper,
-  Snackbar,
-  SnackbarContent,
   TextField,
   Typography
 } from '@material-ui/core';
-import { Close, Visibility, VisibilityOff } from '@material-ui/icons';
+import { Visibility, VisibilityOff } from '@material-ui/icons';
 import axios from 'axios';
-import clsx from 'clsx';
 import React, { useEffect, useState } from 'react';
 import { Redirect } from 'react-router-dom';
 import { address, port } from '../config';
+import Snack from '../utils/Snack';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -44,24 +37,6 @@ const useStyles = makeStyles(theme => ({
   },
   alignCenter: {
     textAlign: 'center'
-  },
-  messageSnack: {
-    display: 'flex',
-    alignItems: 'center'
-  },
-  iconSnack: {
-    fontSize: 20,
-    opacity: 0.9,
-    marginRight: theme.spacing(1)
-  },
-  iconClose: {
-    fontSize: 20
-  },
-  errorSnack: {
-    backgroundColor: theme.palette.error.dark
-  },
-  successSnack: {
-    backgroundColor: '#008000'
   }
 }));
 
@@ -180,16 +155,6 @@ function ResetPassword(props) {
     }
     setSnackTxt(txt);
     setSnackOpen(true);
-  };
-
-  /**
-   * Método que maneja las acciones al cerrar un snackbar.
-   * @param {React.MouseEvent<HTMLButtonElement> | React.SyntheticEvent<Event>} e Evento de cierre en cuestión.
-   * @param {string} [reason] Razón de cierre del snackbar.
-   */
-  const handleSnackClose = (e, reason) => {
-    if (reason === 'clickaway') return;
-    setSnackOpen(false);
   };
 
   /**
@@ -378,37 +343,7 @@ function ResetPassword(props) {
             </Paper>
           </Grid>
         </Grid>
-        <Snackbar
-          anchorOrigin={{
-            vertical: 'bottom',
-            horizontal: 'right'
-          }}
-          open={SnackOpen}
-          autoHideDuration={5000}
-          onClose={handleSnackClose}
-        >
-          <SnackbarContent
-            className={clsx({
-              [classes.errorSnack]: IsSnackError,
-              [classes.successSnack]: !IsSnackError
-            })}
-            aria-describedby='snackbar'
-            message={
-              <span className={classes.messageSnack} id='snackbar'>
-                <FAI
-                  icon={IsSnackError ? faTimesCircle : faCheckCircle}
-                  className={classes.iconSnack}
-                />
-                {SnackTxt}
-              </span>
-            }
-            action={[
-              <IconButton key='close' aria-label='close' color='inherit' onClick={handleSnackClose}>
-                <Close className={classes.iconClose} />
-              </IconButton>
-            ]}
-          />
-        </Snackbar>
+        <Snack show={SnackOpen} texto={SnackTxt} setShow={setSnackOpen} isError={IsSnackError} />
       </Container>
     </React.Fragment>
   );

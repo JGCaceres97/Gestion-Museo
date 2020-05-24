@@ -1,7 +1,7 @@
 # Usar una versión específica de Node como base.
 FROM node:12.13.1-alpine3.10
 
-# Establecer el directorio de trabajo en /api.
+# Establecer el directorio de trabajo en /usr/src/app.
 WORKDIR /usr/src/app
 
 # Copiar el package.json dentro del contenedor.

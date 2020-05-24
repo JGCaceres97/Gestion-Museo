@@ -1,47 +1,18 @@
 // @ts-check
-import { faExclamationCircle, faTimesCircle } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon as FAI } from '@fortawesome/react-fontawesome';
-import {
-  Container,
-  Grid,
-  IconButton,
-  makeStyles,
-  Paper,
-  Snackbar,
-  SnackbarContent,
-  Typography
-} from '@material-ui/core';
-import { Close } from '@material-ui/icons';
+import { Container, Grid, makeStyles, Paper, Typography } from '@material-ui/core';
 import axios from 'axios';
-import clsx from 'clsx';
 import React, { useEffect, useState } from 'react';
 import { Chart } from 'react-google-charts';
 import { address, port } from '../config';
 import useLocalStorage from '../customHooks/useLocalStorage';
+import Snack from '../utils/Snack';
 
 const useStyles = makeStyles(theme => ({
   paper: {
     height: '100%',
+    overflowY: 'hidden',
     margin: theme.spacing(1),
-    padding: theme.spacing(3, 2)
-  },
-  messageSnack: {
-    display: 'flex',
-    alignItems: 'center'
-  },
-  iconSnack: {
-    fontSize: 20,
-    opacity: 0.9,
-    marginRight: theme.spacing(1)
-  },
-  iconClose: {
-    fontSize: 20
-  },
-  errorSnack: {
-    backgroundColor: theme.palette.error.dark
-  },
-  infoSnack: {
-    backgroundColor: theme.palette.primary.main
+    padding: theme.spacing(2)
   },
   height100: {
     height: '100%'
@@ -101,16 +72,6 @@ function ReporteCharlas() {
 
     getData();
   }, [Token]);
-
-  /**
-   * Método que maneja las acciones al cerrar un snackbar.
-   * @param {React.MouseEvent<HTMLButtonElement> | React.SyntheticEvent<Event>} e Evento del cierre en cuestión.
-   * @param {string} [reason] Razón de cierre del snackbar.
-   */
-  const handleSnackClose = (e, reason) => {
-    if (reason === 'clickaway') return;
-    setSnackOpen(false);
-  };
 
   /**
    * Método para mostrar los snack con un mensaje personalizado.
@@ -182,37 +143,7 @@ function ReporteCharlas() {
           )}
         </Container>
       </Paper>
-      <Snackbar
-        anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'right'
-        }}
-        open={SnackOpen}
-        autoHideDuration={5000}
-        onClose={handleSnackClose}
-      >
-        <SnackbarContent
-          className={clsx({
-            [classes.errorSnack]: IsSnackError,
-            [classes.infoSnack]: !IsSnackError
-          })}
-          aria-describedby='snackbar'
-          message={
-            <span className={classes.messageSnack} id='snackbar'>
-              <FAI
-                icon={IsSnackError ? faTimesCircle : faExclamationCircle}
-                className={classes.iconSnack}
-              />
-              {SnackTxt}
-            </span>
-          }
-          action={[
-            <IconButton key='close' aria-label='close' color='inherit' onClick={handleSnackClose}>
-              <Close className={classes.iconClose} />
-            </IconButton>
-          ]}
-        />
-      </Snackbar>
+      <Snack show={SnackOpen} texto={SnackTxt} setShow={setSnackOpen} isError={IsSnackError} />
     </React.Fragment>
   );
 }
@@ -297,16 +228,6 @@ function ReporteHorarios() {
   }, [Token]);
 
   /**
-   * Método que maneja las acciones al cerrar un snackbar.
-   * @param {React.MouseEvent<HTMLButtonElement> | React.SyntheticEvent<Event>} e Evento del cierre en cuestión.
-   * @param {string} [reason] Razón de cierre del snackbar.
-   */
-  const handleSnackClose = (e, reason) => {
-    if (reason === 'clickaway') return;
-    setSnackOpen(false);
-  };
-
-  /**
    * Método para mostrar los snack con un mensaje personalizado.
    * @param {'Info' | 'Error'} type Tipo de snack a mostrar.
    * @param {string} txt Texto a mostrar en el snack.
@@ -383,37 +304,7 @@ function ReporteHorarios() {
           )}
         </Container>
       </Paper>
-      <Snackbar
-        anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'right'
-        }}
-        open={SnackOpen}
-        autoHideDuration={5000}
-        onClose={handleSnackClose}
-      >
-        <SnackbarContent
-          className={clsx({
-            [classes.errorSnack]: IsSnackError,
-            [classes.infoSnack]: !IsSnackError
-          })}
-          aria-describedby='snackbar'
-          message={
-            <span className={classes.messageSnack} id='snackbar'>
-              <FAI
-                icon={IsSnackError ? faTimesCircle : faExclamationCircle}
-                className={classes.iconSnack}
-              />
-              {SnackTxt}
-            </span>
-          }
-          action={[
-            <IconButton key='close' aria-label='close' color='inherit' onClick={handleSnackClose}>
-              <Close className={classes.iconClose} />
-            </IconButton>
-          ]}
-        />
-      </Snackbar>
+      <Snack show={SnackOpen} texto={SnackTxt} setShow={setSnackOpen} isError={IsSnackError} />
     </React.Fragment>
   );
 }
@@ -488,16 +379,6 @@ function ReporteTemas() {
   }, [Token]);
 
   /**
-   * Método que maneja las acciones al cerrar un snackbar.
-   * @param {React.MouseEvent<HTMLButtonElement> | React.SyntheticEvent<Event>} e Evento del cierre en cuestión.
-   * @param {string} [reason] Razón de cierre del snackbar.
-   */
-  const handleSnackClose = (e, reason) => {
-    if (reason === 'clickaway') return;
-    setSnackOpen(false);
-  };
-
-  /**
    * Método para mostrar los snack con un mensaje personalizado.
    * @param {'Info' | 'Error'} type Tipo de snack a mostrar.
    * @param {string} txt Texto a mostrar en el snack.
@@ -568,37 +449,7 @@ function ReporteTemas() {
           )}
         </Container>
       </Paper>
-      <Snackbar
-        anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'right'
-        }}
-        open={SnackOpen}
-        autoHideDuration={5000}
-        onClose={handleSnackClose}
-      >
-        <SnackbarContent
-          className={clsx({
-            [classes.errorSnack]: IsSnackError,
-            [classes.infoSnack]: !IsSnackError
-          })}
-          aria-describedby='snackbar'
-          message={
-            <span className={classes.messageSnack} id='snackbar'>
-              <FAI
-                icon={IsSnackError ? faTimesCircle : faExclamationCircle}
-                className={classes.iconSnack}
-              />
-              {SnackTxt}
-            </span>
-          }
-          action={[
-            <IconButton key='close' aria-label='close' color='inherit' onClick={handleSnackClose}>
-              <Close className={classes.iconClose} />
-            </IconButton>
-          ]}
-        />
-      </Snackbar>
+      <Snack show={SnackOpen} texto={SnackTxt} setShow={setSnackOpen} isError={IsSnackError} />
     </React.Fragment>
   );
 }

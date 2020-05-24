@@ -5,7 +5,8 @@ import React from 'react';
 
 const useStyle = makeStyles(() => ({
   container: {
-    height: '103.8%',
+    display: 'flex',
+    flex: '1 1 auto',
     maxWidth: '100%',
     filter: 'grayscale(20%)',
     backgroundPosition: 'bottom',
@@ -39,42 +40,33 @@ function Inicio() {
   return (
     <React.Fragment>
       <Container className={classes.container}>
-        <Grid
-          container
-          justify='center'
-          direction='column'
-          alignItems='center'
-        >
+        <Grid container justify='center' direction='column' alignItems='center'>
           <Grid item xs={12} className={classes.grid}>
             <Box className={classes.box}>
-              <Typography
-                variant='h4'
-                className={classes.text}>
+              <Typography variant='h4' className={classes.text}>
                 Misión del <b>Banco Central de Honduras</b>
               </Typography>
-              <Typography
-                variant='body1'
-                className={clsx(classes.text, classes.leyend)}>
-                En el Banco Central de Honduras somos responsables de velar por el mantenimiento del valor interno y externo de la moneda nacional, el buen funcionamiento del sistema de pagos y propiciar la estabilidad del sistema financiero del país.
+              <Typography variant='body1' className={clsx(classes.text, classes.leyend)}>
+                En el Banco Central de Honduras somos responsables de velar por el mantenimiento del
+                valor interno y externo de la moneda nacional, el buen funcionamiento del sistema de
+                pagos y propiciar la estabilidad del sistema financiero del país.
               </Typography>
             </Box>
             <Box className={classes.box}>
-              <Typography
-                variant='h4'
-                className={classes.text}>
+              <Typography variant='h4' className={classes.text}>
                 Visión del <b>Banco Central de Honduras</b>
               </Typography>
-              <Typography
-                variant='body1'
-                className={clsx(classes.text, classes.leyend)}>
-                Ser reconocida como una institución líder que ejerce con autonomía y calidad profesional sus funciones, contribuyendo a la estabilidad de precios, lo que coadyuvará al crecimiento económico sostenido.
+              <Typography variant='body1' className={clsx(classes.text, classes.leyend)}>
+                Ser reconocida como una institución líder que ejerce con autonomía y calidad
+                profesional sus funciones, contribuyendo a la estabilidad de precios, lo que
+                coadyuvará al crecimiento económico sostenido.
               </Typography>
             </Box>
           </Grid>
         </Grid>
       </Container>
     </React.Fragment>
-  )
+  );
 }
 
 export default Inicio;

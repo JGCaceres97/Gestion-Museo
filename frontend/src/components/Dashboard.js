@@ -49,6 +49,7 @@ import Backups from './Backups';
 import Biblioteca from './Biblioteca';
 import Bitacora from './Bitacora';
 import Calendario from './Calendario';
+import { ReporteCharlas, ReporteHorarios, ReporteTemas } from './Charts';
 import Deptos from './Deptos';
 import Estados from './Estados';
 // import Etiquetas from './Etiquetas';
@@ -59,9 +60,6 @@ import Municipios from './Municipios';
 import ReporteVisitas from './ReporteVisitas';
 import Roles from './Roles';
 import Usuarios from './Usuarios';
-import { ReporteCharlas, ReporteHorarios, ReporteTemas } from './Charts';
-
-const drawerWidth = 240;
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -74,12 +72,12 @@ const useStyles = makeStyles(theme => ({
     marginRight: 24
   },
   drawer: {
-    width: drawerWidth,
+    width: 240,
     flexShrink: 0,
     whiteSpace: 'nowrap'
   },
   drawerOpen: {
-    width: drawerWidth,
+    width: 240,
     overflowX: 'hidden',
     transition: theme.transitions.create('width', {
       easing: theme.transitions.easing.sharp,
@@ -124,7 +122,9 @@ const useStyles = makeStyles(theme => ({
   },
   content: {
     flexGrow: 1,
-    height: '100vh'
+    display: 'flex',
+    height: '100vh',
+    flexDirection: 'column'
   },
   toolbar: {
     display: 'flex',
@@ -144,9 +144,6 @@ const useStyles = makeStyles(theme => ({
   },
   title: {
     flexGrow: 1
-  },
-  contentSpace: {
-    height: '87%'
   },
   rightSpace: {
     marginRight: theme.spacing(2)
@@ -676,7 +673,7 @@ function Dashboard() {
         </Drawer>
         <main className={classes.content}>
           <div className={classes.toolbar} />
-          <div className={classes.contentSpace}>{showSelected()}</div>
+          {showSelected()}
         </main>
       </div>
     </React.Fragment>

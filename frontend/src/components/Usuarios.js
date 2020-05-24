@@ -1,11 +1,11 @@
 // @ts-check
-import React, { useEffect, useState } from 'react';
+import TextField from '@material-ui/core/TextField';
 import axios from 'axios';
+import moment from 'moment';
+import React, { useEffect, useState } from 'react';
+import { address, port } from '../config';
 import useLocalStorage from '../customHooks/useLocalStorage';
 import LayoutMantenimiento from '../layouts/Mantenimiento';
-import moment from 'moment';
-import { address, port } from '../config';
-import TextField from '@material-ui/core/TextField';
 
 function Usuarios() {
   const [Roles, setRoles] = useState({});
@@ -48,20 +48,21 @@ function Usuarios() {
 
   return (
     <LayoutMantenimiento
-      Grouping
-      MaxBodyHeight={409}
-      Added='Usuario ingresado.'
-      ApiUrl='api/usuarios'
-      Component='Usuarios'
-      DataLoaded='Usuarios cargados.'
-      DataNotLoaded='Error obteniendo los usuarios.'
-      Deleted='Usuario dado de baja.'
-      NotAdded='Error ingresando el usuario.'
-      NotDeleted='Error dando de baja el usuario.'
-      NotUpdated='Error actualizando el usuario.'
-      Updated='Usuario actualizado.'
-      Titulo='Usuarios del Sistema'
-      Columnas={[
+      grouping
+      added='Usuario ingresado.'
+      apiUrl='api/usuarios'
+      component='Usuarios'
+      dataLoaded='Usuarios cargados.'
+      dataNotLoaded='Error obteniendo los usuarios.'
+      deleted='Usuario dado de baja.'
+      notAdded='Error ingresando el usuario.'
+      notDeleted='Error dando de baja el usuario.'
+      notUpdated='Error actualizando el usuario.'
+      updated='Usuario actualizado.'
+      titulo='Usuarios del Sistema'
+      isEditable={rowData => rowData.Nombres !== 'Admin'}
+      isDeletable={rowData => rowData.Nombres !== 'Admin'}
+      columnas={[
         {
           title: 'ID',
           field: '_id',
