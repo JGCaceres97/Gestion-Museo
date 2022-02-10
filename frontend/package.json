@@ -21,7 +21,7 @@
     "jspdf-autotable": "^3.5.3",
     "material-table": "^1.54.2",
     "moment": "^2.26.0",
-    "node-sass": "^4.14.1",
+    "node-sass": "^7.0.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-google-charts": "^3.0.15",
